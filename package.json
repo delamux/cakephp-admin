@@ -1,0 +1,16 @@
+{
+  "name": "cakephp-admin-assets",
+  "private": true,
+  "description": "Production assets (Tailwind v4 + basecoat-css, self-hosted Chart.js, htmx and Geist). Only used in the Docker `assets` stage.",
+  "scripts": {
+    "build:css": "tailwindcss -i resources/css/app.css -o webroot/css/app.css --minify"
+  },
+  "devDependencies": {
+    "@fontsource-variable/geist": "5.3.0",
+    "@tailwindcss/cli": "4.2.4",
+    "basecoat-css": "1.1.0",
+    "chart.js": "4.4.7",
+    "htmx.org": "2.0.11",
+    "tailwindcss": "4.2.4"
+  }
+}

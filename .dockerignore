@@ -1,0 +1,13 @@
+.git
+vendor
+tmp
+logs
+node_modules
+# Local config with dev defaults (salt, debug): production reads everything from env
+config/app_local.php
+webroot/css/app.css
+webroot/js/basecoat
+.phpunit.cache
+webroot/js/vendor
+webroot/font/geist
+docker/certs

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Creates or renews the mkcert certificate for local HTTPS (https://admindashboard.localhost; README, "HTTPS").
+#
+# Usage, from anywhere in the project:
+#   bin/dev-https-cert
+#
+# - Writes docker/certs/admindashboard.localhost.pem and admindashboard.localhost-key.pem (not in git).
+# - Restarts the `web` container if it is running, so nginx loads the new certificate.
+# - Warns if `mkcert -install` (trusted local authority) is missing.
+#
+# The certificate lasts about 2 years: macOS and browsers reject more than 825 days.
+set -euo pipefail
+
+DOMAIN="admindashboard.localhost"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CERTS="$ROOT/docker/certs"
+CERT="$CERTS/$DOMAIN.pem"
+KEY="$CERTS/$DOMAIN-key.pem"
+
+if ! command -v mkcert >/dev/null 2>&1; then
+    echo "mkcert is missing. Install it with: brew install mkcert && mkcert -install" >&2
+    exit 1
+fi
+
+# The mkcert authority must be installed as trusted, not only exist: on macOS `mkcert -install`
+# adds it to the System keychain.
+CA_FILE="$(mkcert -CAROOT)/rootCA.pem"
+CA_TRUSTED=false
+if [ -f "$CA_FILE" ]; then
+    if [ "$(uname -s)" = "Darwin" ]; then
+        CA_HASH="$(openssl x509 -noout -fingerprint -sha1 -in "$CA_FILE" | cut -d= -f2 | tr -d :)"
+        security find-certificate -a -Z /Library/Keychains/System.keychain 2>/dev/null | grep -qi "$CA_HASH" \
+            && CA_TRUSTED=true
+    else
+        CA_TRUSTED=true
+    fi
+fi
+if [ "$CA_TRUSTED" = false ]; then
+    echo "Warning: the mkcert local authority is not installed; browsers will not trust the certificate." >&2
+    echo "         Run once: mkcert -install" >&2
+fi
+
+# No /etc/hosts needed: browsers send any `*.localhost` to this machine (RFC 6761).
+
+mkdir -p "$CERTS"
+mkcert -cert-file "$CERT" -key-file "$KEY" "$DOMAIN" localhost 127.0.0.1
+chmod 644 "$KEY"  # read by nginx inside the container (the file never leaves this machine)
+
+for compose in compose.yaml compose.prod.yaml; do
+    if (cd "$ROOT" && docker compose -f "$compose" ps --status running --services 2>/dev/null | grep -qx web); then
+        (cd "$ROOT" && docker compose -f "$compose" restart web >/dev/null)
+        echo "Container web ($compose) restarted with the new certificate."
+    fi
+done
+
+if command -v openssl >/dev/null 2>&1; then
+    echo "Expires: $(openssl x509 -enddate -noout -in "$CERT" | cut -d= -f2)"
+fi
+echo "Done: https://$DOMAIN"

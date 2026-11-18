@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+# All database migrations, in order: CakeDC/Users schema, Queue tables, then the app's own.
+# Used by the `migrate` service (compose.prod.yaml, compose.coolify.yaml) and in development.
+set -e
+cd "$(dirname "$0")/.."
+bin/cake migrations migrate -p CakeDC/Users --no-lock "$@"
+bin/cake migrations migrate -p Queue --no-lock "$@"
+bin/cake migrations migrate --no-lock "$@"
