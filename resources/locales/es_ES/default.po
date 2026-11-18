@@ -1,0 +1,1365 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ./src/Controller/AppController.php:66
+msgid "You cannot delete your own account."
+msgstr "No puedes eliminar tu propia cuenta."
+
+#: ./src/Controller/AppController.php:68
+msgid "You don't have permission to manage this account."
+msgstr "No tienes permiso para gestionar esta cuenta."
+
+#: ./src/Controller/DashboardController.php:22
+#: ./src/Navigation/SidebarMenu.php:30
+msgid "Dashboard"
+msgstr "Panel"
+
+#: ./src/Controller/PasskeyLoginController.php:66
+#: ./templates/plugin/CakeDC/Users/Users/login.php:41
+msgid "Could not sign in with the passkey. Try again or sign in with your password."
+msgstr "No se ha podido entrar con la passkey. Vuelve a intentarlo o entra con tu contraseña."
+
+#: ./src/Controller/PermissionsController.php:28
+msgid "Permissions saved."
+msgstr "Permisos guardados."
+
+#: ./src/Controller/PermissionsController.php:34
+#: ./src/Navigation/SidebarMenu.php:45
+#: ./templates/Permissions/audit.php:10
+#: ./templates/Roles/index.php:11
+msgid "Permissions"
+msgstr "Permisos"
+
+#: ./src/Controller/PermissionsController.php:54
+msgid "Actions synced: {0} added, {1} orphaned, {2} restored."
+msgstr "Acciones sincronizadas: {0} añadidas, {1} huérfanas, {2} restauradas."
+
+#: ./src/Controller/PermissionsController.php:75
+#: ./templates/Permissions/audit.php:63
+msgid "Permissions history"
+msgstr "Historial de permisos"
+
+#: ./src/Controller/ReportsController.php:33
+#: ./src/Navigation/SidebarMenu.php:37
+#: ./templates/Reports/pdf/users.php:10
+#: ./templates/Reports/pdf/users.php:12
+msgid "Users report"
+msgstr "Informe de usuarios"
+
+#: ./src/Controller/RolesController.php:31
+#: ./src/Navigation/SidebarMenu.php:44
+#: ./templates/Roles/add.php:9
+#: ./templates/Roles/edit.php:9
+#: ./templates/Roles/index.php:49
+msgid "Roles"
+msgstr "Roles"
+
+#: ./src/Controller/RolesController.php:45
+msgid "Role {0} created. Assign its permissions in the permissions screen."
+msgstr "Rol {0} creado. Asigna sus permisos en la pantalla de permisos."
+
+#: ./src/Controller/RolesController.php:50
+#: ./src/Controller/RolesController.php:73
+#: ./src/UseCase/Users/ChangeUserRole.php:39
+msgid "The role could not be saved."
+msgstr "No se ha podido guardar el rol."
+
+#: ./src/Controller/RolesController.php:52
+#: ./templates/Roles/add.php:9
+#: ./templates/Roles/index.php:12
+msgid "New role"
+msgstr "Nuevo rol"
+
+#: ./src/Controller/RolesController.php:68
+msgid "Role {0} saved."
+msgstr "Rol {0} guardado."
+
+#: ./src/Controller/RolesController.php:76
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:13
+msgid "Edit {0}"
+msgstr "Editar {0}"
+
+#: ./src/Controller/RolesController.php:94
+msgid "Role {0} deleted."
+msgstr "Rol {0} eliminado."
+
+#: ./src/Controller/RolesController.php:96
+msgid "The role could not be deleted."
+msgstr "No se ha podido eliminar el rol."
+
+#: ./src/Controller/TwoFactorController.php:36
+msgid "Choose a verification method."
+msgstr "Elige un método de verificación."
+
+#: ./src/Controller/TwoFactorController.php:39
+msgid "That method is already active."
+msgstr "Ese método ya está activo."
+
+#: ./src/Controller/TwoFactorController.php:44
+#: ./src/Controller/TwoFactorController.php:100
+msgid "The password is not correct."
+msgstr "La contraseña no es correcta."
+
+#: ./src/Controller/TwoFactorController.php:64
+msgid "The step has expired. Start again."
+msgstr "El paso ha caducado. Vuelve a empezar."
+
+#: ./src/Controller/TwoFactorController.php:68
+msgid "The code is not valid. Check the time on your phone and type the current code."
+msgstr "El código no es válido. Comprueba la hora del móvil y escribe el código que se muestra ahora."
+
+#: ./src/Controller/TwoFactorController.php:74
+#: ./src/Controller/TwoFactorController.php:186
+msgid "Two-step verification is on."
+msgstr "La verificación en dos pasos está activada."
+
+#: ./src/Controller/TwoFactorController.php:107
+msgid "The authenticator app has been removed."
+msgstr "Se ha quitado la app de autenticación."
+
+#: ./src/Controller/TwoFactorController.php:108
+msgid "The security key has been removed."
+msgstr "Se ha quitado la llave de seguridad."
+
+#: ./src/Controller/TwoFactorController.php:130
+msgid "The two-step verification of another superadmin cannot be reset."
+msgstr "No se puede restablecer la verificación en dos pasos de otro superadmin."
+
+#: ./src/Controller/TwoFactorController.php:135
+msgid "Two-step verification removed for {0}."
+msgstr "Verificación en dos pasos quitada a {0}."
+
+#: ./src/Controller/TwoFactorController.php:176
+#: ./templates/cell/TwoFactor/display.php:49
+msgid "The key could not be registered. Try again."
+msgstr "No se ha podido registrar la llave. Vuelve a intentarlo."
+
+#: ./src/Controller/TwoFactorController.php:200
+msgid "Confirm your password first."
+msgstr "Confirma antes tu contraseña."
+
+#: ./src/Controller/UserRolesController.php:37
+msgid "{0} is now {1}."
+msgstr "{0} ahora es {1}."
+
+#: ./src/Controller/WebauthnLoginController.php:36
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:16
+msgid "The key could not be verified. Try again."
+msgstr "No se ha podido verificar la llave. Vuelve a intentarlo."
+
+#: ./src/Mailer/UsersMailer.php:28
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:11
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:14
+msgid "Confirm your email address"
+msgstr "Confirma tu dirección de email"
+
+#: ./src/Mailer/UsersMailer.php:39
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:11
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:14
+msgid "Reset your password"
+msgstr "Restablece tu contraseña"
+
+#: ./src/Mailer/UsersMailer.php:48
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:11
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:14
+msgid "Activate your social login"
+msgstr "Activa tu acceso con red social"
+
+#: ./src/Mailer/UsersMailer.php:57
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:13
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:16
+msgid "Your sign-in link"
+msgstr "Tu enlace de acceso"
+
+#: ./src/Mailer/UsersMailer.php:74
+#: ./templates/email/html/two_factor_changed.php:12
+msgid "Two-step verification turned on"
+msgstr "Verificación en dos pasos activada"
+
+#: ./src/Mailer/UsersMailer.php:75
+#: ./templates/email/html/two_factor_changed.php:13
+msgid "Two-step verification turned off"
+msgstr "Verificación en dos pasos desactivada"
+
+#: ./src/Mailer/UsersMailer.php:76
+#: ./templates/email/html/two_factor_changed.php:14
+msgid "Two-step verification reset"
+msgstr "Verificación en dos pasos restablecida"
+
+#: ./src/Middleware/AuthThrottleMiddleware.php:52
+msgid "Too many attempts. Wait a few minutes before trying again."
+msgstr "Demasiados intentos. Espera unos minutos antes de volver a intentarlo."
+
+#: ./src/Middleware/UnauthorizedHandler/AppRedirectHandler.php:32
+msgid "Your session has ended. Please sign in again."
+msgstr "Tu sesión ha terminado. Vuelve a iniciar sesión."
+
+#: ./src/Middleware/UnauthorizedHandler/AppRedirectHandler.php:38
+msgid "Please sign in to continue."
+msgstr "Inicia sesión para continuar."
+
+#: ./src/Model/Table/RolesTable.php:54
+msgid "Use lowercase letters, numbers, \"-\" or \"_\" (2-50)."
+msgstr "Usa minúsculas, números, \"-\" o \"_\" (2-50)."
+
+#: ./src/Model/Table/RolesTable.php:66
+msgid "This role already exists."
+msgstr "Este rol ya existe."
+
+#: ./src/Model/Table/RolesTable.php:72
+msgid "This role is protected and cannot be renamed."
+msgstr "Este rol está protegido y no se puede renombrar."
+
+#: ./src/Model/Table/RolesTable.php:78
+msgid "Users have this role: its identifier cannot change."
+msgstr "Hay usuarios con este rol: su identificador no puede cambiar."
+
+#: ./src/Model/Table/RolesTable.php:84
+msgid "This role is protected and cannot be deleted."
+msgstr "Este rol está protegido y no se puede eliminar."
+
+#: ./src/Model/Table/RolesTable.php:89
+msgid "Users have this role: reassign them before deleting it."
+msgstr "Hay usuarios con este rol: reasígnalos antes de eliminarlo."
+
+#: ./src/Navigation/SidebarMenu.php:35
+msgid "Administration"
+msgstr "Administración"
+
+#: ./src/Navigation/SidebarMenu.php:36
+#: ./templates/Roles/index.php:44
+#: ./templates/plugin/CakeDC/Users/Users/add.php:11
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:15
+#: ./templates/plugin/CakeDC/Users/Users/index.php:12
+#: ./templates/plugin/CakeDC/Users/Users/view.php:14
+msgid "Users"
+msgstr "Usuarios"
+
+#: ./src/Navigation/SidebarMenu.php:43
+msgid "Access control"
+msgstr "Control de acceso"
+
+#: ./src/Navigation/SidebarMenu.php:46
+msgid "History"
+msgstr "Historial"
+
+#: ./src/Navigation/SidebarMenu.php:52
+#: ./templates/plugin/CakeDC/Users/Users/view.php:58
+msgid "Account"
+msgstr "Cuenta"
+
+#: ./src/Navigation/SidebarMenu.php:54
+#: ./src/Navigation/SidebarMenu.php:74
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:10
+msgid "Profile"
+msgstr "Perfil"
+
+#: ./src/Navigation/SidebarMenu.php:75
+#: ./templates/Dashboard/index.php:36
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:12
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:31
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:54
+#: ./templates/plugin/CakeDC/Users/Users/index.php:30
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:34
+#: ./templates/plugin/CakeDC/Users/Users/view.php:53
+msgid "Change password"
+msgstr "Cambiar contraseña"
+
+#: ./src/Navigation/SidebarMenu.php:77
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: ./src/Service/UserRoleManager.php:76
+msgid "Superadmin"
+msgstr "Superadmin"
+
+#: ./src/Service/UserRoleManager.php:77
+msgid "Administrator"
+msgstr "Administrador"
+
+#: ./src/Service/UserRoleManager.php:78
+msgid "Editor"
+msgstr "Editor"
+
+#: ./src/Service/UserRoleManager.php:79
+#: ./templates/Dashboard/index.php:169
+#: ./templates/plugin/CakeDC/Users/Users/index.php:73
+msgid "User"
+msgstr "Usuario"
+
+#: ./src/Service/UserRoleManager.php:232
+msgid "You are not allowed to change the role of this user."
+msgstr "No puedes cambiar el rol de este usuario."
+
+#: ./src/Service/UserRoleManager.php:235
+msgid "You cannot change your own role."
+msgstr "No puedes cambiar tu propio rol."
+
+#: ./src/Service/UserRoleManager.php:238
+msgid "Unknown role \"{0}\"."
+msgstr "Rol desconocido \"{0}\"."
+
+#: ./src/Service/UserRoleManager.php:241
+msgid "Only superadmins can grant the {0} role."
+msgstr "Solo los superadmins pueden conceder el rol {0}."
+
+#: ./templates/Dashboard/index.php:31
+msgid "You are signed in as {0}. Keep your account details and password up to date."
+msgstr "Has iniciado sesión como {0}. Mantén al día los datos de tu cuenta y tu contraseña."
+
+#: ./templates/Dashboard/index.php:33
+msgid "Welcome, {0}"
+msgstr "Hola, {0}"
+
+#: ./templates/Dashboard/index.php:34
+msgid "Your workspace"
+msgstr "Tu espacio de trabajo"
+
+#: ./templates/Dashboard/index.php:35
+msgid "My profile"
+msgstr "Mi perfil"
+
+#: ./templates/Dashboard/index.php:45
+#: ./templates/plugin/CakeDC/Users/Users/index.php:15
+msgid "Export"
+msgstr "Exportar"
+
+#: ./templates/Dashboard/index.php:47
+#: ./templates/plugin/CakeDC/Users/Users/add.php:9
+#: ./templates/plugin/CakeDC/Users/Users/add.php:11
+#: ./templates/plugin/CakeDC/Users/Users/index.php:17
+#: ./templates/plugin/CakeDC/Users/Users/index.php:71
+msgid "New user"
+msgstr "Nuevo usuario"
+
+#: ./templates/Dashboard/index.php:53
+msgid "new"
+msgstr "nuevos"
+
+#: ./templates/Dashboard/index.php:59
+#: ./templates/Reports/pdf/users.php:16
+msgid "Total users"
+msgstr "Usuarios totales"
+
+#: ./templates/Dashboard/index.php:62
+msgid "All registered accounts"
+msgstr "Todas las cuentas registradas"
+
+#: ./templates/Dashboard/index.php:63
+msgid "Including administrators"
+msgstr "Incluidos los administradores"
+
+#: ./templates/Dashboard/index.php:67
+msgid "New users"
+msgstr "Nuevos usuarios"
+
+#: ./templates/Dashboard/index.php:70
+msgid "No signups in the previous period"
+msgstr "Sin altas en el periodo anterior"
+
+#: ./templates/Dashboard/index.php:70
+msgid "Up vs previous {0} days"
+msgstr "Sube frente a los {0} días anteriores"
+
+#: ./templates/Dashboard/index.php:70
+msgid "Down vs previous {0} days"
+msgstr "Baja frente a los {0} días anteriores"
+
+#: ./templates/Dashboard/index.php:71
+msgid "Last {0} days"
+msgstr "Últimos {0} días"
+
+#: ./templates/Dashboard/index.php:75
+#: ./templates/Dashboard/index.php:197
+msgid "Active accounts"
+msgstr "Cuentas activas"
+
+#: ./templates/Dashboard/index.php:78
+msgid "Email validated"
+msgstr "Email validado"
+
+#: ./templates/Dashboard/index.php:79
+msgid "Can sign in"
+msgstr "Pueden iniciar sesión"
+
+#: ./templates/Dashboard/index.php:83
+#: ./templates/plugin/CakeDC/Users/Users/view.php:29
+msgid "Pending validation"
+msgstr "Pendientes de validar"
+
+#: ./templates/Dashboard/index.php:85
+msgid "action needed"
+msgstr "requiere acción"
+
+#: ./templates/Dashboard/index.php:85
+msgid "all clear"
+msgstr "todo en orden"
+
+#: ./templates/Dashboard/index.php:86
+msgid "Waiting for email confirmation"
+msgstr "Esperando confirmación del email"
+
+#: ./templates/Dashboard/index.php:87
+msgid "Accounts that cannot sign in yet"
+msgstr "Cuentas que aún no pueden iniciar sesión"
+
+#: ./templates/Dashboard/index.php:98
+#: ./templates/Reports/pdf/users.php:17
+#: ./templates/Reports/pdf/users.php:41
+#: ./templates/plugin/CakeDC/Users/Users/index.php:51
+#: ./templates/plugin/CakeDC/Users/Users/view.php:28
+#: ./templates/plugin/CakeDC/Users/Users/view.php:45
+msgid "Active"
+msgstr "Activo"
+
+#: ./templates/Dashboard/index.php:99
+#: ./templates/Reports/pdf/users.php:18
+#: ./templates/Reports/pdf/users.php:41
+#: ./templates/plugin/CakeDC/Users/Users/index.php:52
+msgid "Pending"
+msgstr "Pendiente"
+
+#: ./templates/Dashboard/index.php:112
+#: ./templates/plugin/CakeDC/Users/Users/index.php:25
+msgid "View"
+msgstr "Ver"
+
+#: ./templates/Dashboard/index.php:114
+#: ./templates/Roles/index.php:27
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:15
+#: ./templates/plugin/CakeDC/Users/Users/index.php:27
+#: ./templates/plugin/CakeDC/Users/Users/view.php:18
+msgid "Edit"
+msgstr "Editar"
+
+#: ./templates/Dashboard/index.php:119
+#: ./templates/plugin/CakeDC/Users/Users/index.php:57
+msgid "Actions"
+msgstr "Acciones"
+
+#: ./templates/Dashboard/index.php:144
+#: ./templates/Dashboard/index.php:156
+msgid "Signups"
+msgstr "Altas"
+
+#: ./templates/Dashboard/index.php:149
+msgid "Signups per day"
+msgstr "Altas por día"
+
+#: ./templates/Dashboard/index.php:157
+msgid "New accounts per day, last {0} days"
+msgstr "Cuentas nuevas por día, últimos {0} días"
+
+#: ./templates/Dashboard/index.php:158
+msgid "{0} total"
+msgstr "{0} en total"
+
+#: ./templates/Dashboard/index.php:167
+#: ./templates/plugin/CakeDC/Users/Users/index.php:71
+msgid "No users yet"
+msgstr "Aún no hay usuarios"
+
+#: ./templates/Dashboard/index.php:167
+msgid "New accounts will appear here."
+msgstr "Las cuentas nuevas aparecerán aquí."
+
+#: ./templates/Dashboard/index.php:170
+#: ./templates/Permissions/audit.php:59
+#: ./templates/Reports/pdf/users.php:28
+#: ./templates/Roles/index.php:43
+#: ./templates/element/Roles/form.php:22
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:32
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:44
+#: ./templates/plugin/CakeDC/Users/Users/index.php:74
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:16
+#: ./templates/plugin/CakeDC/Users/Users/view.php:26
+msgid "Role"
+msgstr "Rol"
+
+#: ./templates/Dashboard/index.php:171
+#: ./templates/Reports/pdf/users.php:29
+#: ./templates/plugin/CakeDC/Users/Users/index.php:75
+#: ./templates/plugin/CakeDC/Users/Users/view.php:27
+msgid "Status"
+msgstr "Estado"
+
+#: ./templates/Dashboard/index.php:172
+msgid "Joined"
+msgstr "Alta"
+
+#: ./templates/Dashboard/index.php:177
+msgid "Latest users"
+msgstr "Últimos usuarios"
+
+#: ./templates/Dashboard/index.php:178
+msgid "The most recent accounts created in the application."
+msgstr "Las cuentas creadas más recientemente en la aplicación."
+
+#: ./templates/Dashboard/index.php:179
+msgid "View all"
+msgstr "Ver todos"
+
+#: ./templates/Dashboard/index.php:192
+msgid "No administrators yet."
+msgstr "Aún no hay administradores."
+
+#: ./templates/Dashboard/index.php:195
+msgid "Team"
+msgstr "Equipo"
+
+#: ./templates/Dashboard/index.php:196
+msgid "Administrators with full access."
+msgstr "Administradores con acceso completo."
+
+#: ./templates/Dashboard/index.php:197
+msgid "{0}% of accounts are active"
+msgstr "El {0}% de las cuentas están activas"
+
+#: ./templates/Dashboard/index.php:61
+msgid "{0} admin"
+msgid_plural "{0} admins"
+msgstr[0] "{0} administrador"
+msgstr[1] "{0} administradores"
+
+#: ./templates/Permissions/audit.php:14
+msgid "Permissions changed"
+msgstr "Permisos cambiados"
+
+#: ./templates/Permissions/audit.php:15
+msgid "Role created"
+msgstr "Rol creado"
+
+#: ./templates/Permissions/audit.php:16
+msgid "Role updated"
+msgstr "Rol actualizado"
+
+#: ./templates/Permissions/audit.php:17
+msgid "Role deleted"
+msgstr "Rol eliminado"
+
+#: ./templates/Permissions/audit.php:18
+msgid "Actions synced"
+msgstr "Acciones sincronizadas"
+
+#: ./templates/Permissions/audit.php:19
+msgid "History purged"
+msgstr "Historial purgado"
+
+#: ./templates/Permissions/audit.php:33
+msgid "{0} added, {1} orphaned, {2} restored"
+msgstr "{0} añadidas, {1} huérfanas, {2} restauradas"
+
+#: ./templates/Permissions/audit.php:35
+msgid "Default grants re-applied"
+msgstr "Permisos por defecto reaplicados"
+
+#: ./templates/Permissions/audit.php:38
+msgid "{0} entries older than {1} days deleted"
+msgstr "{0} entradas de más de {1} días eliminadas"
+
+#: ./templates/Permissions/audit.php:54
+msgid "No changes yet"
+msgstr "Aún no hay cambios"
+
+#: ./templates/Permissions/audit.php:54
+msgid "Changes to roles and permissions will be listed here."
+msgstr "Aquí aparecerán los cambios de roles y permisos."
+
+#: ./templates/Permissions/audit.php:56
+msgid "When"
+msgstr "Cuándo"
+
+#: ./templates/Permissions/audit.php:57
+msgid "Who"
+msgstr "Quién"
+
+#: ./templates/Permissions/audit.php:58
+msgid "Event"
+msgstr "Evento"
+
+#: ./templates/Permissions/audit.php:60
+msgid "Change (granted / revoked)"
+msgstr "Cambio (concedido / revocado)"
+
+#: ./templates/Permissions/audit.php:64
+msgid "Who changed roles and permissions, and when. Granted actions are marked +, revoked ones −."
+msgstr "Quién cambió roles y permisos, y cuándo. Las acciones concedidas llevan +, las revocadas −."
+
+#: ./templates/Permissions/index.php:14
+msgid "Sync actions"
+msgstr "Sincronizar acciones"
+
+#: ./templates/Permissions/index.php:16
+msgid "Discover controllers and actions again"
+msgstr "Volver a descubrir controladores y acciones"
+
+#: ./templates/Permissions/index.php:18
+#: ./templates/Permissions/index.php:65
+msgid "Save permissions"
+msgstr "Guardar permisos"
+
+#: ./templates/Permissions/index.php:23
+msgid "Public"
+msgstr "Pública"
+
+#: ./templates/Permissions/index.php:24
+msgid "All roles"
+msgstr "Todos los roles"
+
+#: ./templates/Permissions/index.php:25
+msgid "Superadmin only"
+msgstr "Solo superadmin"
+
+#: ./templates/Permissions/index.php:30
+msgid "Superadmin can always do everything"
+msgstr "El superadmin siempre puede hacerlo todo"
+
+#: ./templates/Permissions/index.php:31
+msgid "Tick what each role can do. Locked rows are system rules: public actions (sign in, register…), actions for all roles (dashboard, profile) and the access-control screens (superadmin only)."
+msgstr "Marca lo que puede hacer cada rol. Las filas bloqueadas son reglas del sistema: acciones públicas (acceso, registro…), acciones para todos los roles (panel, perfil) y las pantallas de control de acceso (solo superadmin)."
+
+#: ./templates/Permissions/index.php:47
+msgid "Always available"
+msgstr "Siempre disponible"
+
+#: ./templates/Permissions/index.php:50
+msgid "{0}: {1}"
+msgstr "{0}: {1}"
+
+#: ./templates/Permissions/index.php:54
+msgid "Action"
+msgstr "Acción"
+
+#: ./templates/Permissions/index.php:35
+msgid "{0} action no longer exists in the code and is ignored."
+msgid_plural "{0} actions no longer exist in the code and are ignored."
+msgstr[0] "{0} acción ya no existe en el código y se ignora."
+msgstr[1] "{0} acciones ya no existen en el código y se ignoran."
+
+#: ./templates/Reports/pdf/users.php:13
+msgid "Generated on {0}"
+msgstr "Generado el {0}"
+
+#: ./templates/Reports/pdf/users.php:19
+msgid "Administrators"
+msgstr "Administradores"
+
+#: ./templates/Reports/pdf/users.php:25
+#: ./templates/element/Users/user_form.php:15
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:14
+#: ./templates/plugin/CakeDC/Users/Users/register.php:18
+#: ./templates/plugin/CakeDC/Users/Users/view.php:24
+msgid "Username"
+msgstr "Usuario"
+
+#: ./templates/Reports/pdf/users.php:26
+#: ./templates/element/Roles/form.php:11
+msgid "Name"
+msgstr "Nombre"
+
+#: ./templates/Reports/pdf/users.php:27
+#: ./templates/element/Users/user_form.php:16
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:15
+#: ./templates/plugin/CakeDC/Users/Users/register.php:19
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:14
+#: ./templates/plugin/CakeDC/Users/Users/view.php:25
+msgid "Email"
+msgstr "Email"
+
+#: ./templates/Reports/pdf/users.php:30
+#: ./templates/plugin/CakeDC/Users/Users/index.php:76
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:18
+#: ./templates/plugin/CakeDC/Users/Users/view.php:30
+msgid "Last login"
+msgstr "Último acceso"
+
+#: ./templates/Reports/pdf/users.php:31
+#: ./templates/plugin/CakeDC/Users/Users/index.php:77
+#: ./templates/plugin/CakeDC/Users/Users/view.php:33
+msgid "Created"
+msgstr "Creado"
+
+#: ./templates/Reports/pdf/users.php:42
+#: ./templates/plugin/CakeDC/Users/Users/index.php:48
+msgid "Never"
+msgstr "Nunca"
+
+#: ./templates/Roles/index.php:24
+msgid "Protected"
+msgstr "Protegido"
+
+#: ./templates/Roles/index.php:25
+msgid "Custom"
+msgstr "Personalizado"
+
+#: ./templates/Roles/index.php:29
+#: ./templates/plugin/CakeDC/Users/Users/index.php:34
+msgid "Delete"
+msgstr "Eliminar"
+
+#: ./templates/Roles/index.php:33
+msgid "Delete role {0}?"
+msgstr "¿Eliminar el rol {0}?"
+
+#: ./templates/Roles/index.php:45
+msgid "Type"
+msgstr "Tipo"
+
+#: ./templates/Roles/index.php:50
+msgid "Roles assigned to users. Their permissions are managed in the permissions screen. A role with users cannot be deleted."
+msgstr "Roles asignados a los usuarios. Sus permisos se gestionan en la pantalla de permisos. Un rol con usuarios no se puede eliminar."
+
+#: ./templates/Roles/index.php:22
+msgid "{0} user"
+msgid_plural "{0} users"
+msgstr[0] "{0} usuario"
+msgstr[1] "{0} usuarios"
+
+#: ./templates/cell/TwoFactor/display.php:14
+#: ./templates/cell/TwoFactor/status.php:10
+msgid "Authenticator app"
+msgstr "App de autenticación"
+
+#: ./templates/cell/TwoFactor/display.php:14
+#: ./templates/cell/TwoFactor/status.php:10
+msgid "Security key or passkey"
+msgstr "Llave de seguridad o passkey"
+
+#: ./templates/cell/TwoFactor/display.php:16
+msgid "A 6-digit code from an app such as Google Authenticator, 1Password or Bitwarden."
+msgstr "Un código de 6 dígitos de una app como Google Authenticator, 1Password o Bitwarden."
+
+#: ./templates/cell/TwoFactor/display.php:17
+msgid "A security key, fingerprint, face or your device PIN. It also lets you sign in without a password."
+msgstr "Una llave de seguridad, la huella, el rostro o el PIN de tu dispositivo. También te permite entrar sin contraseña."
+
+#: ./templates/cell/TwoFactor/display.php:24
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:19
+msgid "Current password"
+msgstr "Contraseña actual"
+
+#: ./templates/cell/TwoFactor/display.php:34
+msgid "QR code for your authenticator app"
+msgstr "Código QR para tu app de autenticación"
+
+#: ./templates/cell/TwoFactor/display.php:36
+msgid "Scan the code with your authenticator app, then type the 6-digit code it shows."
+msgstr "Escanea el código con tu app de autenticación y escribe el código de 6 dígitos que muestra."
+
+#: ./templates/cell/TwoFactor/display.php:37
+msgid "Or enter this key manually:"
+msgstr "O escribe esta clave a mano:"
+
+#: ./templates/cell/TwoFactor/display.php:39
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:16
+msgid "Code"
+msgstr "Código"
+
+#: ./templates/cell/TwoFactor/display.php:40
+#: ./templates/cell/TwoFactor/display.php:74
+msgid "Turn on"
+msgstr "Activar"
+
+msgid "Continue"
+msgstr "Continuar"
+
+#: ./templates/cell/TwoFactor/display.php:42
+#: ./templates/cell/TwoFactor/display.php:56
+#: ./templates/element/Roles/form.php:18
+#: ./templates/element/Users/user_form.php:24
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ./templates/cell/TwoFactor/display.php:50
+msgid "This browser does not support security keys or passkeys."
+msgstr "Este navegador no admite llaves de seguridad ni passkeys."
+
+#: ./templates/cell/TwoFactor/display.php:51
+msgid "Your browser will ask you to touch your security key or confirm with your fingerprint, face or PIN."
+msgstr "El navegador te pedirá que toques tu llave de seguridad o que confirmes con la huella, el rostro o el PIN."
+
+#: ./templates/cell/TwoFactor/display.php:52
+msgid "Security keys need HTTPS: open https://admindashboard.localhost."
+msgstr "Las llaves de seguridad necesitan HTTPS: abre https://admindashboard.localhost."
+
+#: ./templates/cell/TwoFactor/display.php:55
+msgid "Register key"
+msgstr "Registrar llave"
+
+#: ./templates/cell/TwoFactor/display.php:69
+msgid "On"
+msgstr "Activada"
+
+#: ./templates/cell/TwoFactor/display.php:69
+msgid "Off"
+msgstr "Desactivada"
+
+#: ./templates/cell/TwoFactor/display.php:71
+msgid "This key works as a second step; register it again to also sign in without a password."
+msgstr "Esta llave sirve como segundo paso; regístrala de nuevo para poder entrar también sin contraseña."
+
+#: ./templates/cell/TwoFactor/display.php:73
+msgid "Turn off"
+msgstr "Desactivar"
+
+#: ./templates/cell/TwoFactor/display.php:79
+msgid "Two-step verification is disabled in this installation."
+msgstr "La verificación en dos pasos está desactivada en esta instalación."
+
+#: ./templates/cell/TwoFactor/display.php:84
+#: ./templates/cell/TwoFactor/status.php:24
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:9
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:29
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:9
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:24
+msgid "Two-step verification"
+msgstr "Verificación en dos pasos"
+
+#: ./templates/cell/TwoFactor/display.php:85
+msgid "After your password, ask for a second step when you sign in. Optional."
+msgstr "Después de la contraseña, pide un segundo paso al entrar. Opcional."
+
+#: ./templates/cell/TwoFactor/status.php:12
+msgid "Not enabled"
+msgstr "No activada"
+
+#: ./templates/cell/TwoFactor/status.php:17
+msgid "Reset two-step verification"
+msgstr "Restablecer verificación en dos pasos"
+
+#: ./templates/cell/TwoFactor/status.php:19
+msgid "Remove both methods? The user will be emailed and can enable them again."
+msgstr "¿Quitar los dos métodos? Se avisará al usuario por email y podrá volver a activarlos."
+
+#: ./templates/cell/TwoFactor/status.php:26
+msgid "If the user lost their device, reset it: they will sign in with their password only."
+msgstr "Si el usuario ha perdido su dispositivo, restablécela: entrará solo con su contraseña."
+
+#: ./templates/cell/TwoFactor/status.php:27
+msgid "Superadmins reset their own with bin/cake two_factor reset."
+msgstr "Los superadmins restablecen la suya con bin/cake two_factor reset."
+
+#: ./templates/element/Roles/form.php:12
+msgid "Identifier"
+msgstr "Identificador"
+
+#: ./templates/element/Roles/form.php:15
+msgid "The identifier cannot change because users have this role."
+msgstr "El identificador no puede cambiar porque hay usuarios con este rol."
+
+#: ./templates/element/Roles/form.php:16
+msgid "Lowercase letters, numbers, \"-\" or \"_\". It is stored on each user."
+msgstr "Minúsculas, números, \"-\" o \"_\". Se guarda en cada usuario."
+
+#: ./templates/element/Roles/form.php:18
+#: ./templates/element/Users/user_form.php:23
+msgid "Save"
+msgstr "Guardar"
+
+#: ./templates/element/Roles/form.php:22
+msgid "After creating it, choose what it can do in the permissions screen."
+msgstr "Después de crearlo, elige qué puede hacer en la pantalla de permisos."
+
+#: ./templates/element/Users/user_form.php:13
+#: ./templates/plugin/CakeDC/Users/Users/register.php:15
+msgid "First name"
+msgstr "Nombre"
+
+#: ./templates/element/Users/user_form.php:14
+#: ./templates/plugin/CakeDC/Users/Users/register.php:16
+msgid "Last name"
+msgstr "Apellidos"
+
+#: ./templates/element/Users/user_form.php:19
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:53
+#: ./templates/plugin/CakeDC/Users/Users/login.php:19
+#: ./templates/plugin/CakeDC/Users/Users/register.php:20
+msgid "Password"
+msgstr "Contraseña"
+
+#: ./templates/element/Users/user_form.php:21
+msgid "Active (can sign in)"
+msgstr "Activo (puede iniciar sesión)"
+
+#: ./templates/element/Users/user_form.php:29
+msgid "Basic information of the account."
+msgstr "Información básica de la cuenta."
+
+#: ./templates/element/email/fallback_link.php:9
+msgid "If the button does not work, copy and paste this address into your browser:"
+msgstr "Si el botón no funciona, copia y pega esta dirección en tu navegador:"
+
+#: ./templates/email/html/two_factor_changed.php:10
+#: ./templates/email/text/two_factor_changed.php:8
+msgid "security key or passkey"
+msgstr "llave de seguridad o passkey"
+
+#: ./templates/email/html/two_factor_changed.php:10
+#: ./templates/email/text/two_factor_changed.php:8
+msgid "authenticator app"
+msgstr "app de autenticación"
+
+#: ./templates/email/html/two_factor_changed.php:20
+#: ./templates/email/text/two_factor_changed.php:10
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:17
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:15
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:15
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:15
+#: ./templates/plugin/CakeDC/Users/email/text/reset_password.php:9
+#: ./templates/plugin/CakeDC/Users/email/text/social_account_validation.php:9
+#: ./templates/plugin/CakeDC/Users/email/text/validation.php:9
+msgid "Hi {0},"
+msgstr "Hola {0}:"
+
+#: ./templates/email/html/two_factor_changed.php:22
+#: ./templates/email/text/two_factor_changed.php:14
+msgid "You have enabled the {0} as a second step to sign in to your account."
+msgstr "Has activado la {0} como segundo paso para entrar en tu cuenta."
+
+#: ./templates/email/html/two_factor_changed.php:24
+#: ./templates/email/text/two_factor_changed.php:16
+msgid "You have disabled the {0} as a second step to sign in to your account."
+msgstr "Has desactivado la {0} como segundo paso para entrar en tu cuenta."
+
+#: ./templates/email/html/two_factor_changed.php:26
+#: ./templates/email/text/two_factor_changed.php:18
+msgid "An administrator has removed the two-step verification of your account. You can enable it again from your profile."
+msgstr "Un administrador ha quitado la verificación en dos pasos de tu cuenta. Puedes volver a activarla desde tu perfil."
+
+#: ./templates/email/html/two_factor_changed.php:28
+#: ./templates/email/text/two_factor_changed.php:22
+msgid "If it was not you, change your password and contact an administrator as soon as possible."
+msgstr "Si no has sido tú, cambia tu contraseña y avisa a un administrador lo antes posible."
+
+#: ./templates/layout/email/html/default.php:104
+#: ./templates/layout/email/text/default.php:15
+msgid "You received this email because an account action was requested on {0}."
+msgstr "Has recibido este email porque se solicitó una acción de cuenta en {0}."
+
+#: ./templates/layout/email/html/default.php:105
+#: ./templates/layout/email/text/default.php:16
+msgid "If it was not you, you can safely ignore this message."
+msgstr "Si no has sido tú, puedes ignorar este mensaje."
+
+#: ./templates/layout/error.php:36
+msgid "Back"
+msgstr "Volver"
+
+#: ./templates/layout/pdf/default.php:23
+msgid "Page"
+msgstr "Página"
+
+#: ./templates/layout/pdf/default.php:50
+msgid "Confidential"
+msgstr "Confidencial"
+
+#: ./templates/plugin/CakeDC/Users/Users/add.php:16
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:40
+msgid "Account details"
+msgstr "Datos de la cuenta"
+
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:21
+msgid "New password"
+msgstr "Nueva contraseña"
+
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:25
+#: ./templates/plugin/CakeDC/Users/Users/register.php:24
+msgid "Confirm password"
+msgstr "Confirmar contraseña"
+
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:26
+msgid "Update password"
+msgstr "Actualizar contraseña"
+
+#: ./templates/plugin/CakeDC/Users/Users/change_password.php:32
+msgid "Use at least 8 characters. A long passphrase is best."
+msgstr "Usa al menos 8 caracteres. Mejor una frase larga."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:24
+msgid "You cannot change your own role. Ask another administrator."
+msgstr "No puedes cambiar tu propio rol. Pídeselo a otro administrador."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:35
+msgid "Update role"
+msgstr "Actualizar rol"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:45
+msgid "Superadmin: everything · Administrator: users and roles · Editor: read-only users and reports · User: own account."
+msgstr "Superadmin: todo · Administrador: usuarios y roles · Editor: usuarios e informes en solo lectura · Usuario: su propia cuenta."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:51
+msgid "Set a new password for this user. They will need to use it on their next sign in."
+msgstr "Establece una nueva contraseña para este usuario. Tendrá que usarla en su próximo acceso."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:60
+msgid "Reset the two-factor authenticator if the user lost access to their device."
+msgstr "Restablece el autenticador de doble factor si el usuario ha perdido acceso a su dispositivo."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:62
+msgid "Two-factor authentication"
+msgstr "Autenticación de doble factor"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:63
+msgid "Reset authenticator"
+msgstr "Restablecer autenticador"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:65
+msgid "Reset the authenticator of {0}?"
+msgstr "¿Restablecer el autenticador de {0}?"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:72
+msgid "Permanently delete this account and all its data."
+msgstr "Elimina para siempre esta cuenta y todos sus datos."
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:74
+msgid "Danger zone"
+msgstr "Zona de peligro"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:76
+msgid "Delete user"
+msgstr "Eliminar usuario"
+
+#: ./templates/plugin/CakeDC/Users/Users/edit.php:78
+#: ./templates/plugin/CakeDC/Users/Users/index.php:63
+msgid "Delete user {0}? This cannot be undone."
+msgstr "¿Eliminar el usuario {0}? No se puede deshacer."
+
+#: ./templates/plugin/CakeDC/Users/Users/index.php:71
+msgid "Create the first account to get started."
+msgstr "Crea la primera cuenta para empezar."
+
+#: ./templates/plugin/CakeDC/Users/Users/index.php:81
+msgid "All users"
+msgstr "Todos los usuarios"
+
+#: ./templates/plugin/CakeDC/Users/Users/index.php:82
+msgid "{{count}} accounts"
+msgstr "{{count}} cuentas"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:9
+#: ./templates/plugin/CakeDC/Users/Users/login.php:34
+#: ./templates/plugin/CakeDC/Users/Users/register.php:40
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:19
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:18
+msgid "Username or email"
+msgstr "Usuario o email"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:21
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:19
+msgid "Forgot your password?"
+msgstr "¿Has olvidado tu contraseña?"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:29
+msgid "Remember me"
+msgstr "Recordarme"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:42
+msgid "Sign in with a passkey"
+msgstr "Entrar con una passkey"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:47
+msgid "Email me a sign-in link"
+msgstr "Envíame un enlace de acceso"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:55
+msgid "Welcome back"
+msgstr "Hola de nuevo"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:56
+msgid "Sign in to your account to continue"
+msgstr "Inicia sesión en tu cuenta para continuar"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:59
+msgid "Don't have an account?"
+msgstr "¿No tienes cuenta?"
+
+#: ./templates/plugin/CakeDC/Users/Users/login.php:59
+msgid "Sign up"
+msgstr "Regístrate"
+
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:17
+msgid "Member since"
+msgstr "Miembro desde"
+
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:40
+msgid "Personal information"
+msgstr "Información personal"
+
+#: ./templates/plugin/CakeDC/Users/Users/profile.php:41
+msgid "Details of your account."
+msgstr "Datos de tu cuenta."
+
+#: ./templates/plugin/CakeDC/Users/Users/register.php:10
+#: ./templates/plugin/CakeDC/Users/Users/register.php:36
+msgid "Create an account"
+msgstr "Crear una cuenta"
+
+#: ./templates/plugin/CakeDC/Users/Users/register.php:26
+msgid "I accept the terms of service"
+msgstr "Acepto las condiciones del servicio"
+
+#: ./templates/plugin/CakeDC/Users/Users/register.php:31
+msgid "Create account"
+msgstr "Crear cuenta"
+
+#: ./templates/plugin/CakeDC/Users/Users/register.php:37
+msgid "Enter your details below to get started"
+msgstr "Introduce tus datos para empezar"
+
+#: ./templates/plugin/CakeDC/Users/Users/register.php:39
+msgid "Already have an account?"
+msgstr "¿Ya tienes cuenta?"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:9
+msgid "Sign-in link"
+msgstr "Enlace de acceso"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:18
+msgid "Email me a link"
+msgstr "Envíame un enlace"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:23
+msgid "Sign in without a password"
+msgstr "Inicia sesión sin contraseña"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:24
+msgid "We will send a one-time link and code to your inbox."
+msgstr "Te enviaremos un enlace y un código de un solo uso a tu correo."
+
+#: ./templates/plugin/CakeDC/Users/Users/request_login_link.php:26
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:22
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:21
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:34
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:29
+msgid "Back to sign in"
+msgstr "Volver al inicio de sesión"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:8
+msgid "Forgot password"
+msgstr "Contraseña olvidada"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:13
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:12
+msgid "Email or username"
+msgstr "Email o usuario"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:14
+msgid "Send reset link"
+msgstr "Enviar enlace"
+
+#: ./templates/plugin/CakeDC/Users/Users/request_reset_password.php:20
+msgid "We will email you a link to choose a new one."
+msgstr "Te enviaremos un enlace por email para elegir una nueva."
+
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:8
+msgid "Resend validation email"
+msgstr "Reenviar email de validación"
+
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:13
+msgid "Resend email"
+msgstr "Reenviar email"
+
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:18
+msgid "Didn't get the email?"
+msgstr "¿No te ha llegado el email?"
+
+#: ./templates/plugin/CakeDC/Users/Users/resend_token_validation.php:19
+msgid "We will send you a new validation link."
+msgstr "Te enviaremos un nuevo enlace de validación."
+
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:24
+msgid "Verify"
+msgstr "Verificar"
+
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:30
+msgid "Type the 6-digit code from your authenticator app."
+msgstr "Escribe el código de 6 dígitos de tu app de autenticación."
+
+#: ./templates/plugin/CakeDC/Users/Users/verify.php:33
+msgid "Lost your device? Ask an administrator to reset your two-step verification."
+msgstr "¿Has perdido el dispositivo? Pide a un administrador que restablezca tu verificación en dos pasos."
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:31
+msgid "Activation date"
+msgstr "Fecha de activación"
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:32
+msgid "Terms accepted"
+msgstr "Condiciones aceptadas"
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:34
+msgid "Modified"
+msgstr "Modificado"
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:45
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:59
+msgid "Identity and lifecycle of the account."
+msgstr "Identidad y ciclo de vida de la cuenta."
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:62
+msgid "No social accounts linked."
+msgstr "No hay redes sociales vinculadas."
+
+#: ./templates/plugin/CakeDC/Users/Users/view.php:63
+msgid "Social accounts"
+msgstr "Redes sociales"
+
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:17
+msgid "This browser does not support security keys or passkeys. Sign in from another browser or ask an administrator to reset your two-step verification."
+msgstr "Este navegador no admite llaves de seguridad ni passkeys. Entra desde otro navegador o pide a un administrador que restablezca tu verificación en dos pasos."
+
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:20
+msgid "Use my key"
+msgstr "Usar mi llave"
+
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:25
+msgid "Use your security key, or the fingerprint, face or PIN of your device, to finish signing in."
+msgstr "Usa tu llave de seguridad, o la huella, el rostro o el PIN de tu dispositivo, para terminar de entrar."
+
+#: ./templates/plugin/CakeDC/Users/Users/webauthn2fa.php:28
+msgid "Lost your key? Ask an administrator to reset your two-step verification."
+msgstr "¿Has perdido la llave? Pide a un administrador que restablezca tu verificación en dos pasos."
+
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:14
+msgid "Sign in with one click, no password needed."
+msgstr "Inicia sesión con un clic, sin contraseña."
+
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:18
+msgid "Use the button below to sign in without a password."
+msgstr "Usa el botón de abajo para iniciar sesión sin contraseña."
+
+#: ./templates/plugin/CakeDC/Users/email/html/onetime_token.php:20
+msgid "The link can only be used once and expires in a few minutes."
+msgstr "El enlace solo se puede usar una vez y caduca en unos minutos."
+
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:12
+msgid "Use this link to choose a new password."
+msgstr "Usa este enlace para elegir una nueva contraseña."
+
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:16
+msgid "We received a request to reset the password of your account. Click the button below to choose a new one."
+msgstr "Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. Pulsa el botón de abajo para elegir una nueva."
+
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:17
+msgid "Choose a new password"
+msgstr "Elegir nueva contraseña"
+
+#: ./templates/plugin/CakeDC/Users/email/html/reset_password.php:18
+msgid "This link expires soon. If you did not request a password reset, no action is needed: your password will stay the same."
+msgstr "Este enlace caduca pronto. Si no has pedido restablecer la contraseña, no tienes que hacer nada: tu contraseña seguirá siendo la misma."
+
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:12
+msgid "Confirm the {0} account linked to your profile."
+msgstr "Confirma la cuenta de {0} vinculada a tu perfil."
+
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:16
+msgid "Confirm that you want to sign in with your {0} account."
+msgstr "Confirma que quieres iniciar sesión con tu cuenta de {0}."
+
+#: ./templates/plugin/CakeDC/Users/email/html/social_account_validation.php:17
+msgid "Activate social login"
+msgstr "Activar acceso con red social"
+
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:12
+msgid "One click to activate your account."
+msgstr "Un clic para activar tu cuenta."
+
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:16
+msgid "Thanks for signing up! Please confirm that this is your email address to activate your account."
+msgstr "¡Gracias por registrarte! Confirma que esta es tu dirección de email para activar tu cuenta."
+
+#: ./templates/plugin/CakeDC/Users/email/html/validation.php:17
+msgid "Activate my account"
+msgstr "Activar mi cuenta"
+
+#: ./templates/plugin/CakeDC/Users/email/text/reset_password.php:12
+msgid "We received a request to reset the password of your account. Open this link to choose a new one:"
+msgstr "Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. Abre este enlace para elegir una nueva:"
+
+#: ./templates/plugin/CakeDC/Users/email/text/reset_password.php:18
+msgid "If you did not request a password reset, no action is needed."
+msgstr "Si no has pedido restablecer la contraseña, no tienes que hacer nada."
+
+#: ./templates/plugin/CakeDC/Users/email/text/social_account_validation.php:12
+msgid "Confirm that you want to sign in with your {0} account:"
+msgstr "Confirma que quieres iniciar sesión con tu cuenta de {0}:"
+
+#: ./templates/plugin/CakeDC/Users/email/text/validation.php:12
+msgid "Thanks for signing up! Please confirm your email address to activate your account:"
+msgstr "¡Gracias por registrarte! Confirma tu dirección de email para activar tu cuenta:"
+
+# Account activity log
+msgid "Recent activity"
+msgstr "Actividad reciente"
+
+msgid "Signed in"
+msgstr "Inicio de sesión"
+
+msgid "Signed in with a passkey"
+msgstr "Inicio de sesión con passkey"
+
+msgid "Failed sign-in"
+msgstr "Inicio de sesión fallido"
+
+msgid "Wrong two-step verification"
+msgstr "Verificación en dos pasos fallida"
+
+msgid "Signed out"
+msgstr "Cierre de sesión"
+
+msgid "Password changed"
+msgstr "Contraseña cambiada"
+
+msgid "Password reset by email"
+msgstr "Contraseña restablecida por email"
+
+msgid "Authenticator app enabled"
+msgstr "App de autenticación activada"
+
+msgid "Authenticator app removed"
+msgstr "App de autenticación quitada"
+
+msgid "Security key or passkey added"
+msgstr "Llave de seguridad o passkey añadida"
+
+msgid "Security key or passkey removed"
+msgstr "Llave de seguridad o passkey quitada"
+
+msgid "by {0}"
+msgstr "por {0}"
+
+msgid "another user"
+msgstr "otro usuario"
+
+msgid "Console"
+msgstr "Consola"
+
+msgid "No activity yet"
+msgstr "Sin actividad todavía"
+
+msgid "Sign-ins and security changes will be listed here."
+msgstr "Aquí aparecerán los inicios de sesión y los cambios de seguridad."
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Your last sign-ins and security changes (kept {0} days). Something you do not recognise? Change your password and enable two-step verification."
+msgstr "Tus últimos inicios de sesión y cambios de seguridad (se guardan {0} días). ¿Algo que no reconoces? Cambia tu contraseña y activa la verificación en dos pasos."
+
+msgid "Last sign-ins and security changes of this account (kept {0} days)."
+msgstr "Últimos inicios de sesión y cambios de seguridad de esta cuenta (se guardan {0} días)."
+
+msgid "Unknown browser"
+msgstr "Navegador desconocido"
+
+msgid "{0} on {1}"
+msgstr "{0} en {1}"

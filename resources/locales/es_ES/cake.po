@@ -1,0 +1,18 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ./templates/Error/error400.php:24
+#: ./templates/Error/error500.php:34
+msgid "Error"
+msgstr "Error"
+
+#: ./templates/Error/error400.php:25
+msgid "The requested address {0} was not found on this server."
+msgstr "La dirección solicitada {0} no se ha encontrado en este servidor."
+
+#: ./templates/Error/error500.php:32
+msgid "An Internal Error Has Occurred."
+msgstr "Se ha producido un error interno."
