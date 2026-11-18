@@ -1,0 +1,81 @@
+name: CI
+
+# PHPUnit (PostgreSQL 18, PHP 8.5), CodeSniffer, PHPStan level 8 and composer audit.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests, CodeSniffer, PHPStan, audit
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: cakephp
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: cakephp_admin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cakephp -d cakephp_admin_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://cakephp:secret@127.0.0.1:5432/cakephp_admin_test
+      DATABASE_TEST_URL: postgres://cakephp:secret@127.0.0.1:5432/cakephp_admin_test
+      # WebAuthn tests sign for this domain (keys are bound to the host of APP_FULL_BASE_URL)
+      APP_FULL_BASE_URL: https://admindashboard.localhost
+      # Throwaway value for CI only (not a secret)
+      SECURITY_SALT: ci-only-salt-not-used-anywhere-else-0123456789abcdef
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          # Same extensions as docker/app/Dockerfile
+          extensions: pdo_pgsql, intl, mbstring, gd, zip
+          ini-values: zend.assertions=1, memory_limit=1G
+          coverage: none
+          tools: composer:v2, cs2pr
+
+      - name: Composer install
+        uses: ramsey/composer-install@v4
+
+      - name: Local config
+        # config/app_local.php is not versioned; the example reads everything from the environment
+        run: cp config/app_local.example.php config/app_local.php
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit
+
+      - name: CodeSniffer
+        # Run even if a previous step fails, to report everything at once
+        if: always()
+        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+
+      - name: PHPStan
+        if: always()
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G --error-format=github
+
+      - name: Composer audit
+        # Known vulnerabilities in the installed dependencies (abandoned packages: reported, not failing)
+        if: always()
+        run: composer audit --abandoned=report
