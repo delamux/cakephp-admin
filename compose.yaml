@@ -1,5 +1,15 @@
 name: cakephp-admin
 
+# Shared by app and worker (same code, same database, same SMTP)
+x-app-environment: &app-environment
+  DEBUG: "true"
+  # Links in emails and the WebAuthn domain (keys are bound to it). Without a certificate: http://localhost:8080
+  APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
+  DATABASE_URL: "postgres://cakephp:secret@db:5432/cakephp_admin"
+  DATABASE_TEST_URL: "postgres://cakephp:secret@db:5432/cakephp_admin_test"
+  EMAIL_TRANSPORT_DEFAULT_URL: "smtp://mailpit:1025"
+  EMAIL_FROM: "admin@cakephp-admin.test"
+
 services:
   # nginx -> PHP-FPM (dev: code bind-mounted, Tailwind from the browser build)
   web:
@@ -15,7 +25,10 @@ services:
       - ./docker/nginx/app-locations.conf:/etc/nginx/app-locations.conf:ro
       - ./docker/nginx/https.conf:/etc/nginx/https.conf.template:ro
       - ./docker/nginx/10-enable-https.sh:/docker-entrypoint.d/10-enable-https.sh:ro
+      - ./docker/nginx/00-upstream.conf.template:/etc/nginx/templates/00-upstream.conf.template:ro
       - ./docker/certs:/etc/nginx/certs:ro
+    environment:
+      PHP_FPM_HOST: app
     depends_on:
       - app
 
@@ -26,14 +39,26 @@ services:
       target: dev
     volumes:
       - .:/app
-    environment:
-      DEBUG: "true"
-      # Links in emails and the WebAuthn domain (keys are bound to it). Without a certificate: http://localhost:8080
-      APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
-      DATABASE_URL: "postgres://cakephp:secret@db:5432/cakephp_admin"
-      DATABASE_TEST_URL: "postgres://cakephp:secret@db:5432/cakephp_admin_test"
-      EMAIL_TRANSPORT_DEFAULT_URL: "smtp://mailpit:1025"
-      EMAIL_FROM: "admin@cakephp-admin.test"
+    environment: *app-environment
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  # Background jobs (emails...): `bin/cake queue run`. It exits after Queue.workerLifetime and
+  # Docker starts it again (also picks up code changes). Logs: docker compose logs -f worker
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: dev
+    command: ["bin/cake", "queue", "run"]
+    volumes:
+      - .:/app
+    environment: *app-environment
+    restart: unless-stopped
+    stop_grace_period: 60s
     depends_on:
       db:
         condition: service_healthy

@@ -58,3 +58,7 @@ yarn-error.log
 /webroot/js/vendor/
 /webroot/font/geist/
 /docker/certs/*.pem
+
+# Uploaded files (App\Storage\Uploads): data, not code
+/storage/uploads/*
+!/storage/uploads/.gitkeep

@@ -1,0 +1,132 @@
+# Coolify (Docker Compose build pack): Coolify builds these images from the repository on every
+# deployment and its proxy (Traefik + Let's Encrypt) ends TLS in front of `web`. Step by step:
+# docs/deploy-coolify.md. In short:
+#   - PostgreSQL 18 as a separate Coolify database resource (backups); its internal URL -> DATABASE_URL.
+#   - Advanced > "Connect to predefined network" so these containers reach that database.
+#   - Domain on the `web` service; SMTP + sender in Environment Variables.
+#   - Scheduled Task (container `app`, daily): bin/cake maintenance
+#   - Volume `uploads` (user photos…): persistent; one `app` replica while files live on this volume
+# No ports are published: Traefik reaches `web` on the Docker network.
+
+services:
+  # nginx: static files + PHP-FPM, plain HTTP behind Traefik
+  web:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: web
+    environment:
+      # Coolify routes the generated/configured domain to port 80 of this service
+      - SERVICE_URL_WEB_80
+      # PHP-FPM container (unique name on the shared network)
+      - PHP_FPM_HOST=${SERVICE_NAME_APP}
+    depends_on:
+      - app
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # One-shot on every deployment: migrations + new actions into the permissions catalogue (bin/deploy)
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: prod
+    command: ["bin/deploy"]
+    restart: "no"
+    # Coolify-only key (keeps this one-shot service out of the health status); plain
+    # `docker compose config` rejects it
+    exclude_from_hc: true
+    environment:
+      DEBUG: "false"
+      # Generated once by Coolify and kept between deployments (Environment Variables tab)
+      SECURITY_SALT: ${SERVICE_HEX_64_SALT}
+      COOKIE_KEY: ${SERVICE_HEX_64_COOKIEKEY}
+      # Public URL of the `web` service (the domain set in Coolify): email links, WebAuthn id
+      APP_FULL_BASE_URL: ${SERVICE_URL_WEB}
+      # Internal URL of the Coolify PostgreSQL 18 resource (enable "Connect to predefined network")
+      DATABASE_URL: ${DATABASE_URL:?Internal URL of the PostgreSQL resource}
+      # Real SMTP, e.g. smtp://user:password@smtp.example.com:587?tls=true
+      EMAIL_TRANSPORT_DEFAULT_URL: ${EMAIL_TRANSPORT_DEFAULT_URL:?SMTP URL}
+      EMAIL_FROM: ${EMAIL_FROM:?Sender address}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-CakePHP Admin}
+      # TLS ends at Traefik: trust the private Docker ranges for X-Forwarded-For/-Proto
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      HTTPS_ENFORCE: "true"
+      CSP_REPORT_ONLY: "false"
+      LOG_TO_STDERR: "true"
+      SESSION_TIMEOUT: ${SESSION_TIMEOUT:-240}
+      TWO_FACTOR_ENABLED: ${TWO_FACTOR_ENABLED:-true}
+
+  # PHP-FPM
+  app:
+    volumes:
+      # Uploaded files (App\Storage\Uploads): Coolify keeps this volume between deployments.
+      # Back it up together with the database (docs/operations.md).
+      - uploads:/app/storage/uploads
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: prod
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DEBUG: "false"
+      # Generated once by Coolify and kept between deployments (Environment Variables tab)
+      SECURITY_SALT: ${SERVICE_HEX_64_SALT}
+      COOKIE_KEY: ${SERVICE_HEX_64_COOKIEKEY}
+      # Public URL of the `web` service (the domain set in Coolify): email links, WebAuthn id
+      APP_FULL_BASE_URL: ${SERVICE_URL_WEB}
+      # Internal URL of the Coolify PostgreSQL 18 resource (enable "Connect to predefined network")
+      DATABASE_URL: ${DATABASE_URL:?Internal URL of the PostgreSQL resource}
+      # Real SMTP, e.g. smtp://user:password@smtp.example.com:587?tls=true
+      EMAIL_TRANSPORT_DEFAULT_URL: ${EMAIL_TRANSPORT_DEFAULT_URL:?SMTP URL}
+      EMAIL_FROM: ${EMAIL_FROM:?Sender address}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-CakePHP Admin}
+      # TLS ends at Traefik: trust the private Docker ranges for X-Forwarded-For/-Proto
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      HTTPS_ENFORCE: "true"
+      CSP_REPORT_ONLY: "false"
+      LOG_TO_STDERR: "true"
+      SESSION_TIMEOUT: ${SESSION_TIMEOUT:-240}
+      TWO_FACTOR_ENABLED: ${TWO_FACTOR_ENABLED:-true}
+
+  # Background jobs (every email goes through the queue): bin/cake queue run
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: prod
+    command: ["bin/cake", "queue", "run"]
+    volumes:
+      - uploads:/app/storage/uploads
+    stop_grace_period: 60s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DEBUG: "false"
+      # Generated once by Coolify and kept between deployments (Environment Variables tab)
+      SECURITY_SALT: ${SERVICE_HEX_64_SALT}
+      COOKIE_KEY: ${SERVICE_HEX_64_COOKIEKEY}
+      # Public URL of the `web` service (the domain set in Coolify): email links, WebAuthn id
+      APP_FULL_BASE_URL: ${SERVICE_URL_WEB}
+      # Internal URL of the Coolify PostgreSQL 18 resource (enable "Connect to predefined network")
+      DATABASE_URL: ${DATABASE_URL:?Internal URL of the PostgreSQL resource}
+      # Real SMTP, e.g. smtp://user:password@smtp.example.com:587?tls=true
+      EMAIL_TRANSPORT_DEFAULT_URL: ${EMAIL_TRANSPORT_DEFAULT_URL:?SMTP URL}
+      EMAIL_FROM: ${EMAIL_FROM:?Sender address}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-CakePHP Admin}
+      # TLS ends at Traefik: trust the private Docker ranges for X-Forwarded-For/-Proto
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      HTTPS_ENFORCE: "true"
+      CSP_REPORT_ONLY: "false"
+      LOG_TO_STDERR: "true"
+      SESSION_TIMEOUT: ${SESSION_TIMEOUT:-240}
+      TWO_FACTOR_ENABLED: ${TWO_FACTOR_ENABLED:-true}
+
+volumes:
+  uploads:

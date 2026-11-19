@@ -45,6 +45,10 @@ class SidebarMenu
                 $this->item(__('Permissions'), $this->appUrl('Permissions', 'index'), 'settings-2'),
                 $this->item(__('History'), $this->appUrl('Permissions', 'audit'), 'file-text'),
             ]];
+            // Operations: background jobs (emails...)
+            $items[] = ['type' => 'group', 'label' => __('System'), 'items' => [
+                $this->item(__('Queue'), $this->appUrl('Queue', 'index'), 'inbox'),
+            ]];
         }
 
         $items[] = [

@@ -7,6 +7,7 @@ use App\Mailer\UsersMailer;
 use App\Test\TestCase\UserFactoryTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
+use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
@@ -23,12 +24,27 @@ class QueuedEmailTest extends TestCase
 
     protected array $fixtures = ['app.Users', 'app.QueuedJobs', 'app.QueueProcesses'];
 
+    /**
+     * @var array<string, mixed>
+     */
+    private array $transports = [];
+
+    public function testTheDefaultProfileUsesTheQueueTransportInFrontOfTheRealOne(): void
+    {
+        $this->assertSame('queue', Mailer::getConfig('default')['transport'] ?? null);
+        $this->assertSame('default', $this->transports['queue']['transport'] ?? null);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Users.controller', 'CakeDC/Users.Users');
         $this->loadPlugins(['CakeDC/Users', 'Queue']);
-        // The real delivery transport, captured
+        // config/app.php `queue` transport (EmailTrait in other tests replaces every transport for
+        // good, and bootstrap consumed the config) in front of the real one, captured here
+        $this->transports = ['queue' => TransportFactory::getConfig('queue'), 'default' => TransportFactory::getConfig('default')];
+        TransportFactory::drop('queue');
+        TransportFactory::setConfig('queue', ['className' => 'Queue.Queue', 'transport' => 'default']);
         TransportFactory::drop('default');
         TransportFactory::setConfig('default', ['className' => TestEmailTransport::class]);
         TestEmailTransport::clearMessages();
@@ -36,8 +52,10 @@ class QueuedEmailTest extends TestCase
 
     protected function tearDown(): void
     {
-        TransportFactory::drop('default');
-        TransportFactory::setConfig('default', (array)Configure::read('EmailTransport.default'));
+        foreach ($this->transports as $name => $config) {
+            TransportFactory::drop($name);
+            TransportFactory::setConfig($name, (array)$config);
+        }
         parent::tearDown();
     }
 
