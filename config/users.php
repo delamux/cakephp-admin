@@ -74,6 +74,8 @@ return [
         'id' => $webauthnId ?: null,
         'checker' => OptionalWebauthn2faChecker::class,
     ],
+    // No API: CakeDC's Token authenticator (`?api_key=<users.api_token>` on every URL) is switched off
+    'Auth.Authenticators.Token' => false,
     // The emailed one-time sign-in link must also go through 2FA (CakeDC skips it by default)
     'Auth.Authenticators.OneTimeToken.skipTwoFactorVerify' => false,
     // "Remember me" cookie: only over HTTPS when the app runs on HTTPS, never sent cross-site

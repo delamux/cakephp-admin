@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5e2673f1a1c10404c0323ffc1fb7a65",
+    "content-hash": "7f760656f3aad11125a4b30c0bf0afc1",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -244,16 +244,16 @@
         },
         {
             "name": "cakedc/users",
-            "version": "dev-issue/4-webauthn-lib-5",
+            "version": "dev-fix/password-email-and-optional-authenticators",
             "source": {
                 "type": "git",
                 "url": "https://github.com/delamux/CakeDC-users.git",
-                "reference": "77114ba316628d09dfec8065fbf10cfd6e22f1d8"
+                "reference": "cf6ff6c1459684a389d66e861709cce1d71a3b0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/delamux/CakeDC-users/zipball/77114ba316628d09dfec8065fbf10cfd6e22f1d8",
-                "reference": "77114ba316628d09dfec8065fbf10cfd6e22f1d8",
+                "url": "https://api.github.com/repos/delamux/CakeDC-users/zipball/cf6ff6c1459684a389d66e861709cce1d71a3b0a",
+                "reference": "cf6ff6c1459684a389d66e861709cce1d71a3b0a",
                 "shasum": ""
             },
             "require": {
@@ -375,7 +375,7 @@
                 "issues": "https://github.com/CakeDC/users/issues",
                 "source": "https://github.com/CakeDC/users"
             },
-            "time": "2026-11-14T15:01:20+00:00"
+            "time": "2026-11-19T21:51:31+00:00"
         },
         {
             "name": "cakephp/authentication",
@@ -9548,7 +9548,7 @@
     "aliases": [
         {
             "package": "cakedc/users",
-            "version": "dev-issue/4-webauthn-lib-5",
+            "version": "dev-fix/password-email-and-optional-authenticators",
             "alias": "16.0.5",
             "alias_normalized": "16.0.5.0"
         }
