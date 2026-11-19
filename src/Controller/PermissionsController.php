@@ -6,10 +6,11 @@ namespace App\Controller;
 use App\UseCase\Permissions\PermissionMatrix;
 use App\UseCase\Permissions\SyncPermissions;
 use App\UseCase\Permissions\UpdateRolePermissions;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 
 /**
- * Permissions matrix: discovered actions × roles (allow-list). Superadmin only.
+ * Permissions per role: discovered actions with a select (deny, allow, rule). Superadmin only.
  * Thin controller: the work is done by the use cases in App\UseCase\Permissions.
  */
 class PermissionsController extends AppController
@@ -20,12 +21,13 @@ class PermissionsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        // The matrix checkboxes are plain inputs (grants[role][]): their set varies with the catalogue
+        // The selects are plain inputs (grants[action key]): their set varies with the catalogue
         $this->FormProtection->unlockFields(['grants']);
     }
 
     /**
-     * GET: matrix. POST: replaces the grants of every editable role with the submitted ones.
+     * GET: one tab per editable role (`?role=` opens that tab). POST: saves the permissions of the
+     * submitted role (select value per action: deny, allow or a rule).
      *
      * @param \App\UseCase\Permissions\PermissionMatrix $matrix Read model.
      * @param \App\UseCase\Permissions\UpdateRolePermissions $update Use case.
@@ -33,18 +35,31 @@ class PermissionsController extends AppController
      */
     public function index(PermissionMatrix $matrix, UpdateRolePermissions $update): ?Response
     {
+        $roles = $matrix->editableRoles();
         if ($this->request->is(['post', 'put'])) {
-            $update->execute((array)$this->request->getData('grants'), $this->actor());
-            $this->Flash->success(__('Permissions saved.'));
+            $role = (string)$this->request->getData('role');
+            if (!array_key_exists($role, $roles)) {
+                throw new BadRequestException(__('Unknown role.'));
+            }
+            $update->execute($role, (array)$this->request->getData('grants'), $this->actor());
+            $this->Flash->success(__('Permissions of {0} saved.', $roles[$role]));
 
-            return $this->redirect(['action' => 'index']);
+            return $this->redirect(['action' => 'index', '?' => ['role' => $role]]);
         }
+
+        $values = [];
+        foreach (array_keys($roles) as $slug) {
+            $values[$slug] = $matrix->values($slug);
+        }
+        $active = (string)$this->request->getQuery('role');
 
         $this->set([
             'title' => __('Permissions'),
-            'roles' => $matrix->editableRoles(),
+            'roles' => $roles,
+            'active' => array_key_exists($active, $roles) ? $active : (string)array_key_first($roles),
             'groups' => $matrix->groups(),
-            'grants' => $matrix->grants(),
+            'systemGroups' => $matrix->systemGroups(),
+            'values' => $values,
             'orphans' => $matrix->orphans(),
         ]);
 

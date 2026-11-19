@@ -24,11 +24,9 @@ trait PermissionsTestTrait
             ['plugin' => '', 'namespace' => 'App\\Controller', 'path' => APP . 'Controller' . DS],
             ['plugin' => 'CakeDC/Users', 'namespace' => 'CakeDC\\Users\\Controller', 'path' => ROOT . '/vendor/cakedc/users/src/Controller/'],
         ], $ignored);
-        /** @var array<string, list<string>> $defaults */
-        $defaults = (array)Configure::read('App.permissions.defaults', [
-            'admin' => ['*', '!Roles::*', '!Permissions::*'],
-            'editor' => ['CakeDC/Users.Users::index', 'CakeDC/Users.Users::view', 'Reports::users'],
-        ]);
+        // Same defaults as the app (config/users.php is only loaded when the application boots)
+        /** @var array<string, array<int|string, string>> $defaults */
+        $defaults = (array)Configure::read('App.permissions.defaults', (require CONFIG . 'users.php')['App.permissions']['defaults']);
         (new PermissionsSynchronizer($defaults))->sync($discovery->actions());
     }
 }

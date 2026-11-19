@@ -6,6 +6,7 @@ namespace App\UseCase\Roles;
 use App\Model\Table\RolesTable;
 use App\Rbac\PermissionAuditLog;
 use App\Rbac\PermissionsCache;
+use App\Rbac\PermissionsSynchronizer;
 use App\UseCase\Actor;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\TableRegistry;
@@ -21,9 +22,13 @@ class ManageRoles
     /**
      * @param \App\Rbac\PermissionAuditLog $audit Audit log.
      * @param \App\Model\Table\RolesTable|null $roles Roles table.
+     * @param \App\Rbac\PermissionsSynchronizer|null $sync Grants (a new role gets the defaults).
      */
-    public function __construct(private PermissionAuditLog $audit, ?RolesTable $roles = null)
-    {
+    public function __construct(
+        private PermissionAuditLog $audit,
+        ?RolesTable $roles = null,
+        private ?PermissionsSynchronizer $sync = null,
+    ) {
         /** @var \App\Model\Table\RolesTable $table */
         $table = $roles ?? TableRegistry::getTableLocator()->get('Roles');
         $this->roles = $table;
@@ -68,6 +73,8 @@ class ManageRoles
         if (!$this->roles->save($role)) {
             return RoleResult::of(false, $role);
         }
+        // Defaults of every role (`*`: dashboard, own two-step settings…) + its own, if any
+        ($this->sync ?? PermissionsSynchronizer::fromConfig())->grantDefaultsTo((string)$role->get('slug'));
         PermissionsCache::clear();
         $this->audit->record('role_created', $actor, (string)$role->get('slug'), details: [
             'name' => (string)$role->get('name'),

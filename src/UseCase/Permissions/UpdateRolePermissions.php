@@ -8,11 +8,13 @@ use App\Rbac\PermissionsSynchronizer;
 use App\UseCase\Actor;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
+use InvalidArgumentException;
 
 /**
- * Saves the permissions matrix: replaces the grants of every editable role with the submitted
- * ones, keeping the locked rows (never submitted) and auditing only the roles that changed.
- * Superadmin is never editable; superadmin-only keys are filtered by the synchronizer.
+ * Saves the permissions of one role (one tab of the screen): every editable action gets the
+ * submitted select value (PermissionMatrix::DENY, ::ALLOW or a rule name). System rows are not in
+ * the form and keep their grants; superadmin-only keys and rules that cannot decide an action are
+ * dropped by the synchronizer. Audited only when something changed.
  */
 class UpdateRolePermissions
 {
@@ -29,35 +31,41 @@ class UpdateRolePermissions
     }
 
     /**
-     * @param array<mixed> $submitted role slug => list of action keys.
+     * @param string $roleSlug Role (superadmin and unknown roles are rejected).
+     * @param array<mixed> $submitted action key => DENY | ALLOW | rule name.
      * @param \App\UseCase\Actor $actor Who.
-     * @return array<string, array{added: list<string>, removed: list<string>}> Changes per role.
+     * @return array{added: list<string>, removed: list<string>} What changed (`key` or `key [rule]`).
+     * @throws \InvalidArgumentException When the role is not editable.
      */
-    public function execute(array $submitted, Actor $actor): array
+    public function execute(string $roleSlug, array $submitted, Actor $actor): array
     {
+        if (!array_key_exists($roleSlug, $this->matrix->editableRoles())) {
+            throw new InvalidArgumentException(sprintf('Role `%s` is not editable.', $roleSlug));
+        }
         $locked = $this->matrix->lockedKeys();
-        $current = $this->sync->grants();
+        $current = $this->sync->rules()[$roleSlug] ?? [];
+
+        // System rows keep what they have; editable rows take the submitted value (missing = DENY)
+        $grants = array_intersect_key($current, $locked);
+        foreach (array_keys($this->matrix->values($roleSlug)) as $key) {
+            $value = $submitted[$key] ?? PermissionMatrix::DENY;
+            if (!is_string($value) || $value === PermissionMatrix::DENY) {
+                continue;
+            }
+            $grants[$key] = $value === PermissionMatrix::ALLOW ? null : $value;
+        }
 
         $connection = ConnectionManager::get('default');
         assert($connection instanceof Connection);
 
-        /** @var array<string, array{added: list<string>, removed: list<string>}> */
-        return $connection->transactional(function () use ($submitted, $actor, $locked, $current) {
-            $changes = [];
-            foreach (array_keys($this->matrix->editableRoles()) as $slug) {
-                $keep = array_filter($current[$slug] ?? [], fn(string $key): bool => isset($locked[$key]));
-                $keys = array_values(array_unique(array_merge(
-                    array_map('strval', (array)($submitted[$slug] ?? [])),
-                    $keep,
-                )));
-                $diff = $this->sync->setGrants($slug, $keys);
-                if ($diff['added'] !== [] || $diff['removed'] !== []) {
-                    $this->audit->record('grants_changed', $actor, $slug, $diff['added'], $diff['removed']);
-                    $changes[$slug] = $diff;
-                }
+        /** @var array{added: list<string>, removed: list<string>} */
+        return $connection->transactional(function () use ($roleSlug, $grants, $actor): array {
+            $diff = $this->sync->setGrants($roleSlug, $grants);
+            if ($diff['added'] !== [] || $diff['removed'] !== []) {
+                $this->audit->record('grants_changed', $actor, $roleSlug, $diff['added'], $diff['removed']);
             }
 
-            return $changes;
+            return $diff;
         });
     }
 }

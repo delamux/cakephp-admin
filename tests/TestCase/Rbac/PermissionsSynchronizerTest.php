@@ -114,4 +114,53 @@ class PermissionsSynchronizerTest extends TestCase
 
         $this->assertSame(['Dashboard::index'], $this->grants($sync)['editor']);
     }
+
+    public function testDefaultsForEveryRoleAndRulesFromPatterns(): void
+    {
+        $sync = new PermissionsSynchronizer([
+            '*' => ['Dashboard::index', 'CakeDC/Users.Users::resetOneTimePasswordAuthenticator' => 'owner'],
+            'admin' => ['*', '!Roles::*', 'CakeDC/Users.Users::edit' => 'owner'],
+        ]);
+
+        $sync->sync($this->actions(['Dashboard::index', 'Roles::index', 'CakeDC/Users.Users::edit', 'CakeDC/Users.Users::resetOneTimePasswordAuthenticator']));
+        $rules = $sync->rules();
+
+        $this->assertSame([
+            'CakeDC/Users.Users::edit' => 'owner',
+            'CakeDC/Users.Users::resetOneTimePasswordAuthenticator' => 'owner',
+            'Dashboard::index' => null,
+        ], $rules['admin'], 'Role patterns and `*` defaults are merged, rules win over a plain grant');
+        $this->assertSame([
+            'CakeDC/Users.Users::resetOneTimePasswordAuthenticator' => 'owner',
+            'Dashboard::index' => null,
+        ], $rules['editor']);
+        $this->assertArrayNotHasKey('superadmin', $rules);
+    }
+
+    public function testSetGrantsStoresValidRulesAndReportsRuleChanges(): void
+    {
+        $sync = new PermissionsSynchronizer([]);
+        $sync->sync($this->actions(['Dashboard::index', 'CakeDC/Users.Users::edit']));
+        $sync->setGrants('editor', ['CakeDC/Users.Users::edit' => null]);
+
+        $diff = $sync->setGrants('editor', [
+            'CakeDC/Users.Users::edit' => 'owner',
+            'Dashboard::index' => 'owner',
+        ]);
+
+        $this->assertSame(['CakeDC/Users.Users::edit' => 'owner'], $sync->rules()['editor'], 'A rule that cannot decide the action grants nothing');
+        $this->assertSame(['CakeDC/Users.Users::edit [owner]'], $diff['added']);
+        $this->assertSame(['CakeDC/Users.Users::edit'], $diff['removed']);
+    }
+
+    public function testDefaultsAreGrantedToANewRole(): void
+    {
+        $sync = new PermissionsSynchronizer(['*' => ['Dashboard::index'], 'admin' => ['*']]);
+        $sync->sync($this->actions(['Dashboard::index', 'Reports::users']));
+        $this->fetchTable('Roles')->saveOrFail($this->fetchTable('Roles')->newEntity(['slug' => 'support', 'name' => 'Support']));
+
+        $sync->grantDefaultsTo('support');
+
+        $this->assertSame(['Dashboard::index' => null], $sync->rules()['support']);
+    }
 }

@@ -6,23 +6,30 @@ namespace App\UseCase\Permissions;
 use App\Model\Entity\Permission;
 use App\Rbac\ActionDiscovery;
 use App\Rbac\PermissionsSynchronizer;
+use App\Rbac\RuleCatalog;
 use App\Service\UserRoleManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use CakeDC\Auth\Rbac\Permissions\ConfigProvider;
 
 /**
- * Read model of the permissions screen: actions grouped per controller × editable roles.
+ * Read model of the permissions screen: one tab per editable role, actions grouped per controller,
+ * each with a select (DENY, ALLOW or a rule of App\Rbac\RuleCatalog that can decide it).
  *
- * A row is locked (not editable) when a system rule of config/permissions.php already decides
- * it (`public` = bypassAuth, `all_roles` = role `*`) or it is an access-control screen
- * (`superadmin`, see PermissionsSynchronizer::isSuperadminOnly()).
+ * An action is a system one (read only, behind "Show system actions") when a rule of
+ * config/permissions.php already decides it (`public` = bypassAuth, `all_roles` = role `*`) or it
+ * is an access-control screen (`superadmin`, see PermissionsSynchronizer::isSuperadminOnly()).
  */
 class PermissionMatrix
 {
     public const LOCKED_PUBLIC = 'public';
     public const LOCKED_ALL_ROLES = 'all_roles';
     public const LOCKED_SUPERADMIN = 'superadmin';
+
+    /** Select value: not allowed (no grant). */
+    public const DENY = 'deny';
+    /** Select value: allowed without a rule. */
+    public const ALLOW = 'allow';
 
     /**
      * @var array<array<string, mixed>>
@@ -31,16 +38,26 @@ class PermissionMatrix
 
     private Table $permissions;
 
+    private RuleCatalog $catalog;
+
+    /**
+     * @var array<string, list<array{\App\Model\Entity\Permission, string|null}>>|null
+     */
+    private ?array $actions = null;
+
     /**
      * @param \App\Rbac\PermissionsSynchronizer $sync Grants.
      * @param \App\Service\UserRoleManager $roles Roles.
      * @param array<array<string, mixed>>|null $systemRules System rules (default config/permissions.php).
+     * @param \App\Rbac\RuleCatalog|null $catalog Rules (default App\Rbac\RuleCatalog::fromConfig()).
      */
     public function __construct(
         private PermissionsSynchronizer $sync,
         private UserRoleManager $roles,
         ?array $systemRules = null,
+        ?RuleCatalog $catalog = null,
     ) {
+        $this->catalog = $catalog ?? RuleCatalog::fromConfig();
         $this->systemRules = $systemRules ?? (new ConfigProvider())->getPermissions();
         $this->permissions = TableRegistry::getTableLocator()->get('Permissions');
     }
@@ -56,10 +73,102 @@ class PermissionMatrix
     }
 
     /**
-     * @return array<string, list<array{key: string, action: string, locked: string|null}>>
+     * Editable actions per controller, each with the rules that can decide it (name => label).
+     *
+     * @return array<string, list<array{key: string, action: string, rules: array<string, string>}>>
      */
     public function groups(): array
     {
+        $groups = [];
+        foreach ($this->actions() as $group => $actions) {
+            foreach ($actions as [$permission, $locked]) {
+                if ($locked === null) {
+                    $groups[$group][] = [
+                        'key' => $permission->key(),
+                        'action' => $permission->action,
+                        'rules' => $this->catalog->applicable($permission->toArray()),
+                    ];
+                }
+            }
+        }
+
+        return $groups;
+    }
+
+    /**
+     * Actions decided by config/permissions.php or reserved to superadmin (read only), per controller.
+     *
+     * @return array<string, list<array{key: string, action: string, locked: string}>>
+     */
+    public function systemGroups(): array
+    {
+        $groups = [];
+        foreach ($this->actions() as $group => $actions) {
+            foreach ($actions as [$permission, $locked]) {
+                if ($locked !== null) {
+                    $groups[$group][] = ['key' => $permission->key(), 'action' => $permission->action, 'locked' => $locked];
+                }
+            }
+        }
+
+        return $groups;
+    }
+
+    /**
+     * Keys of the locked rows (not in the form, so their grants are kept as they are).
+     *
+     * @return array<string, true>
+     */
+    public function lockedKeys(): array
+    {
+        $locked = [];
+        foreach ($this->systemGroups() as $actions) {
+            foreach ($actions as $action) {
+                $locked[$action['key']] = true;
+            }
+        }
+
+        return $locked;
+    }
+
+    /**
+     * Select value of every editable action for a role: DENY, ALLOW or a rule name.
+     *
+     * @param string $roleSlug Role.
+     * @return array<string, string>
+     */
+    public function values(string $roleSlug): array
+    {
+        $granted = $this->sync->rules()[$roleSlug] ?? [];
+        $values = [];
+        foreach ($this->groups() as $actions) {
+            foreach ($actions as $action) {
+                $key = $action['key'];
+                $values[$key] = array_key_exists($key, $granted) ? ($granted[$key] ?? self::ALLOW) : self::DENY;
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * @return int Actions no longer present in the code.
+     */
+    public function orphans(): int
+    {
+        return $this->permissions->find()->where(['orphan' => true])->count();
+    }
+
+    /**
+     * Non orphan actions per controller with their lock reason (null = editable).
+     *
+     * @return array<string, list<array{\App\Model\Entity\Permission, string|null}>>
+     */
+    private function actions(): array
+    {
+        if ($this->actions !== null) {
+            return $this->actions;
+        }
         $permissions = $this->permissions->find()
             ->where(['orphan' => false])
             ->orderBy(['plugin' => 'ASC', 'prefix' => 'ASC', 'controller' => 'ASC', 'action' => 'ASC'])
@@ -73,51 +182,10 @@ class PermissionMatrix
                 'controller' => $permission->controller,
                 'action' => '',
             ]), ':');
-            $groups[$group][] = [
-                'key' => $permission->key(),
-                'action' => $permission->action,
-                'locked' => $this->lockReason($permission),
-            ];
+            $groups[$group][] = [$permission, $this->lockReason($permission)];
         }
 
-        return $groups;
-    }
-
-    /**
-     * Keys of the locked rows (they have no checkbox, so the browser never submits them).
-     *
-     * @return array<string, true>
-     */
-    public function lockedKeys(): array
-    {
-        $locked = [];
-        foreach ($this->groups() as $actions) {
-            foreach ($actions as $action) {
-                if ($action['locked'] !== null) {
-                    $locked[$action['key']] = true;
-                }
-            }
-        }
-
-        return $locked;
-    }
-
-    /**
-     * Current grants as lookup tables (role slug => [action key => index]).
-     *
-     * @return array<string, array<string, int>>
-     */
-    public function grants(): array
-    {
-        return array_map('array_flip', $this->sync->grants());
-    }
-
-    /**
-     * @return int Actions no longer present in the code.
-     */
-    public function orphans(): int
-    {
-        return $this->permissions->find()->where(['orphan' => true])->count();
+        return $this->actions = $groups;
     }
 
     /**

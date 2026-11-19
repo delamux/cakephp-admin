@@ -171,11 +171,25 @@ class UserRoleManager
      */
     public function canManage(ArrayAccess|array|null $actor, ArrayAccess|array $target): bool
     {
-        if (!self::hasAdminAccess($actor)) {
+        return self::hasAdminAccess($actor) && !$this->isProtected($actor, $target);
+    }
+
+    /**
+     * Fixed account protection (holds whatever the role permissions say): a superadmin account is
+     * only touched by a superadmin, and an admin account by a superadmin (admins do not edit
+     * other admins). The own account is not protected: the role permissions decide.
+     *
+     * @param \ArrayAccess<string, mixed>|array<string, mixed>|null $actor Logged-in user.
+     * @param \ArrayAccess<string, mixed>|array<string, mixed> $target Account.
+     * @return bool
+     */
+    public function isProtected(ArrayAccess|array|null $actor, ArrayAccess|array $target): bool
+    {
+        if (self::isSuperadmin($actor) || $this->isSameUser($actor, $target)) {
             return false;
         }
 
-        return !self::isSuperadmin($target) || self::isSuperadmin($actor);
+        return self::isSuperadmin($target) || ($target['role'] ?? null) === self::ADMIN;
     }
 
     /**

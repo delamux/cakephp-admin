@@ -5,6 +5,7 @@ namespace App\Rbac;
 
 use App\Model\Table\PermissionsTable;
 use App\Model\Table\RolesTable;
+use App\Service\UserRoleManager;
 use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -23,7 +24,7 @@ class PermissionsSynchronizer
     /**
      * Never grantable to a role from the matrix: access control and resetting other users' 2FA.
      */
-    public const SUPERADMIN_ONLY = ['Roles::*', 'Permissions::*', 'TwoFactor::reset'];
+    public const SUPERADMIN_ONLY = ['Roles::*', 'Permissions::*', 'TwoFactor::reset', 'Queue::*'];
 
     private PermissionsTable $Permissions;
 
@@ -31,14 +32,20 @@ class PermissionsSynchronizer
 
     private Table $RolesPermissions;
 
+    private RuleCatalog $catalog;
+
     /**
-     * @param array<string, list<string>> $defaults Default grants per role slug.
+     * @param array<string, array<int|string, string>> $defaults Default grants per role slug (`*` = every
+     *   role): patterns (`!` excludes) and `pattern => rule` (granted with that rule).
      * @param list<string> $superadminOnly Patterns never grantable to a role (access-control screens).
+     * @param \App\Rbac\RuleCatalog|null $catalog Rules (default App\Rbac\RuleCatalog::fromConfig()).
      */
     public function __construct(
         private array $defaults,
         private array $superadminOnly = self::SUPERADMIN_ONLY,
+        ?RuleCatalog $catalog = null,
     ) {
+        $this->catalog = $catalog ?? RuleCatalog::fromConfig();
         $locator = TableRegistry::getTableLocator();
         /** @var \App\Model\Table\PermissionsTable $permissions */
         $permissions = $locator->get('Permissions');
@@ -54,7 +61,7 @@ class PermissionsSynchronizer
      */
     public static function fromConfig(): self
     {
-        /** @var array<string, list<string>> $defaults */
+        /** @var array<string, array<int|string, string>> $defaults */
         $defaults = (array)Configure::read('App.permissions.defaults', []);
         /** @var list<string> $superadminOnly */
         $superadminOnly = (array)Configure::read('App.permissions.superadminOnly', self::SUPERADMIN_ONLY);
@@ -134,28 +141,67 @@ class PermissionsSynchronizer
     }
 
     /**
-     * Replaces the grants of a role (unknown or orphan keys are ignored).
+     * Granted (non orphan) actions per role slug with their rule (null = allowed without a rule).
+     *
+     * @return array<string, array<string, string|null>> role slug => [action key => rule]
+     */
+    public function rules(): array
+    {
+        $rows = $this->RolesPermissions->find()
+            ->contain(['Roles', 'Permissions'])
+            ->where(['Permissions.orphan' => false])
+            ->all();
+        $rules = [];
+        foreach ($rows as $row) {
+            /** @var \App\Model\Entity\Permission $permission */
+            $permission = $row->get('permission');
+            $rule = $row->get('rule');
+            $rules[(string)$row->get('role')->get('slug')][$permission->key()] = is_string($rule) && $rule !== '' ? $rule : null;
+        }
+        foreach ($rules as &$keys) {
+            ksort($keys, SORT_STRING);
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Replaces the grants of a role. Unknown or orphan keys, superadmin-only actions and rules that
+     * cannot decide the action (App\Rbac\RuleCatalog::isValid()) grant nothing.
      *
      * @param string $roleSlug Role.
-     * @param list<string> $keys Action keys.
-     * @return array{added: list<string>, removed: list<string>} What changed.
+     * @param array<int|string, string|null> $grants `key => rule|null`, or a list of keys (no rule).
+     * @return array{added: list<string>, removed: list<string>} What changed (`key` or `key [rule]`).
      */
-    public function setGrants(string $roleSlug, array $keys): array
+    public function setGrants(string $roleSlug, array $grants): array
     {
-        $before = $this->grants()[$roleSlug] ?? [];
+        $wanted = [];
+        foreach ($grants as $key => $rule) {
+            if (is_int($key)) {
+                $wanted[(string)$rule] = null;
+            } else {
+                $wanted[$key] = is_string($rule) && $rule !== '' ? $rule : null;
+            }
+        }
+
+        $before = self::labels($this->rules()[$roleSlug] ?? []);
         $role = $this->Roles->find()->where(['slug' => $roleSlug])->firstOrFail();
         $this->RolesPermissions->deleteAll(['role_id' => $role->get('id')]);
 
-        $wanted = array_flip($keys);
         foreach ($this->Permissions->find()->where(['orphan' => false])->all() as $permission) {
             /** @var \App\Model\Entity\Permission $permission */
-            if (isset($wanted[$permission->key()]) && !$this->isSuperadminOnly($permission->key())) {
-                $this->grant((int)$role->get('id'), $permission->id);
+            $key = $permission->key();
+            if (!array_key_exists($key, $wanted) || $this->isSuperadminOnly($key)) {
+                continue;
+            }
+            $rule = $wanted[$key];
+            if ($rule === null || $this->catalog->isValid($rule, $permission->toArray())) {
+                $this->grant((int)$role->get('id'), $permission->id, $rule);
             }
         }
         PermissionsCache::clear();
 
-        $after = $this->grants()[$roleSlug] ?? [];
+        $after = self::labels($this->rules()[$roleSlug] ?? []);
 
         return [
             'added' => array_values(array_diff($after, $before)),
@@ -164,24 +210,87 @@ class PermissionsSynchronizer
     }
 
     /**
-     * @param array<\Cake\Datasource\EntityInterface> $permissions Permissions to grant defaults for.
+     * Grants the defaults (`*` + its own patterns) of every current action to a role (new roles).
+     *
+     * @param string $roleSlug Role.
      * @return void
      */
-    private function grantDefaults(array $permissions): void
+    public function grantDefaultsTo(string $roleSlug): void
+    {
+        $permissions = $this->Permissions->find()->where(['orphan' => false])->all()->toList();
+        $this->grantDefaults($permissions, $roleSlug);
+        PermissionsCache::clear();
+    }
+
+    /**
+     * @param array<string, string|null> $rules key => rule.
+     * @return list<string> `key` or `key [rule]`.
+     */
+    private static function labels(array $rules): array
+    {
+        $labels = [];
+        foreach ($rules as $key => $rule) {
+            $labels[] = $rule === null ? $key : $key . ' [' . $rule . ']';
+        }
+
+        return $labels;
+    }
+
+    /**
+     * @param array<\Cake\Datasource\EntityInterface> $permissions Permissions to grant defaults for.
+     * @param string|null $onlyRole Only this role (default: every role with defaults, `*` = all but superadmin).
+     * @return void
+     */
+    private function grantDefaults(array $permissions, ?string $onlyRole = null): void
     {
         if ($permissions === []) {
             return;
         }
-        $roles = $this->Roles->find()->where(['slug IN' => array_keys($this->defaults) ?: ['']])->all();
-        foreach ($roles as $role) {
+        $query = $this->Roles->find()->where(['slug !=' => UserRoleManager::SUPERADMIN]);
+        if ($onlyRole !== null) {
+            $query->where(['slug' => $onlyRole]);
+        } elseif (!isset($this->defaults['*'])) {
+            $query->where(['slug IN' => array_keys($this->defaults) ?: ['']]);
+        }
+        foreach ($query->all() as $role) {
+            $patterns = array_merge($this->defaults['*'] ?? [], $this->defaults[(string)$role->get('slug')] ?? []);
             foreach ($permissions as $permission) {
-                $key = ActionDiscovery::key($permission->toArray());
-                $patterns = $this->defaults[(string)$role->get('slug')];
-                if (!$this->isSuperadminOnly($key) && self::matches($key, $patterns)) {
-                    $this->grant((int)$role->get('id'), (int)$permission->get('id'));
+                $action = $permission->toArray();
+                $key = ActionDiscovery::key($action);
+                if ($this->isSuperadminOnly($key)) {
+                    continue;
+                }
+                [$granted, $rule] = self::decide($key, $patterns);
+                if ($granted && ($rule === null || $this->catalog->isValid($rule, $action))) {
+                    $this->grant((int)$role->get('id'), (int)$permission->get('id'), $rule);
                 }
             }
         }
+    }
+
+    /**
+     * Default for one action: plain patterns grant without a rule; `pattern => rule` grants with it
+     * (wins over a plain pattern, the last matching one wins); `!pattern` always excludes.
+     *
+     * @param string $key Action key.
+     * @param array<int|string, string> $patterns Patterns.
+     * @return array{bool, string|null} [granted, rule]
+     */
+    private static function decide(string $key, array $patterns): array
+    {
+        $plain = array_values(array_filter($patterns, fn($pattern, $index): bool => is_int($index), ARRAY_FILTER_USE_BOTH));
+        $rule = null;
+        foreach ($patterns as $pattern => $name) {
+            if (is_string($pattern) && fnmatch($pattern, $key, FNM_NOESCAPE)) {
+                $rule = $name;
+            }
+        }
+        $excluded = array_filter($plain, fn(string $pattern): bool => str_starts_with($pattern, '!'));
+        if ($excluded !== [] && !self::matches($key, ['*', ...$excluded])) {
+            return [false, null];
+        }
+
+        return [$rule !== null || self::matches($key, $plain), $rule];
     }
 
     /**
@@ -221,13 +330,17 @@ class PermissionsSynchronizer
     /**
      * @param int $roleId Role.
      * @param int $permissionId Permission.
+     * @param string|null $rule Rule name (null = allowed).
      * @return void
      */
-    private function grant(int $roleId, int $permissionId): void
+    private function grant(int $roleId, int $permissionId, ?string $rule = null): void
     {
         if (!$this->RolesPermissions->exists(['role_id' => $roleId, 'permission_id' => $permissionId])) {
             $this->RolesPermissions->saveOrFail(
-                $this->RolesPermissions->newEntity(['role_id' => $roleId, 'permission_id' => $permissionId]),
+                $this->RolesPermissions->newEntity(
+                    ['role_id' => $roleId, 'permission_id' => $permissionId, 'rule' => $rule],
+                    ['accessibleFields' => ['*' => true]],
+                ),
             );
         }
     }

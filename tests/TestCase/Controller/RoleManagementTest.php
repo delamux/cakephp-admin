@@ -278,4 +278,43 @@ class RoleManagementTest extends TestCase
 
         $this->assertFalse($this->exists($user));
     }
+
+    public function testAdminCannotEditOrDeleteAnotherAdmin(): void
+    {
+        $admin = $this->createUser(['role' => 'admin']);
+        $other = $this->createUser(['role' => 'admin', 'email' => 'other-admin@example.test']);
+        $this->loginAs($admin);
+
+        $this->post('/users/edit/' . $other->id, ['email' => 'attacker@example.test']);
+        $this->assertRedirect();
+        $this->assertSame('other-admin@example.test', $this->reload($other)->email);
+
+        $this->post('/users/delete/' . $other->id);
+        $this->assertTrue($this->exists($other));
+    }
+
+    public function testAdminEditsTheirOwnAccountAndRegularUsers(): void
+    {
+        $admin = $this->createUser(['role' => 'admin']);
+        $editor = $this->createUser(['role' => 'editor']);
+        $this->loginAs($admin);
+
+        $this->get('/users/edit/' . $admin->id);
+        $this->assertResponseOk();
+        $this->get('/users/edit/' . $editor->id);
+        $this->assertResponseOk();
+    }
+
+    public function testSuperadminEditsAdminsAndOtherSuperadmins(): void
+    {
+        $super = $this->createUser(['role' => 'superadmin', 'is_superuser' => true]);
+        $admin = $this->createUser(['role' => 'admin']);
+        $otherSuper = $this->createUser(['role' => 'superadmin', 'is_superuser' => true]);
+        $this->loginAs($super);
+
+        $this->get('/users/edit/' . $admin->id);
+        $this->assertResponseOk();
+        $this->get('/users/edit/' . $otherSuper->id);
+        $this->assertResponseOk();
+    }
 }
