@@ -31,6 +31,8 @@ class ActivityLog
     public const KEY_ADDED = 'key_added';
     public const KEY_REMOVED = 'key_removed';
     public const TWO_FACTOR_RESET = 'two_factor_reset';
+    public const PHOTO_CHANGED = 'photo_changed';
+    public const PHOTO_REMOVED = 'photo_removed';
 
     /**
      * Events that may mean someone else is trying to get in (highlighted in the UI).

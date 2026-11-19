@@ -19,23 +19,28 @@ namespace App;
 use App\Account\AccountActivityListener;
 use App\Account\ActivityLog;
 use App\Command\ActivityPurgeCommand;
+use App\Command\MaintenanceCommand;
 use App\Command\PermissionsPurgeCommand;
 use App\Command\PermissionsSyncCommand;
 use App\Command\TwoFactorResetCommand;
 use App\Http\SecurityMiddlewares;
 use App\Middleware\AuthThrottleMiddleware;
 use App\Middleware\HostHeaderMiddleware;
+use App\Queue\QueueFailureListener;
 use App\Rbac\ActionDiscovery;
 use App\Rbac\PermissionAuditLog;
 use App\Rbac\PermissionsSynchronizer;
 use App\Service\UserRoleManager;
 use App\UseCase\Account\PurgeAccountActivity;
+use App\UseCase\Maintenance\DailyMaintenance;
 use App\UseCase\Permissions\PermissionMatrix;
 use App\UseCase\Permissions\PurgePermissionHistory;
 use App\UseCase\Permissions\SyncPermissions;
 use App\UseCase\Permissions\UpdateRolePermissions;
+use App\UseCase\Queue\QueueMonitor;
 use App\UseCase\Roles\ManageRoles;
 use App\UseCase\TwoFactor\TwoFactorSettings;
+use App\UseCase\Users\ChangeUserPhoto;
 use App\UseCase\Users\ChangeUserRole;
 use App\Webauthn\PasskeyLoginAdapter;
 use Cake\Core\Configure;
@@ -89,6 +94,8 @@ class Application extends BaseApplication
         self::$activityListenerOn ??= new WeakMap();
         if (!isset(self::$activityListenerOn[$events])) {
             $events->on(new AccountActivityListener());
+            // Failed queue jobs to the error log (App\Queue\QueueFailureListener)
+            $events->on(new QueueFailureListener());
             self::$activityListenerOn[$events] = true;
         }
         $this->addPlugin(Plugin::class);
@@ -197,8 +204,12 @@ class Application extends BaseApplication
         $container->add(PurgePermissionHistory::class)->addArgument(PermissionAuditLog::class);
         $container->add(ManageRoles::class)->addArgument(PermissionAuditLog::class);
         $container->add(ChangeUserRole::class)->addArgument(UserRoleManager::class);
+        $container->add(ChangeUserPhoto::class);
         $container->add(TwoFactorSettings::class);
         $container->add(PurgeAccountActivity::class)->addArgument(ActivityLog::class);
+        $container->add(QueueMonitor::class);
+        $container->add(DailyMaintenance::class)
+            ->addArguments([PurgeAccountActivity::class, PurgePermissionHistory::class]);
         // Passkey login adapter (mockable in integration tests with mockService())
         $container->add(PasskeyLoginAdapter::class);
 
@@ -207,6 +218,7 @@ class Application extends BaseApplication
         $container->add(PermissionsPurgeCommand::class)->addArgument(PurgePermissionHistory::class);
         $container->add(TwoFactorResetCommand::class)->addArgument(TwoFactorSettings::class);
         $container->add(ActivityPurgeCommand::class)->addArgument(PurgeAccountActivity::class);
+        $container->add(MaintenanceCommand::class)->addArgument(DailyMaintenance::class);
     }
 
     /**

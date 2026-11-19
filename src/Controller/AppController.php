@@ -7,9 +7,11 @@ use App\Controller\Component\OneTimePasswordAuthenticatorComponent;
 use App\Navigation\SidebarMenu;
 use App\Service\UserRoleManager;
 use App\UseCase\Actor;
+use App\View\Helper\UserPhotoHelper;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\UnauthorizedException;
+use Cake\Validation\Validation;
 
 /**
  * Application Controller.
@@ -39,11 +41,9 @@ class AppController extends Controller
     }
 
     /**
-     * Account-management guards for the CakeDC/Users CRUD (edit/delete). The identity is already
-     * fresh here (App\Middleware\RefreshIdentityMiddleware runs before authorization).
-     *
-     * The guards live here and not in config/permissions.php because superusers bypass the RBAC
-     * rules (`Rbac|Superuser` policy) and "nobody deletes their own account" applies to them too.
+     * App TOTP component for CakeDC's controllers and the self-delete guard of the CakeDC/Users CRUD.
+     * The identity is already fresh here (App\Middleware\RefreshIdentityMiddleware runs before
+     * authorization).
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
      * @return void
@@ -66,33 +66,34 @@ class AppController extends Controller
             );
         }
 
+        // Fixed account protections of the CakeDC/Users CRUD, whatever the role permissions say
+        // (App\Service\UserRoleManager::isProtected()): superadmin accounts only for superadmins,
+        // admin accounts not for other admins; and nobody deletes their own account, superadmins
+        // included (they bypass the RBAC rules, so these cannot be rules).
         $params = (array)$this->request->getAttribute('params');
         $action = $params['action'] ?? null;
+        $id = (string)($params['pass'][0] ?? '');
         if (
             ($params['plugin'] ?? null) !== 'CakeDC/Users'
             || ($params['controller'] ?? null) !== 'Users'
             || !in_array($action, ['edit', 'delete'], true)
-            || empty($params['pass'][0])
+            || $id === ''
         ) {
             return;
         }
-
-        $target = $this->fetchTable('CakeDC/Users.Users')->find()->where(['id' => $params['pass'][0]])->first();
-        if ($target === null) {
-            // Let the CRUD action answer 404
-            return;
-        }
         $actor = $this->request->getAttribute('identity')?->getOriginalData();
-        $manager = UserRoleManager::fromConfig();
-
-        if ($action === 'delete' && $manager->canManage($actor, $target) && !$manager->canDelete($actor, $target)) {
+        if ($action === 'delete' && $actor !== null && $id === (string)$actor['id']) {
             $this->Flash->error(__('You cannot delete your own account.'));
-        } elseif (!$manager->canManage($actor, $target)) {
-            $this->Flash->error(__('You don\'t have permission to manage this account.'));
         } else {
-            return;
+            $target = Validation::uuid($id)
+                ? $this->fetchTable('CakeDC/Users.Users')->find()->where(['id' => $id])->first()
+                : null;
+            // Missing account: the CRUD action answers 404
+            if ($target === null || !UserRoleManager::fromConfig()->isProtected($actor, $target)) {
+                return;
+            }
+            $this->Flash->error(__('You don\'t have permission to manage this account.'));
         }
-
         $event->setResult($this->redirect(['plugin' => 'CakeDC/Users', 'controller' => 'Users', 'action' => 'index']));
     }
 
@@ -121,7 +122,7 @@ class AppController extends Controller
         $menu = new SidebarMenu();
         $this->set([
             'sidebarMenu' => $menu->items($user),
-            'sidebarUser' => $menu->user($user),
+            'sidebarUser' => $menu->user($user) + ['avatar' => (new UserPhotoHelper($this->createView()))->url($user)],
             'currentUser' => $user,
             'isAdmin' => $menu->isAdmin($user),
             'canViewUsers' => UserRoleManager::canViewUsers($user),

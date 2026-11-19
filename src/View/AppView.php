@@ -61,6 +61,8 @@ class AppView extends View
         // App behaviours without inline JS (confirmations, link-submitted forms, htmx CSRF). With nonce.
         $this->Html->script('app', ['block' => true, 'defer' => true]);
         $this->addHelper('CakeDC/Users.AuthLink');
+        // Private user photos (App\Controller\UserPhotoController)
+        $this->addHelper('UserPhoto');
     }
 
     public const HTMX_VERSION = '2.0.11';

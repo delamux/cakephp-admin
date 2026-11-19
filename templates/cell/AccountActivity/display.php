@@ -24,6 +24,8 @@ $events = [
     ActivityLog::KEY_ADDED => [__('Security key or passkey added'), 'key-round'],
     ActivityLog::KEY_REMOVED => [__('Security key or passkey removed'), 'key-round'],
     ActivityLog::TWO_FACTOR_RESET => [__('Two-step verification reset'), 'shield'],
+    ActivityLog::PHOTO_CHANGED => [__('Photo changed'), 'circle-user'],
+    ActivityLog::PHOTO_REMOVED => [__('Photo removed'), 'circle-user'],
 ];
 
 $rows = [];

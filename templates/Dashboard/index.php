@@ -102,7 +102,7 @@ $roleBadge = fn($user): string => $this->element('Users/role_badge', ['user' => 
 $rows = [];
 foreach ($recentUsers as $i => $user) {
     $rows[] = [
-        'user' => '<div class="flex items-center gap-3">' . $this->Avatar->render($displayName($user), ['size' => 'sm'])
+        'user' => '<div class="flex items-center gap-3">' . $this->Avatar->render($displayName($user), array_filter(['src' => $this->UserPhoto->url($user), 'size' => 'sm']))
             . '<div class="grid leading-tight"><span class="font-medium">' . h($displayName($user)) . '</span><span class="text-xs text-muted-foreground">' . h($user->email) . '</span></div></div>',
         'role' => $roleBadge($user),
         'status' => $statusBadge($user),
@@ -110,7 +110,7 @@ foreach ($recentUsers as $i => $user) {
             . h($user->created?->timeAgoInWords(['end' => '+1 month', 'format' => 'd MMM yyyy', 'accuracy' => ['minute' => 'minute', 'hour' => 'hour', 'day' => 'day', 'week' => 'day', 'month' => 'day']])) . '</span>',
         'actions' => $this->DropdownMenu->render('', [
             ['label' => __('View'), 'url' => ['plugin' => 'CakeDC/Users', 'controller' => 'Users', 'action' => 'view', $user->id], 'icon' => 'user'],
-            ...($roleManager->canManage($currentUser, $user)
+            ...(!$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'edit', $user->id])
                 ? [['label' => __('Edit'), 'url' => ['plugin' => 'CakeDC/Users', 'controller' => 'Users', 'action' => 'edit', $user->id], 'icon' => 'pencil']]
                 : []),
         ], [
@@ -183,7 +183,7 @@ $admins = $administrators;
     <?php
     $team = '';
     foreach ($admins as $admin) {
-        $team .= '<li class="flex items-center gap-3">' . $this->Avatar->render($displayName($admin))
+        $team .= '<li class="flex items-center gap-3">' . $this->Avatar->render($displayName($admin), array_filter(['src' => $this->UserPhoto->url($admin)]))
             . '<div class="grid flex-1 leading-tight"><span class="text-sm font-medium">' . h($displayName($admin)) . '</span><span class="text-xs text-muted-foreground">' . h($admin->email) . '</span></div>'
             . $roleBadge($admin) . '</li>';
     }

@@ -5,6 +5,7 @@ namespace App\Model\Table;
 
 use App\Model\Entity\User;
 use App\Service\UserRoleManager;
+use App\Storage\Uploads;
 use ArrayObject;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -52,6 +53,22 @@ class UsersTable extends BaseUsersTable
         parent::initialize($config);
         // CakeDC's entity (password hashing, hidden fields) with the 2FA columns not mass-assignable
         $this->setEntityClass(User::class);
+        // Photo: users/<id>/photo/<uuid>.webp in the private uploads (App\Storage\Uploads). Written
+        // only by App\UseCase\Users\ChangeUserPhoto (`photo` is not mass-assignable).
+        Uploads::attachImage($this, 'photo');
+    }
+
+    /**
+     * Deleting a user deletes all its files (`users/<id>/`).
+     *
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event.
+     * @param \Cake\Datasource\EntityInterface $entity User.
+     * @param \ArrayObject<string, mixed> $options Options.
+     * @return void
+     */
+    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
+    {
+        Uploads::deleteRecord($this->getTable(), (string)$entity->get('id'));
     }
 
     /**

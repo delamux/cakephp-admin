@@ -20,18 +20,20 @@ $this->end();
 
 $displayName = fn($user): string => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: (string)$user->username;
 
-// Row actions: only what App\Service\UserRoleManager allows for the logged-in user
-$rowMenu = function ($user, int $i) use ($roleManager, $currentUser): array {
+// Row actions: what the RBAC rules allow (role permissions, rule `owner`) and the account protections
+// allow (App\Service\UserRoleManager::isProtected(): superadmin/admin accounts, own account)
+$canDelete = fn($user): bool => $user->id !== $currentUser->id && !$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'delete', $user->id]);
+$rowMenu = function ($user, int $i) use ($roleManager, $currentUser, $canDelete): array {
     // Links leave the list: normal navigation (the list container is htmx-boosted)
     $nav = ['attributes' => ['hx-boost' => 'false']];
     $items = [['label' => __('View'), 'url' => ['action' => 'view', $user->id], 'icon' => 'user'] + $nav];
-    if ($roleManager->canManage($currentUser, $user)) {
+    if (!$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'edit', $user->id])) {
         $items[] = ['label' => __('Edit'), 'url' => ['action' => 'edit', $user->id], 'icon' => 'pencil'] + $nav;
     }
     if ($roleManager->canChangePasswordOf($currentUser, $user)) {
         $items[] = ['label' => __('Change password'), 'url' => ['action' => 'changePassword', $user->id], 'icon' => 'settings-2'] + $nav;
     }
-    if ($roleManager->canDelete($currentUser, $user)) {
+    if ($canDelete($user)) {
         $items[] = '-';
         $items[] = ['label' => __('Delete'), 'url' => '#', 'icon' => 'trash', 'variant' => 'destructive', 'attributes' => [
             // webroot/js/app.js submits the form (no inline JS: CSP)
@@ -45,7 +47,7 @@ $rowMenu = function ($user, int $i) use ($roleManager, $currentUser): array {
 $rows = [];
 foreach ($users as $i => $user) {
     $rows[] = [
-        'username' => '<div class="flex items-center gap-3">' . $this->Avatar->render($displayName($user), ['size' => 'sm'])
+        'username' => '<div class="flex items-center gap-3">' . $this->Avatar->render($displayName($user), array_filter(['src' => $this->UserPhoto->url($user), 'size' => 'sm']))
             . '<div class="grid leading-tight">' . $this->Html->link($displayName($user), ['action' => 'view', $user->id], ['class' => 'font-medium hover:underline'])
             . '<span class="text-xs text-muted-foreground">' . h($user->email) . '</span></div></div>',
         'last_login' => '<span class="whitespace-nowrap text-muted-foreground">' . ($user->last_login ? h($user->last_login->i18nFormat('d MMM yyyy')) : __('Never')) . '</span>',
@@ -59,7 +61,7 @@ foreach ($users as $i => $user) {
             'align' => 'end',
             'trigger' => ['variant' => 'ghost', 'size' => 'icon-sm', 'icon' => 'ellipsis-vertical', 'class' => 'btn text-muted-foreground', 'aria-label' => __('Actions')],
             'popoverOptions' => ['class' => 'min-w-40'],
-        ]) . ($roleManager->canDelete($currentUser, $user) ? $this->Form->create(null, [
+        ]) . ($canDelete($user) ? $this->Form->create(null, [
             'url' => ['action' => 'delete', $user->id],
             'id' => 'delete-user-' . $i,
             'class' => 'hidden',
