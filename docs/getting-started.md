@@ -20,15 +20,15 @@ app. Giving each project its own domain (`cakeadmin.local`, `otherapp.local`…)
 their cookies, sessions and WebAuthn keys apart. The `::1` line matters: on macOS, `.local` names are also looked up
 over mDNS (Bonjour), and with only the IPv4 line every request can stall for several seconds waiting for that lookup.
 
-**b) Publish HTTPS on port 443**, so the URL has no port. Create a `.env` file in the project root (Docker Compose
-reads it automatically; it's ignored by git):
+**b) Publish HTTPS on port 443**, so the URL has no port. 443 is already the default in `compose.yaml`; set it
+explicitly in a `.env` file in the project root (Docker Compose reads it automatically; it's ignored by git):
 
 ```bash
 echo 'HTTPS_PORT=443' > .env
 ```
 
-Without it nginx publishes HTTPS on 8445 (`https://cakeadmin.local:8445`). Only one container can hold port 443 at a
-time: if another project is already using it, stop that one or give one of them a different `HTTPS_PORT`.
+Only one container can hold port 443 at a time. If another project is already using it, stop that one or give this
+one a different port in `.env` (e.g. `HTTPS_PORT=8445` → `https://cakeadmin.local:8445`).
 
 **c) Create the certificate:**
 
@@ -56,7 +56,7 @@ in `tmp/` and logs in `logs/` that the app can't overwrite later, and the app fa
 
 | Service | Where |
 | --- | --- |
-| App | https://cakeadmin.local (with `HTTPS_PORT=443` in `.env`) · https://cakeadmin.local:8445 (without it) · http://localhost:8080 |
+| App | https://cakeadmin.local · http://localhost:8080 |
 | Mailpit (every email in dev) | http://localhost:8026 |
 | PostgreSQL | `localhost:5433`, user `cakephp` / `secret`; test database `cakephp_admin_test` |
 | Worker logs | `docker compose logs -f worker` |
@@ -89,4 +89,5 @@ SECURITY_SALT=$(openssl rand -hex 32) docker compose -f compose.prod.yaml up -d 
 ```
 
 Real images (no mounted code, strict CSP, compiled assets), automatic migrations (`migrate` service) and the worker.
-It uses the same port as dev: run one at a time (or set `HTTPS_PORT=8446`).
+It reads the same `.env`, so with `HTTPS_PORT=443` it uses the same port as dev: run one stack at a time. Without
+the `.env` it publishes HTTPS on 8445 and can run next to the dev stack.

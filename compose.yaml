@@ -16,8 +16,8 @@ services:
     image: nginx:1.29-alpine
     ports:
       - "${APP_PORT:-8080}:80"
-      # HTTPS (mkcert certificate in docker/certs, bin/dev-https-cert). For https://cakeadmin.local without a
-      # port, set HTTPS_PORT=443 in .env and map the domain in /etc/hosts (docs/getting-started.md)
+      # HTTPS (mkcert certificate in docker/certs, bin/dev-https-cert) on 443: https://cakeadmin.local without a
+      # port once the domain is in /etc/hosts. Another port via HTTPS_PORT in .env (docs/getting-started.md)
       - "${HTTPS_PORT:-443}:443"
     volumes:
       - .:/app:ro
