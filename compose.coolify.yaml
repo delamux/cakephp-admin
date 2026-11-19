@@ -1,6 +1,6 @@
 # Coolify (Docker Compose build pack): Coolify builds these images from the repository on every
 # deployment and its proxy (Traefik + Let's Encrypt) ends TLS in front of `web`. Step by step:
-# docs/deploy-coolify.md. In short:
+# docs/en/deploy-coolify.md. In short:
 #   - PostgreSQL 18 as a separate Coolify database resource (backups); its internal URL -> DATABASE_URL.
 #   - Advanced > "Connect to predefined network" so these containers reach that database.
 #   - Domain on the `web` service; SMTP + sender in Environment Variables.
@@ -64,7 +64,7 @@ services:
   app:
     volumes:
       # Uploaded files (App\Storage\Uploads): Coolify keeps this volume between deployments.
-      # Back it up together with the database (docs/operations.md).
+      # Back it up together with the database (docs/en/operations.md).
       - uploads:/app/storage/uploads
     build:
       context: .

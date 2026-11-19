@@ -1,5 +1,7 @@
 # Two-step verification and passkeys
 
+**English** · [Español](../es/two-factor.md)
+
 Optional for every role and enabled from the profile (*Two-step verification* card). Global switch:
 `TWO_FACTOR_ENABLED` (default `true`). It requires HTTPS and `APP_FULL_BASE_URL` set to the final domain: keys are
 bound to that domain (WebAuthn).

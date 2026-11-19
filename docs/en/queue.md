@@ -1,5 +1,7 @@
 # Job queue
 
+**English** · [Español](../es/queue.md)
+
 [dereuromark/cakephp-queue](https://github.com/dereuromark/cakephp-queue): background jobs stored in **PostgreSQL**
 (`queued_jobs` and `queue_processes` tables, with `SKIP LOCKED`). No Redis or external services.
 

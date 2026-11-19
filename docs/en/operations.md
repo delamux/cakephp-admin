@@ -1,5 +1,7 @@
 # Operations and crons
 
+**English** · [Español](../es/operations.md)
+
 ## What must always be running
 
 | What | How | If it's missing |

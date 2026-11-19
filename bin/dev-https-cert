@@ -40,7 +40,7 @@ if [ "$CA_TRUSTED" = false ]; then
     echo "         Run once: mkcert -install" >&2
 fi
 
-# `.local` doesn't resolve on its own: it needs both lines in /etc/hosts (docs/getting-started.md).
+# `.local` doesn't resolve on its own: it needs both lines in /etc/hosts (docs/en/getting-started.md).
 has_host() { # $1 = address: an uncommented /etc/hosts line mapping it to $DOMAIN
     grep -Eq "^[[:space:]]*$1[[:space:]]+([^#]*[[:space:]])?${DOMAIN//./\\.}([[:space:]]|#|\$)" /etc/hosts 2>/dev/null
 }

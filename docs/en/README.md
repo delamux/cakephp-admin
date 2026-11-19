@@ -1,7 +1,9 @@
 # Documentation
 
-Everything the app does, how to use it, how to run it and how to extend it. The [README](../README.md) is the
-summary; the decisions and the status of each phase are in the [ROADMAP](../ROADMAP.md).
+**English** · [Español](../es/README.md)
+
+Everything the app does, how to use it, how to run it and how to extend it. The [README](../../README.md) is the
+summary; the decisions and the status of each phase are in the [ROADMAP](../../ROADMAP.md).
 
 | Guide | What it covers |
 | --- | --- |

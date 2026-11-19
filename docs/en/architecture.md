@@ -1,5 +1,7 @@
 # Architecture
 
+**English** · [Español](../es/architecture.md)
+
 **DDD-lite.** Thin controllers and commands; orchestration (transactions, auditing, caching, emails, activity) lives
 in **use cases** (`src/UseCase`) injected with CakePHP's DI container; domain rules live in plain classes
 (`UserRoleManager`, `PermissionsSynchronizer`, `ActionDiscovery`) and Tables act as repositories. It isn't full DDD

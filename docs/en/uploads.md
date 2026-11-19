@@ -1,5 +1,7 @@
 # File uploads
 
+**English** · [Español](../es/uploads.md)
+
 [josegonzalez/cakephp-upload](https://github.com/FriendsOfCake/cakephp-upload) (FriendsOfCake) with
 [Flysystem](https://flysystem.thephpleague.com/) 3, wrapped in `App\Storage\Uploads` so every entity follows the
 same convention. First use: the **user photo**.

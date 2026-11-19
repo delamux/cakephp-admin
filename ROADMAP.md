@@ -261,7 +261,7 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
 - **Done:** `compose.coolify.yaml` (services `web`, `app`, `worker`, `migrate` with `restart: "no"` + `exclude_from_hc`; no ports; `SERVICE_URL_WEB_80` → `APP_FULL_BASE_URL`; `SERVICE_HEX_64_*` for the salt and the cookie key; `DATABASE_URL`/SMTP required; `PHP_FPM_HOST=${SERVICE_NAME_APP}` to avoid clashes on the shared network). Checked against the Coolify documentation (Context7).
   - `TRUSTED_PROXIES` accepts IPv4/IPv6 **CIDR ranges** (`TrustedProxiesMiddleware`, TDD): behind Traefik `X-Forwarded-For` and `X-Forwarded-Proto` are honoured (no redirect loop, HSTS, `secure` cookies); defaults to Docker's private ranges. `HttpsEnforcerMiddleware` no longer repeats `setTrustedProxies`.
   - Simulated locally with the production stack: HTTP request with `X-Forwarded-Proto: https` from another container → 200 with HSTS and CSP; without the header → 301; outside the range → the header isn't trusted.
-  - Pending on the user's side: push the repo, create the database and the app in Coolify (steps in `docs/deploy-coolify.md`).
+  - Pending on the user's side: push the repo, create the database and the app in Coolify (steps in `docs/en/deploy-coolify.md`).
 
 ### Phase 20 — Documentation (`docs/`) ✅ (2026-11-18)
 - A guide per area covering everything the app can do; README as summary and index; the crons to run always documented.
@@ -271,7 +271,7 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
 - Approved package: `josegonzalez/cakephp-upload` 8.1.1 (FriendsOfCake) + `league/flysystem` 3. User's decisions: **`<table>/<id>/<field>/<uuid>.<ext>` convention** for every entity (not the original name nor the controller), **private Docker volume** (served by a controller with a session), everyone manages their own photo + admins can manage others'.
 - `App\Storage\Uploads` (root `Uploads.path`/`UPLOADS_PATH`, `attachImage()` = `upload.file` type + behavior, `deleteRecord()`), `App\Storage\ImageProcessor` (GD: real type via `finfo`, 2 MB, 6000 px; 256×256 cropped WebP, EXIF orientation, no metadata), `App\UseCase\Users\ChangeUserPhoto` (permissions via `canManage`, deletes the previous one, `photo_changed`/`photo_removed` activity with actor), `UserPhotoController` (update/delete/show; system rule for every role), `UserPhotoHelper` (URL with `?v=`), card on profile and edit pages, photo on the user page, list, dashboard and sidebar. Migration `20261119090000_AddPhotoToUsers` (`photo`, `photo_dir`, not mass-assignable).
 - Docker: `exif` extension; `storage/uploads` owned by `www-data` in the image; `uploads` volume on `app` and `worker` (prod and Coolify; a single `app` replica while files live on a local volume).
-- Verified: `UserPhotoTest` (7 tests) and end to end in dev (upload from the form → `users/<id>/photo/<uuid>.webp`, WebP served with private caching, CSP `img-src 'self'`). Documented in `docs/uploads.md`.
+- Verified: `UserPhotoTest` (7 tests) and end to end in dev (upload from the form → `users/<id>/photo/<uuid>.webp`, WebP served with private caching, CSP `img-src 'self'`). Documented in `docs/en/uploads.md`.
 - Note: in parallel another session reworked the permissions matrix (per-role rules, migration `20261119000000_AddRuleToRolesPermissions`); its files were not touched. Full suite green at the end: 258 tests.
 
 ### Phase 22 — Performance review of migrations and relations ✅ (2026-11-19)

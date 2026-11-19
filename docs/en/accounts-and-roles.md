@@ -1,5 +1,7 @@
 # Accounts, users and roles
 
+**English** · [Español](../es/accounts-and-roles.md)
+
 Accounts are managed by [CakeDC/Users](https://github.com/CakeDC/users) (fork `delamux/CakeDC-users` for
 webauthn-lib 5), with its screens overridden in `templates/plugin/CakeDC/Users/Users/` and its config in
 `config/users.php`.

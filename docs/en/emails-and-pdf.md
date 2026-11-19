@@ -1,5 +1,7 @@
 # Emails and PDF
 
+**English** · [Español](../es/emails-and-pdf.md)
+
 ## Emails
 
 - **Custom layout** (`templates/layout/email/`): 600 px tables, preheader, "bulletproof" button, Outlook (MSO)

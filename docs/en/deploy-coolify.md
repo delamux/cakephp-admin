@@ -1,5 +1,7 @@
 # Deploying on Coolify
 
+**English** · [Español](../es/deploy-coolify.md)
+
 `compose.coolify.yaml` (**Docker Compose** build pack): Coolify builds the images from the repository on every deploy
 and its proxy (Traefik + Let's Encrypt) puts HTTPS in front of nginx. No port is published.
 

@@ -1,5 +1,7 @@
 # htmx
 
+**English** · [Español](../es/htmx.md)
+
 htmx 2 (self-hosted in production, pinned CDN in dev) with a custom integration inspired by `zunnu/cake-htmx`
 (`App\Controller\Component\HtmxComponent`, loaded in `AppController`).
 

@@ -1,5 +1,7 @@
 # Permissions (database-backed RBAC)
 
+**English** · [Español](../es/permissions.md)
+
 CakeDC/Auth's RBAC still makes the decisions, but the rules come from the database
 (`App\Rbac\DatabasePermissionsProvider`, configured in `Auth.RbacPolicy`), with a cache that is invalidated on every change.
 It works as an **allowlist**: anything not granted is denied.

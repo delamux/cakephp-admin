@@ -1,5 +1,7 @@
 # Configuration
 
+**English** · [Español](../es/configuration.md)
+
 In production everything is set through **environment variables** (`config/app_local.php` isn't included in the
 image). In dev, `compose.yaml` already defines them.
 

@@ -1,5 +1,7 @@
 # Account activity
 
+**English** · [Español](../es/account-activity.md)
+
 A log of each account's security events, with **date, IP and browser** (`account_activities` table).
 
 ## What is recorded

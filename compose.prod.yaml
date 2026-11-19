@@ -22,7 +22,7 @@ x-app: &app
     THEME_COMPILED_ASSETS: "true"
     ASSET_TIMESTAMP: "force"
     LOG_TO_STDERR: "true"
-    # book.cakephp.org/5.x/security: HTTPS + HSTS, CSP enforced (see docs/security.md)
+    # book.cakephp.org/5.x/security: HTTPS + HSTS, CSP enforced (see docs/en/security.md)
     HTTPS_ENFORCE: "true"
     CSP_REPORT_ONLY: "false"
     COOKIE_KEY: "${COOKIE_KEY:-}"

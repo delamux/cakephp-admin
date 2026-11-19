@@ -1,5 +1,7 @@
 # Getting started (development)
 
+**English** · [Español](../es/getting-started.md)
+
 Requirements: Docker (Docker Desktop, OrbStack or Colima) and [mkcert](https://github.com/FiloSottile/mkcert). You
 don't need PHP, Composer or Node on your machine: everything runs in containers.
 

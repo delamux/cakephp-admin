@@ -1,5 +1,7 @@
 # Security
 
+**English** · [Español](../es/security.md)
+
 Applied following [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/security.html)
 (`App\Http\SecurityMiddlewares`, `config/app.php` → `Security.*`). `SecurityTest` checks it against real responses.
 
