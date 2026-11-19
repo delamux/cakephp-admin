@@ -44,6 +44,7 @@ $connect = $this->User->socialConnectLinkList($user->social_accounts ?? []);
         <div class="@3xl/main:col-span-3"><?= $this->element('Users/photo_form', ['user' => $user, 'own' => true]) ?></div>
         <div class="grid items-start gap-4 @3xl/main:col-span-3 @5xl/main:grid-cols-2">
             <?= $this->cell('TwoFactor') ?>
+            <div class="min-w-0"><?= $this->cell('ActiveSessions', [(string)$user->id, $this->request->getSession()->id()]) ?></div>
             <div class="min-w-0"><?= $this->cell('AccountActivity', [(string)$user->id]) ?></div>
         </div>
     <?php endif; ?>

@@ -59,6 +59,13 @@ return [
         ],
         // User photos: any signed-in role; whose photo may be changed is decided by
         // App\UseCase\Users\ChangeUserPhoto (own always; others' with admin access)
+        // Own sessions ("Where you're signed in" in the profile): always the signed-in user's
+        [
+            'role' => '*',
+            'plugin' => null,
+            'controller' => 'AccountSessions',
+            'action' => ['signOut', 'signOutOthers'],
+        ],
         [
             'role' => '*',
             'plugin' => null,

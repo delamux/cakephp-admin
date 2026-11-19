@@ -28,6 +28,7 @@ $events = [
     ActivityLog::PHOTO_REMOVED => [__('Photo removed'), 'circle-user'],
     ActivityLog::INVITED => [__('Invited'), 'mail'],
     ActivityLog::INVITATION_ACCEPTED => [__('Invitation accepted'), 'log-in'],
+    ActivityLog::SESSIONS_REVOKED => [__('Other sessions signed out'), 'log-out'],
 ];
 
 $rows = [];

@@ -29,5 +29,19 @@ class User extends BaseUser
         'photo' => false,
         'photo_dir' => false,
         'invited_at' => false,
+        // Only App\UseCase\Account\ActiveSessions (rotated to sign the other devices out)
+        'session_key' => false,
     ];
+
+    /**
+     * Secret of the "remember me" cookie token (`Auth.Authenticators.Cookie.fields.password`): the
+     * password hash plus `session_key`. Changing the password or rotating the key invalidates every
+     * remember-me cookie of the account.
+     *
+     * @return string
+     */
+    protected function _getRememberSecret(): string
+    {
+        return (string)$this->get('password') . (string)$this->get('session_key');
+    }
 }

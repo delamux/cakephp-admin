@@ -81,6 +81,9 @@ return [
     // "Remember me" cookie: only over HTTPS when the app runs on HTTPS, never sent cross-site
     'Auth.Authenticators.Cookie.cookie.secure' => str_starts_with($fullBaseUrl, 'https://'),
     'Auth.Authenticators.Cookie.cookie.samesite' => 'Lax',
+    // Token secret = password hash + users.session_key (App\Model\Entity\User::_getRememberSecret()):
+    // "Sign out of every other session" rotates the key, so other devices cannot sign back in
+    'Auth.Authenticators.Cookie.fields.password' => 'remember_secret',
     // Role whitelist (App\Service\UserRoleManager). `superadmin` is kept in sync with CakeDC's
     // `is_superuser` (App\Model\Table\UsersTable::beforeSave) and only superadmins grant it.
     'App.roles' => [

@@ -31,6 +31,7 @@ use App\Rbac\ActionDiscovery;
 use App\Rbac\PermissionAuditLog;
 use App\Rbac\PermissionsSynchronizer;
 use App\Service\UserRoleManager;
+use App\UseCase\Account\ActiveSessions;
 use App\UseCase\Account\PurgeAccountActivity;
 use App\UseCase\Maintenance\DailyMaintenance;
 use App\UseCase\Permissions\PermissionMatrix;
@@ -207,6 +208,7 @@ class Application extends BaseApplication
         $container->add(ChangeUserRole::class)->addArgument(UserRoleManager::class);
         $container->add(ChangeUserPhoto::class);
         $container->add(InviteUser::class);
+        $container->add(ActiveSessions::class);
         $container->add(TwoFactorSettings::class);
         $container->add(PurgeAccountActivity::class)->addArgument(ActivityLog::class);
         $container->add(QueueMonitor::class);
