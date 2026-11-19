@@ -2,7 +2,7 @@
 # assets, DEBUG off, HTTPS with the mkcert certificate. For a real server use compose.coolify.yaml.
 #   bin/dev-https-cert   # once: mkcert certificate in docker/certs
 #   SECURITY_SALT=$(openssl rand -hex 32) docker compose -f compose.prod.yaml up -d --build
-#   -> https://admindashboard.localhost (same port as dev: run one stack at a time)
+#   -> https://cakeadmin.local (same port as dev: run one stack at a time)
 # Migrations run on every start (the one-shot `migrate` service); app and worker wait for it.
 # The database/SMTP here are local examples: point DATABASE_URL / EMAIL_TRANSPORT_DEFAULT_URL to real ones.
 name: cakephp-admin-prod
@@ -15,7 +15,7 @@ x-app: &app
   environment:
     DEBUG: "false"
     SECURITY_SALT: "${SECURITY_SALT:?Set SECURITY_SALT (e.g. openssl rand -hex 32)}"
-    APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
+    APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://cakeadmin.local}"
     DATABASE_URL: "${DATABASE_URL:-postgres://cakephp:secret@db:5432/cakephp_admin}"
     EMAIL_TRANSPORT_DEFAULT_URL: "${EMAIL_TRANSPORT_DEFAULT_URL:-smtp://mailpit:1025}"
     EMAIL_FROM: "${EMAIL_FROM:-admin@cakephp-admin.test}"

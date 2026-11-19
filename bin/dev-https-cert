@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Creates or renews the mkcert certificate for local HTTPS (https://admindashboard.localhost; README, "HTTPS").
+# Creates or renews the mkcert certificate for local HTTPS (https://cakeadmin.local; README, "HTTPS").
 #
 # Usage, from anywhere in the project:
 #   bin/dev-https-cert
 #
-# - Writes docker/certs/admindashboard.localhost.pem and admindashboard.localhost-key.pem (not in git).
+# - Writes docker/certs/cakeadmin.local.pem and cakeadmin.local-key.pem (not in git).
 # - Restarts the `web` container if it is running, so nginx loads the new certificate.
 # - Warns if `mkcert -install` (trusted local authority) is missing.
 #
 # The certificate lasts about 2 years: macOS and browsers reject more than 825 days.
 set -euo pipefail
 
-DOMAIN="admindashboard.localhost"
+DOMAIN="cakeadmin.local"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CERTS="$ROOT/docker/certs"
 CERT="$CERTS/$DOMAIN.pem"
@@ -40,10 +40,18 @@ if [ "$CA_TRUSTED" = false ]; then
     echo "         Run once: mkcert -install" >&2
 fi
 
-# No /etc/hosts needed: browsers send any `*.localhost` to this machine (RFC 6761).
+# `.local` doesn't resolve on its own: it needs both lines in /etc/hosts (docs/getting-started.md).
+has_host() { # $1 = address: an uncommented /etc/hosts line mapping it to $DOMAIN
+    grep -Eq "^[[:space:]]*$1[[:space:]]+([^#]*[[:space:]])?${DOMAIN//./\\.}([[:space:]]|#|\$)" /etc/hosts 2>/dev/null
+}
+if ! has_host '127\.0\.0\.1' || ! has_host '::1'; then
+    echo "Warning: add $DOMAIN to /etc/hosts (IPv4 and IPv6):" >&2
+    echo "         127.0.0.1   $DOMAIN" >&2
+    echo "         ::1         $DOMAIN" >&2
+fi
 
 mkdir -p "$CERTS"
-mkcert -cert-file "$CERT" -key-file "$KEY" "$DOMAIN" localhost 127.0.0.1
+mkcert -cert-file "$CERT" -key-file "$KEY" "$DOMAIN" localhost 127.0.0.1 ::1
 chmod 644 "$KEY"  # read by nginx inside the container (the file never leaves this machine)
 
 for compose in compose.yaml compose.prod.yaml; do

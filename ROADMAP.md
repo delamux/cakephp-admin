@@ -342,3 +342,4 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
 ## Log
 
 - 2026-11-18: Phases 0–8 completed. Tests 26/26, phpcs and phpstan level 8 green.
+- 2026-11-19: Local domain renamed `admindashboard.localhost` → `cakeadmin.local` (user's decision; earlier entries keep the old name). `/etc/hosts` with IPv4 and IPv6 (`::1` avoids the macOS mDNS delay on `.local`), `HTTPS_PORT=443` in a root `.env` (ignored by git) instead of the shared SNI proxy; `bin/dev-https-cert` warns if the hosts lines are missing.

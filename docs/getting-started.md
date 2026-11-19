@@ -3,20 +3,43 @@
 Requirements: Docker (Docker Desktop, OrbStack or Colima) and [mkcert](https://github.com/FiloSottile/mkcert). You
 don't need PHP, Composer or Node on your machine: everything runs in containers.
 
-## 1. Local HTTPS (once per machine)
+## 1. Local HTTPS and domain (once per machine)
 
-WebAuthn (security keys and passkeys) only works over HTTPS on a domain, so locally the app uses
-`https://admindashboard.localhost` with an mkcert certificate:
+WebAuthn (security keys and passkeys) only works over HTTPS on a domain, so locally the app runs at
+`https://cakeadmin.local` with an mkcert certificate. Do these three steps once.
+
+**a) Point the domain at your machine** in `/etc/hosts` (`sudo nano /etc/hosts`). Add both lines, IPv4 and IPv6:
+
+```
+127.0.0.1   cakeadmin.local
+::1         cakeadmin.local
+```
+
+Unlike `*.localhost`, a `.local` domain doesn't resolve on its own: without these lines the browser can't find the
+app. Giving each project its own domain (`cakeadmin.local`, `otherapp.local`…) instead of plain `localhost` keeps
+their cookies, sessions and WebAuthn keys apart. The `::1` line matters: on macOS, `.local` names are also looked up
+over mDNS (Bonjour), and with only the IPv4 line every request can stall for several seconds waiting for that lookup.
+
+**b) Publish HTTPS on port 443**, so the URL has no port. Create a `.env` file in the project root (Docker Compose
+reads it automatically; it's ignored by git):
+
+```bash
+echo 'HTTPS_PORT=443' > .env
+```
+
+Without it nginx publishes HTTPS on 8445 (`https://cakeadmin.local:8445`). Only one container can hold port 443 at a
+time: if another project is already using it, stop that one or give one of them a different `HTTPS_PORT`.
+
+**c) Create the certificate:**
 
 ```bash
 brew install mkcert && mkcert -install
-bin/dev-https-cert          # creates docker/certs/admindashboard.localhost{,-key}.pem (outside git), lasts ~2 years
+bin/dev-https-cert          # creates docker/certs/cakeadmin.local{,-key}.pem (outside git), lasts ~2 years
 ```
 
-To use it **without a port** alongside other projects, the shared proxy `~/code/local-https-proxy` (outside this
-repository) listens on 443/80 and routes by domain without decrypting (SNI): `admindashboard.localhost` → 8445,
-`filae.localhost` → 8444. Start it once with `docker compose up -d` in its folder. `*.localhost` domains don't need
-`/etc/hosts`. Without the proxy, the app is still at `https://admindashboard.localhost:8445`.
+> Coming from the old `admindashboard.localhost` domain? Run `bin/dev-https-cert` again (the certificate file names
+> changed), add the `/etc/hosts` lines and sign in again: cookies and security keys were tied to the old domain, so
+> re-register any keys or passkeys.
 
 ## 2. Services, schema and first user
 
@@ -31,7 +54,7 @@ docker compose exec app bin/cake seeds run DemoUsers     # optional: 40 demo use
 
 | Service | Where |
 | --- | --- |
-| App | https://admindashboard.localhost (proxy) · https://admindashboard.localhost:8445 · http://localhost:8080 |
+| App | https://cakeadmin.local (with `HTTPS_PORT=443` in `.env`) · https://cakeadmin.local:8445 (without it) · http://localhost:8080 |
 | Mailpit (every email in dev) | http://localhost:8026 |
 | PostgreSQL | `localhost:5433`, user `cakephp` / `secret`; test database `cakephp_admin_test` |
 | Worker logs | `docker compose logs -f worker` |

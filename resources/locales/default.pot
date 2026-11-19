@@ -792,7 +792,7 @@ msgid "Your browser will ask you to touch your security key or confirm with your
 msgstr ""
 
 #: ./templates/cell/TwoFactor/display.php:52
-msgid "Security keys need HTTPS: open https://admindashboard.localhost."
+msgid "Security keys need HTTPS: open https://cakeadmin.local."
 msgstr ""
 
 #: ./templates/cell/TwoFactor/display.php:55

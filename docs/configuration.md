@@ -8,7 +8,7 @@ image). In dev, `compose.yaml` already defines them.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `SECURITY_SALT` | — (**required** in production) | Security salt (`openssl rand -hex 32`). Don't change it later: it invalidates sessions and cookies |
-| `APP_FULL_BASE_URL` | `https://admindashboard.localhost` | Public URL: email links and the **WebAuthn domain** (keys are bound to it) |
+| `APP_FULL_BASE_URL` | `https://cakeadmin.local` | Public URL: email links and the **WebAuthn domain** (keys are bound to it) |
 | `APP_NAME` | `CakePHP Admin` | Name used as the TOTP issuer and in WebAuthn |
 | `DATABASE_URL` | compose PostgreSQL | `postgres://user:password@host:5432/db` |
 | `EMAIL_TRANSPORT_DEFAULT_URL` | compose Mailpit | Real SMTP: `smtp://user:password@smtp.example.com:587?tls=true` |
@@ -28,6 +28,9 @@ image). In dev, `compose.yaml` already defines them.
 | `APP_DEFAULT_LOCALE`, `APP_DEFAULT_TIMEZONE` | `en_US`, `UTC` | Default language (the browser picks between `en_US` and `es_ES`) and time zone |
 | `THEME_COMPILED_ASSETS`, `ASSET_TIMESTAMP`, `LOG_TO_STDERR` | set in the image | Self-hosted assets, cache busting, logs to the container output |
 | `APP_PORT`, `HTTPS_PORT`, `DB_PORT`, `MAILPIT_UI_PORT`, `MAILPIT_SMTP_PORT` | 8080, 8445, 5433, 8026, 1026 | Dev ports |
+
+In local dev, put `HTTPS_PORT=443` in a `.env` file at the project root (ignored by git) so the app is at
+`https://cakeadmin.local` without a port; see [Getting started](getting-started.md#1-local-https-and-domain-once-per-machine).
 
 ## App config keys
 

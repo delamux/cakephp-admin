@@ -4,7 +4,7 @@ name: cakephp-admin
 x-app-environment: &app-environment
   DEBUG: "true"
   # Links in emails and the WebAuthn domain (keys are bound to it). Without a certificate: http://localhost:8080
-  APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
+  APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://cakeadmin.local}"
   DATABASE_URL: "postgres://cakephp:secret@db:5432/cakephp_admin"
   DATABASE_TEST_URL: "postgres://cakephp:secret@db:5432/cakephp_admin_test"
   EMAIL_TRANSPORT_DEFAULT_URL: "smtp://mailpit:1025"
@@ -16,8 +16,8 @@ services:
     image: nginx:1.29-alpine
     ports:
       - "${APP_PORT:-8080}:80"
-      # HTTPS (mkcert certificate in docker/certs, bin/dev-https-cert). https://admindashboard.localhost without
-      # a port goes through ~/code/local-https-proxy (443 shared by domain with other projects)
+      # HTTPS (mkcert certificate in docker/certs, bin/dev-https-cert). For https://cakeadmin.local without a
+      # port, set HTTPS_PORT=443 in .env and map the domain in /etc/hosts (docs/getting-started.md)
       - "${HTTPS_PORT:-8445}:443"
     volumes:
       - .:/app:ro

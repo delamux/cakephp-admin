@@ -48,13 +48,21 @@ Docker for development, production and **Coolify**.
 | Files | josegonzalez/cakephp-upload (FriendsOfCake) + Flysystem | 8.1 · 3 | Private uploads with a naming convention |
 | Queue | dereuromark/cakephp-queue | 8.18 | Emails and background jobs in PostgreSQL (no Redis) |
 | Mail in dev | Mailpit | — | Local inbox at http://localhost:8026 |
-| Local HTTPS | mkcert + shared SNI proxy | — | `https://admindashboard.localhost` without a port (WebAuthn requires HTTPS) |
+| Local HTTPS | mkcert + `/etc/hosts` | — | `https://cakeadmin.local` without a port (WebAuthn requires HTTPS) |
 | Production assets | Tailwind CLI + basecoat-css, Chart.js, htmx, Geist (Docker Node stage) | — | Everything self-hosted: no requests to CDNs |
 | Quality | PHPUnit 13 · PHPStan 2 (level 8) · CakePHP CodeSniffer | — | `composer check`; CI on GitHub Actions |
 
 ## Getting started
 
+Once per machine, add the domain to `/etc/hosts` (IPv4 and IPv6) and publish HTTPS on port 443:
+
+```
+127.0.0.1   cakeadmin.local
+::1         cakeadmin.local
+```
+
 ```bash
+echo 'HTTPS_PORT=443' > .env                                       # project root, ignored by git
 brew install mkcert && mkcert -install && bin/dev-https-cert     # local HTTPS (WebAuthn requires it)
 docker compose up -d --build                                       # web, app, worker, db, mailpit
 docker compose exec app composer install
@@ -62,7 +70,7 @@ docker compose exec app bin/deploy                                 # migrations 
 docker compose exec app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
 ```
 
-App at https://admindashboard.localhost · emails at http://localhost:8026. Details in
+App at https://cakeadmin.local · emails at http://localhost:8026. Details in
 [Getting started](docs/getting-started.md).
 
 ## Production
@@ -75,7 +83,7 @@ App at https://admindashboard.localhost · emails at http://localhost:8026. Deta
 
 ## Documentation
 
-The guides in `docs/` are written in Spanish.
+The guides in `docs/`:
 
 | Guide | |
 | --- | --- |

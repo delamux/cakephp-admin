@@ -75,7 +75,7 @@ if ($setup !== null && $setup['method'] === 'totp' && $qr !== null) {
         . ' data-error="' . h(__('The key could not be registered. Try again.')) . '"'
         . ' data-unsupported="' . h(__('This browser does not support security keys or passkeys.')) . '">'
         . '<p>' . __('Your browser will ask you to touch your security key or confirm with your fingerprint, face or PIN.') . '</p>'
-        . ($secure ? '' : $this->Alert->warning(__('Security keys need HTTPS: open https://admindashboard.localhost.')))
+        . ($secure ? '' : $this->Alert->warning(__('Security keys need HTTPS: open https://cakeadmin.local.')))
         . '<p class="hidden text-destructive" data-webauthn-message role="alert"></p>'
         . '<div class="flex flex-wrap gap-2">'
         . $this->Button->render(__('Register key'), ['type' => 'button', 'data-webauthn-start' => true, 'icon' => 'shield-check'])

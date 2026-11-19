@@ -12,11 +12,11 @@ use Webauthn\TrustPath\EmptyTrustPath;
 /**
  * Real WebAuthn credentials for tests: an EC P-256 key pair, the credential stored like CakeDC/Users
  * does (`additional_data.webauthn_credentials`) and browser assertions signed with that key.
- * Requests go to https://admindashboard.localhost (the WebAuthn domain of APP_FULL_BASE_URL).
+ * Requests go to https://cakeadmin.local (the WebAuthn domain of APP_FULL_BASE_URL).
  */
 trait WebauthnTestTrait
 {
-    protected const WEBAUTHN_HOST = 'admindashboard.localhost';
+    protected const WEBAUTHN_HOST = 'cakeadmin.local';
     protected const CREDENTIAL_ID = 'credential-id';
 
     private ?OpenSSLAsymmetricKey $webauthnKey = null;

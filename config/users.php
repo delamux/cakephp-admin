@@ -67,7 +67,7 @@ return [
         // Must be set explicitly: overriding the plugin config with null breaks the login page
         'qrcodeprovider' => new EndroidQrCodeProvider(),
     ],
-    // WebAuthn requires HTTPS (https://admindashboard.localhost in dev, README "HTTPS")
+    // WebAuthn requires HTTPS (https://cakeadmin.local in dev, README "HTTPS")
     'Webauthn2fa' => [
         'enabled' => $twoFactorEnabled,
         'appName' => env('APP_NAME', 'CakePHP Admin'),

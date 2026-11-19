@@ -782,8 +782,8 @@ msgid "Your browser will ask you to touch your security key or confirm with your
 msgstr "El navegador te pedirá que toques tu llave de seguridad o que confirmes con la huella, el rostro o el PIN."
 
 #: ./templates/cell/TwoFactor/display.php:52
-msgid "Security keys need HTTPS: open https://admindashboard.localhost."
-msgstr "Las llaves de seguridad necesitan HTTPS: abre https://admindashboard.localhost."
+msgid "Security keys need HTTPS: open https://cakeadmin.local."
+msgstr "Las llaves de seguridad necesitan HTTPS: abre https://cakeadmin.local."
 
 #: ./templates/cell/TwoFactor/display.php:55
 msgid "Register key"

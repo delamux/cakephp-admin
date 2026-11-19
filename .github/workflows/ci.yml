@@ -39,7 +39,7 @@ jobs:
       DATABASE_URL: postgres://cakephp:secret@127.0.0.1:5432/cakephp_admin_test
       DATABASE_TEST_URL: postgres://cakephp:secret@127.0.0.1:5432/cakephp_admin_test
       # WebAuthn tests sign for this domain (keys are bound to the host of APP_FULL_BASE_URL)
-      APP_FULL_BASE_URL: https://admindashboard.localhost
+      APP_FULL_BASE_URL: https://cakeadmin.local
       # Throwaway value for CI only (not a secret)
       SECURITY_SALT: ci-only-salt-not-used-anywhere-else-0123456789abcdef
 
