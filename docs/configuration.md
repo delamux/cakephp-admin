@@ -29,9 +29,8 @@ image). In dev, `compose.yaml` already defines them.
 | `THEME_COMPILED_ASSETS`, `ASSET_TIMESTAMP`, `LOG_TO_STDERR` | set in the image | Self-hosted assets, cache busting, logs to the container output |
 | `APP_PORT`, `HTTPS_PORT`, `DB_PORT`, `MAILPIT_UI_PORT`, `MAILPIT_SMTP_PORT` | 8080, 443, 5433, 8026, 1026 | Dev ports (`compose.prod.yaml` publishes HTTPS on 8445 by default) |
 
-In local dev, set `HTTPS_PORT=443` in a `.env` file at the project root (ignored by git) so the app is at
-`https://cakeadmin.local` without a port (443 is also the `compose.yaml` default; use another port in `.env` if 443 is
-taken); see [Getting started](getting-started.md#1-local-https-and-domain-once-per-machine).
+In local dev the app is at `https://cakeadmin.local` on port 443 (the `compose.yaml` default). If 443 is taken, set
+another `HTTPS_PORT` in a `.env` file at the project root (ignored by git); see [Getting started](getting-started.md#1-local-https-and-domain-once-per-machine).
 
 ## App config keys
 

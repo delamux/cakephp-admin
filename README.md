@@ -54,14 +54,14 @@ Docker for development, production and **Coolify**.
 
 ## Getting started
 
-Once per machine, add the domain to `/etc/hosts` (IPv4 and IPv6) and publish HTTPS on port 443:
+Once per machine, add the domain to `/etc/hosts` (IPv4 and IPv6); HTTPS is published on port 443:
 
 ```
 127.0.0.1   cakeadmin.local
 ::1         cakeadmin.local
 ```
 
-```bash                                       # project root, ignored by git
+```bash
 brew install mkcert && mkcert -install && bin/dev-https-cert     # local HTTPS (WebAuthn requires it)
 docker compose up -d --build                                       # web, app, worker, db, mailpit
 docker compose exec app composer install

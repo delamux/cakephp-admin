@@ -20,15 +20,13 @@ app. Giving each project its own domain (`cakeadmin.local`, `otherapp.local`…)
 their cookies, sessions and WebAuthn keys apart. The `::1` line matters: on macOS, `.local` names are also looked up
 over mDNS (Bonjour), and with only the IPv4 line every request can stall for several seconds waiting for that lookup.
 
-**b) Publish HTTPS on port 443**, so the URL has no port. 443 is already the default in `compose.yaml`; set it
-explicitly in a `.env` file in the project root (Docker Compose reads it automatically; it's ignored by git):
+**b) Port 443.** `compose.yaml` publishes HTTPS on 443 by default, so the URL has no port. Only one container can
+hold 443 at a time: if another project is already using it, stop that one or give this one another port in a `.env`
+file in the project root (Docker Compose reads it automatically; it's ignored by git):
 
 ```bash
-echo 'HTTPS_PORT=443' > .env
+echo 'HTTPS_PORT=8445' > .env      # → https://cakeadmin.local:8445
 ```
-
-Only one container can hold port 443 at a time. If another project is already using it, stop that one or give this
-one a different port in `.env` (e.g. `HTTPS_PORT=8445` → `https://cakeadmin.local:8445`).
 
 **c) Create the certificate:**
 
@@ -89,5 +87,5 @@ SECURITY_SALT=$(openssl rand -hex 32) docker compose -f compose.prod.yaml up -d 
 ```
 
 Real images (no mounted code, strict CSP, compiled assets), automatic migrations (`migrate` service) and the worker.
-It reads the same `.env`, so with `HTTPS_PORT=443` it uses the same port as dev: run one stack at a time. Without
-the `.env` it publishes HTTPS on 8445 and can run next to the dev stack.
+It publishes HTTPS on 8445 by default (`https://cakeadmin.local:8445`), so it can run next to the dev stack; a
+`HTTPS_PORT` in `.env` applies to both stacks.
