@@ -54,6 +54,11 @@ return [
      *   `plugins`, `templates`, `locales` subkeys, which allow the definition of
      *   paths for plugins, view templates and locale files respectively.
      */
+    // `bin/cake bake` generates the CRUD screens with the theme components (docs/en/architecture.md)
+    'Bake' => [
+        'theme' => 'BasecoatTheme',
+    ],
+
     'App' => [
         'namespace' => 'App',
         'encoding' => env('APP_ENCODING', 'UTF-8'),
