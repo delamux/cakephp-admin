@@ -61,8 +61,7 @@ Once per machine, add the domain to `/etc/hosts` (IPv4 and IPv6) and publish HTT
 ::1         cakeadmin.local
 ```
 
-```bash
-echo 'HTTPS_PORT=443' > .env                                       # project root, ignored by git
+```bash                                       # project root, ignored by git
 brew install mkcert && mkcert -install && bin/dev-https-cert     # local HTTPS (WebAuthn requires it)
 docker compose up -d --build                                       # web, app, worker, db, mailpit
 docker compose exec app composer install
