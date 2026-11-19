@@ -1,229 +1,231 @@
 # CakePHP Admin Skeleton
 
-Esqueleto de panel de administración para arrancar proyectos con CakePHP: login completo, usuarios, roles y permisos
-gestionados desde la propia UI, verificación en dos pasos y passkeys, dashboard, emails y PDF, seguridad de
-[book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/security.html) aplicada, htmx, i18n y Docker para dev y
-producción.
+Admin panel skeleton for kick-starting CakePHP projects: full login, users, roles and permissions managed from the UI
+itself, two-step verification and passkeys, dashboard, emails and PDF, the security guidance from
+[book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/security.html) applied, htmx, i18n and Docker for
+development and production.
 
-Plan, decisiones y estado de cada fase: [ROADMAP.md](ROADMAP.md).
+Plan, decisions and status of each phase: [ROADMAP.md](ROADMAP.md).
 
-## Qué incluye
+## What's included
 
-- **Cuentas** (CakeDC/Users): login, registro con validación por email, reset de contraseña, enlace mágico de acceso,
-  perfil, CRUD de usuarios, «recordarme».
-- **Roles y permisos en base de datos**: roles `superadmin`, `admin`, `editor`, `user` (y los que crees), matriz
-  acción × rol con descubrimiento automático de controladores, acciones solo-superadmin bloqueadas e **histórico de
-  cambios** con purga por retención.
-- **Actividad de la cuenta**: inicios de sesión (también fallidos), cierres, cambios de contraseña y de 2FA, con IP y
-  navegador; cada usuario ve la suya en el perfil y el superadmin la de cualquiera. Purga a los 180 días.
-- **Verificación en dos pasos** opcional: app de autenticación (TOTP + QR) y/o llave de seguridad; **passkeys** para
-  entrar sin contraseña; avisos por email; restablecimiento por superadmin o por consola; códigos de un solo uso.
-- **Dashboard** con KPIs, gráfico de altas, últimos usuarios y equipo; informe de usuarios en **PDF**.
-- **Emails** HTML de alta compatibilidad (tablas, CSS inline con Emogrifier, dark mode, versión texto).
-- **htmx**: listados, matriz de permisos y tarjeta de 2FA sin recargar, compatible con la CSP.
-- **Seguridad**: CSP estricta con nonces, cabeceras de seguridad, HTTPS + HSTS, CSRF y FormProtection, cookie
-  «recordarme» cifrada, sesión endurecida, límite de intentos por IP, proxies de confianza.
-- **i18n**: inglés y español (según el navegador).
-- **Calidad**: TDD (≈225 tests), PHPStan nivel 8, CakePHP CodeSniffer, `composer audit`, CI en GitHub Actions.
+- **Accounts** (CakeDC/Users): login, sign-up with email verification, password reset, magic sign-in link, profile,
+  user CRUD, "remember me".
+- **Database-backed roles and permissions**: `superadmin`, `admin`, `editor` and `user` roles (plus any you create),
+  an action × role matrix with automatic controller discovery, locked superadmin-only actions and a **change history**
+  with retention-based purging.
+- **Account activity**: sign-ins (including failed ones), sign-outs, password and 2FA changes, with IP and browser;
+  every user sees their own in their profile and the superadmin can see anyone's. Purged after 180 days.
+- Optional **two-step verification**: authenticator app (TOTP + QR) and/or security key; **passkeys** for passwordless
+  sign-in; email notifications; reset by a superadmin or from the console; single-use codes.
+- **Dashboard** with KPIs, a sign-ups chart, latest users and the team; users report as a **PDF**.
+- Highly compatible HTML **emails** (tables, inline CSS via Emogrifier, dark mode, plain-text version).
+- **htmx**: lists, the permissions matrix and the 2FA card update without a page reload, CSP-compatible.
+- **Security**: strict CSP with nonces, security headers, HTTPS + HSTS, CSRF and FormProtection, encrypted
+  "remember me" cookie, hardened session, per-IP rate limiting, trusted proxies.
+- **i18n**: English and Spanish (based on the browser).
+- **Quality**: TDD (≈225 tests), PHPStan level 8, CakePHP CodeSniffer, `composer audit`, CI on GitHub Actions.
 
 ## Stack
 
-| Capa | Tecnología | Versión | Por qué |
+| Layer | Technology | Version | Why |
 | --- | --- | --- | --- |
-| Lenguaje | PHP | 8.5 | Requisito del proyecto |
-| Framework | CakePHP | 5.4 | Convenciones, ORM, DI container, middlewares de seguridad |
-| Usuarios | CakeDC/Users (fork `delamux/CakeDC-users`, rama `issue/4-webauthn-lib-5`) | 16.0.5 + webauthn-lib 5 | Login, registro, 2FA; el fork lo hace compatible con webauthn-lib 5 / PHP 8.5 |
-| Autorización | CakeDC/Auth RBAC + proveedor propio en BD | 10.1 | Reglas por rol editables en la UI |
-| 2FA / passkeys | robthree/twofactorauth · web-auth/webauthn-lib · endroid/qr-code | 3 · 5.3 · 6.2 | TOTP, WebAuthn, QR en servidor |
-| UI | [delamux/cakephp-basecoat-theme](https://github.com/delamux/cakephp-basecoat-theme) (Basecoat + Tailwind v4) | main | Componentes estilo shadcn, light/dark, sin JS en línea |
-| Interacción | htmx | 2.0.11 | Fragmentos sin recargar, sin build ni framework JS |
-| CSP | paragonie/csp-builder (CspMiddleware de CakePHP) | 3.1 | Content-Security-Policy con nonces |
-| PDF | friendsofcake/cakepdf + Dompdf | — | PDF en PHP puro, sin binarios |
-| Emails | pelago/emogrifier | — | CSS inline para clientes de correo |
-| Base de datos | PostgreSQL | 18 | |
-| Servidor | nginx + PHP-FPM | 1.29 · 8.5 | Mismo Dockerfile multi-stage para dev y producción |
-| Correo en dev | Mailpit | — | Bandeja local en http://localhost:8026 |
-| HTTPS local | mkcert + proxy SNI compartido | — | `https://admindashboard.localhost` sin puerto (WebAuthn exige HTTPS) |
-| Assets en producción | Tailwind CLI + basecoat-css, Chart.js, htmx, Geist (etapa Node de Docker) | — | Todo autoalojado: ninguna petición a CDNs |
-| Calidad | PHPUnit 13 · PHPStan 2 (nivel 8) · CakePHP CodeSniffer | — | `composer check`; CI en GitHub Actions |
+| Language | PHP | 8.5 | Project requirement |
+| Framework | CakePHP | 5.4 | Conventions, ORM, DI container, security middlewares |
+| Users | CakeDC/Users (fork `delamux/CakeDC-users`, branch `issue/4-webauthn-lib-5`) | 16.0.5 + webauthn-lib 5 | Login, sign-up, 2FA; the fork makes it compatible with webauthn-lib 5 / PHP 8.5 |
+| Authorization | CakeDC/Auth RBAC + custom database provider | 10.1 | Per-role rules editable in the UI |
+| 2FA / passkeys | robthree/twofactorauth · web-auth/webauthn-lib · endroid/qr-code | 3 · 5.3 · 6.2 | TOTP, WebAuthn, server-side QR |
+| UI | [delamux/cakephp-basecoat-theme](https://github.com/delamux/cakephp-basecoat-theme) (Basecoat + Tailwind v4) | main | shadcn-style components, light/dark, no inline JS |
+| Interaction | htmx | 2.0.11 | Fragments without reloads, no build step or JS framework |
+| CSP | paragonie/csp-builder (CakePHP's CspMiddleware) | 3.1 | Content-Security-Policy with nonces |
+| PDF | friendsofcake/cakepdf + Dompdf | — | Pure-PHP PDF, no binaries |
+| Emails | pelago/emogrifier | — | Inline CSS for email clients |
+| Database | PostgreSQL | 18 | |
+| Server | nginx + PHP-FPM | 1.29 · 8.5 | Same multi-stage Dockerfile for dev and production |
+| Mail in dev | Mailpit | — | Local inbox at http://localhost:8026 |
+| Local HTTPS | mkcert + shared SNI proxy | — | `https://admindashboard.localhost` without a port (WebAuthn requires HTTPS) |
+| Production assets | Tailwind CLI + basecoat-css, Chart.js, htmx, Geist (Docker Node stage) | — | Everything self-hosted: no requests to CDNs |
+| Quality | PHPUnit 13 · PHPStan 2 (level 8) · CakePHP CodeSniffer | — | `composer check`; CI on GitHub Actions |
 
-## Arquitectura
+## Architecture
 
-DDD-lite: controladores y comandos finos; la orquestación (auditoría, caché, transacciones, emails) vive en **casos de
-uso** de `src/UseCase` inyectados con el contenedor DI de CakePHP (`Application::services()`), las reglas de dominio en
-clases puras (`UserRoleManager`, `PermissionsSynchronizer`, `ActionDiscovery`) y las Tables hacen de repositorios.
-`ArchitectureTest` impide que un controlador o comando orqueste por su cuenta.
+DDD-lite: thin controllers and commands; orchestration (auditing, caching, transactions, emails) lives in **use cases**
+under `src/UseCase`, injected with CakePHP's DI container (`Application::services()`); domain rules live in plain
+classes (`UserRoleManager`, `PermissionsSynchronizer`, `ActionDiscovery`) and Tables act as repositories.
+`ArchitectureTest` prevents controllers and commands from orchestrating on their own.
 
 ```
 src/
-├── UseCase/            # casos de uso: Permissions, Roles, TwoFactor, Users (+ Actor)
-├── Rbac/               # descubrimiento de acciones, sincronización, proveedor RBAC en BD, auditoría
-├── Service/            # reglas de roles, estadísticas del dashboard
-├── Authentication/     # checkers de 2FA opcional
-├── Webauthn/           # adaptadores WebAuthn (registro, segundo paso, passkey)
-├── Http/               # SecurityMiddlewares (CSP, cabeceras, HTTPS, CSRF, cookies), AuthThrottle
-├── Middleware/         # límite por IP, proxies de confianza, refresco de identidad
-├── Controller/         # finos; Component/Htmx y OneTimePasswordAuthenticator propio
-└── Model/              # UsersTable (2FA, sincronía superadmin), Roles, Permissions, auditoría
-webroot/js/             # app.js (confirmaciones, CSRF de htmx) y webauthn.js, sin build
+├── UseCase/            # use cases: Permissions, Roles, TwoFactor, Users (+ Actor)
+├── Rbac/               # action discovery, synchronization, database RBAC provider, auditing
+├── Service/            # role rules, dashboard statistics
+├── Authentication/     # optional 2FA checkers
+├── Webauthn/           # WebAuthn adapters (registration, second step, passkey)
+├── Http/               # SecurityMiddlewares (CSP, headers, HTTPS, CSRF, cookies), AuthThrottle
+├── Middleware/         # per-IP rate limiting, trusted proxies, identity refresh
+├── Controller/         # thin; Htmx component and custom OneTimePasswordAuthenticator
+└── Model/              # UsersTable (2FA, superadmin sync), Roles, Permissions, auditing
+webroot/js/             # app.js (confirmations, htmx CSRF) and webauthn.js, no build step
 ```
 
-## Arranque (desarrollo)
+## Getting started (development)
 
 ```bash
-# 1. HTTPS local (una vez por equipo; WebAuthn/passkeys lo exigen)
+# 1. Local HTTPS (once per machine; WebAuthn/passkeys require it)
 brew install mkcert && mkcert -install
 bin/dev-https-cert
 
-# 2. Servicios y base de datos
+# 2. Services and database
 docker compose up -d --build
 docker compose exec app composer install
 docker compose exec app bin/cake migrations migrate -p CakeDC/Users
 docker compose exec app bin/cake migrations migrate
 docker compose exec app bin/cake permissions sync
 docker compose exec app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
-docker compose exec app bin/cake seeds run DemoUsers     # opcional: 40 usuarios de demo (contraseña Demo1234!)
+docker compose exec app bin/cake seeds run DemoUsers     # optional: 40 demo users (password Demo1234!)
 ```
 
-| Servicio | URL |
+| Service | URL |
 | --- | --- |
-| App | https://admindashboard.localhost (vía el proxy compartido) · https://admindashboard.localhost:8445 · http://localhost:8080 |
+| App | https://admindashboard.localhost (via the shared proxy) · https://admindashboard.localhost:8445 · http://localhost:8080 |
 | Mailpit | http://localhost:8026 |
-| PostgreSQL | `localhost:5433` (cakephp / secret; BD de tests `cakephp_admin_test`) |
+| PostgreSQL | `localhost:5433` (cakephp / secret; test database `cakephp_admin_test`) |
 
-- En dev el código va montado en el contenedor y Tailwind se carga con su build de navegador: no hay que compilar nada.
-- **HTTPS sin puerto junto a otros proyectos:** el proxy `~/code/local-https-proxy` (puertos 443/80, fuera del
-  proyecto) reparte por dominio sin descifrar (SNI): `admindashboard.localhost` → 8445, `filae.localhost` → 8444.
-  Arráncalo una vez con `docker compose up -d` en esa carpeta. Los `*.localhost` no necesitan `/etc/hosts`.
-- El certificado dura ~2 años; se renueva con `bin/dev-https-cert`.
-- Puertos configurables: `APP_PORT`, `HTTPS_PORT`, `MAILPIT_UI_PORT`, `MAILPIT_SMTP_PORT`, `DB_PORT`.
+- In dev the code is mounted into the container and Tailwind is loaded with its browser build: nothing needs compiling.
+- **Port-less HTTPS alongside other projects:** the `~/code/local-https-proxy` proxy (ports 443/80, outside this
+  project) routes by domain without decrypting (SNI): `admindashboard.localhost` → 8445, `filae.localhost` → 8444.
+  Start it once with `docker compose up -d` in that folder. `*.localhost` domains don't need `/etc/hosts`.
+- The certificate lasts ~2 years; renew it with `bin/dev-https-cert`.
+- Configurable ports: `APP_PORT`, `HTTPS_PORT`, `MAILPIT_UI_PORT`, `MAILPIT_SMTP_PORT`, `DB_PORT`.
 
-## Desarrollo diario
+## Day-to-day development
 
 ```bash
-docker compose exec app composer check                    # PHPUnit + CodeSniffer + PHPStan nivel 8
-docker compose exec app bin/cake permissions sync         # tras añadir controladores o acciones
-docker compose exec app bin/cake permissions purge        # histórico de permisos (retención 365 días)
-docker compose exec app bin/cake activity purge           # actividad de las cuentas (retención 180 días)
-docker compose exec app bin/cake two_factor reset admin   # quitar el 2FA de una cuenta (p. ej. superadmin sin móvil)
+docker compose exec app composer check                    # PHPUnit + CodeSniffer + PHPStan level 8
+docker compose exec app bin/cake permissions sync         # after adding controllers or actions
+docker compose exec app bin/cake permissions purge        # permissions history (365-day retention)
+docker compose exec app bin/cake activity purge           # account activity (180-day retention)
+docker compose exec app bin/cake two_factor reset admin   # remove 2FA from an account (e.g. a superadmin without their phone)
 ```
 
-- **TDD** para las reglas de negocio propias (no para plantillas ni para lo que ya prueba el framework).
-- **CI** (`.github/workflows/ci.yml`): PHPUnit contra PostgreSQL 18, CodeSniffer (anotado en el PR), PHPStan y
-  `composer audit` en cada push a `main` y en los pull requests. Dependabot actualiza Composer y las actions.
-- **Traducciones:** al añadir textos, `bin/cake i18n extract --paths src,templates --output resources/locales --merge no
-  --overwrite --extract-core no`, completar `resources/locales/es_ES/default.po` y `bin/cake cache clear_all`.
+- **TDD** for the project's own business rules (not for templates or for what the framework already tests).
+- **CI** (`.github/workflows/ci.yml`): PHPUnit against PostgreSQL 18, CodeSniffer (annotated on the PR), PHPStan and
+  `composer audit` on every push to `main` and on pull requests. Dependabot updates Composer packages and actions.
+- **Translations:** when adding strings, run `bin/cake i18n extract --paths src,templates --output resources/locales
+  --merge no --overwrite --extract-core no`, fill in `resources/locales/es_ES/default.po` and run
+  `bin/cake cache clear_all`.
 
-## Seguridad
+## Security
 
-Aplicado según [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/security.html) (`App\Http\SecurityMiddlewares`,
-`config/app.php` → `Security.*`). `SecurityTest` lo comprueba sobre respuestas reales.
+Applied following [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/security.html)
+(`App\Http\SecurityMiddlewares`, `config/app.php` → `Security.*`). `SecurityTest` checks it against real responses.
 
-| Medida | Cómo |
+| Measure | How |
 | --- | --- |
-| **Content-Security-Policy** | `CspMiddleware` con nonces de script y estilo; nada en línea (`'unsafe-inline'`/`'unsafe-eval'` fuera), `object-src 'none'`, `frame-ancestors`/`form-action`/`base-uri 'self'`. Estricta en producción; **Report-Only en dev** (el build de navegador de Tailwind inyecta estilos sin nonce). |
-| Cabeceras | `SecurityHeadersMiddleware`: `nosniff`, `X-Frame-Options: sameorigin`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Download-Options`, `Permissions-Policy` (cámara, micro, geolocalización… desactivados; WebAuthn permitido). |
-| HTTPS + HSTS | `HttpsEnforcerMiddleware` con `HTTPS_ENFORCE=true` (imagen de producción): HTTP → HTTPS y `Strict-Transport-Security` de 1 año. |
-| CSRF | `CsrfProtectionMiddleware`: cookie `httponly`, `SameSite=Lax` y `secure` en HTTPS; los `fetch`/htmx envían `X-CSRF-Token` desde `<meta name="csrf-token">`. |
-| FormProtection | En todos los controladores: los formularios de `FormHelper` llevan un token de sus campos. Solo se desbloquean los endpoints JSON de WebAuthn y los checkboxes de la matriz. |
-| Cookie «recordarme» | `EncryptedCookieMiddleware` (AES) con `COOKIE_KEY` (o derivada de la sal): ni legible ni falsificable; `secure` y `SameSite=Lax`. |
-| Sesión | En **PostgreSQL** (tabla `sessions`); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` en HTTPS, caducidad por inactividad (`SESSION_TIMEOUT`). |
-| Límite de intentos | Por IP, en **PostgreSQL** (`auth_throttles`, IP con hash, upsert atómico): 20 accesos/códigos 2FA/passkeys fallidos cada 15 min; registro, reset y reenvío 5 por hora (429 + `Retry-After`). |
-| Proxies de confianza | `TRUSTED_PROXIES`: solo desde ellos se acepta `X-Forwarded-For` (IP real para el límite y los logs). |
-| Actividad de la cuenta | `account_activities`: accesos, fallos (solo de cuentas existentes, nunca lo tecleado), cierres, contraseña y 2FA, con IP y navegador. Visible en el perfil y, para el superadmin, en la ficha del usuario. Sin `TRUSTED_PROXIES` detrás de un proxy se ve la IP del proxy. |
-| Cuentas | 2FA/passkeys, códigos TOTP de un solo uso, campos de 2FA no asignables desde formularios, solo un superadmin gestiona superadmins, histórico de cambios de permisos. |
+| **Content-Security-Policy** | `CspMiddleware` with script and style nonces; nothing inline (no `'unsafe-inline'`/`'unsafe-eval'`), `object-src 'none'`, `frame-ancestors`/`form-action`/`base-uri 'self'`. Strict in production; **Report-Only in dev** (Tailwind's browser build injects styles without a nonce). |
+| Headers | `SecurityHeadersMiddleware`: `nosniff`, `X-Frame-Options: sameorigin`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Download-Options`, `Permissions-Policy` (camera, microphone, geolocation… disabled; WebAuthn allowed). |
+| HTTPS + HSTS | `HttpsEnforcerMiddleware` with `HTTPS_ENFORCE=true` (production image): HTTP → HTTPS and a 1-year `Strict-Transport-Security`. |
+| CSRF | `CsrfProtectionMiddleware`: `httponly` cookie, `SameSite=Lax` and `secure` over HTTPS; `fetch`/htmx requests send `X-CSRF-Token` from `<meta name="csrf-token">`. |
+| FormProtection | In every controller: `FormHelper` forms carry a token for their fields. Only the WebAuthn JSON endpoints and the matrix checkboxes are unlocked. |
+| "Remember me" cookie | `EncryptedCookieMiddleware` (AES) with `COOKIE_KEY` (or derived from the salt): neither readable nor forgeable; `secure` and `SameSite=Lax`. |
+| Session | Stored in **PostgreSQL** (`sessions` table); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` over HTTPS, idle timeout (`SESSION_TIMEOUT`). |
+| Rate limiting | Per IP, in **PostgreSQL** (`auth_throttles`, hashed IP, atomic upsert): 20 failed sign-ins/2FA codes/passkeys every 15 min; sign-up, reset and resend 5 per hour (429 + `Retry-After`). |
+| Trusted proxies | `TRUSTED_PROXIES`: `X-Forwarded-For` is only accepted from them (real IP for rate limiting and logs). |
+| Account activity | `account_activities`: sign-ins, failures (only for existing accounts, never what was typed), sign-outs, password and 2FA, with IP and browser. Visible in the profile and, for the superadmin, on the user's page. Behind a proxy without `TRUSTED_PROXIES` you see the proxy's IP. |
+| Accounts | 2FA/passkeys, single-use TOTP codes, 2FA fields not mass-assignable from forms, only a superadmin can manage superadmins, permission change history. |
 
-**Cómo escribir plantillas compatibles con la CSP:** nada de `onclick`/`onsubmit`, `<script>` sin `Html->script()`,
-`style="…"` ni `javascript:`. En su lugar:
+**How to write CSP-compatible templates:** no `onclick`/`onsubmit`, no `<script>` outside `Html->script()`, no
+`style="…"` and no `javascript:`. Instead:
 
-- Scripts y estilos con `$this->Html->script()` / `->css()` / `->scriptBlock()`: llevan el nonce solos.
-- Confirmación: `'data-confirm' => __('¿Seguro?')` en el botón o el formulario (lo gestiona `webroot/js/app.js`).
-- Enviar un formulario desde un enlace: `'data-submit-form' => 'id-del-form'`.
-- Componentes del tema (sidebar, diálogos, alertas, barras de progreso): atributos `data-*` del propio tema.
+- Scripts and styles via `$this->Html->script()` / `->css()` / `->scriptBlock()`: they get the nonce automatically.
+- Confirmation: `'data-confirm' => __('Are you sure?')` on the button or form (handled by `webroot/js/app.js`).
+- Submitting a form from a link: `'data-submit-form' => 'form-id'`.
+- Theme components (sidebar, dialogs, alerts, progress bars): the theme's own `data-*` attributes.
 
 ## htmx
 
-htmx 2 (autoalojado en producción, CDN fijado en dev) con una integración propia inspirada en `zunnu/cake-htmx`
-(`App\Controller\Component\HtmxComponent`, cargado en `AppController`):
+htmx 2 (self-hosted in production, pinned CDN in dev) with a custom integration inspired by `zunnu/cake-htmx`
+(`App\Controller\Component\HtmxComponent`, loaded in `AppController`):
 
-- **Peticiones htmx** (`HX-Request`) se renderizan con el layout `htmx`: solo la plantilla, y los mensajes flash
-  llegan como **toasts** fuera de banda (`hx-swap-oob` al toaster), aunque `hx-select` tome otro elemento. La
-  navegación con `hx-boost` sin `hx-target` recibe la página completa. Siempre `Vary: HX-Request`.
-- **CSRF** por cabecera (`app.js`), **FormProtection** intacto (los formularios siguen siendo de `FormHelper`) y
-  **CSP**: `htmx-config` con `allowEval: false`, sin estilos inyectados y con el nonce de la página.
-- Si una petición htmx necesita login, `AppRedirectHandler` responde con `HX-Redirect` (navegación completa).
-- Helpers en el controlador: `$this->Htmx->isRequest()`, `->trigger('evento')`, `->redirect($url)`, `->refresh()`.
+- **htmx requests** (`HX-Request`) are rendered with the `htmx` layout: just the template, and flash messages arrive
+  as out-of-band **toasts** (`hx-swap-oob` into the toaster), even when `hx-select` picks another element. Navigation
+  with `hx-boost` and no `hx-target` receives the full page. Always `Vary: HX-Request`.
+- **CSRF** via header (`app.js`), **FormProtection** untouched (forms are still `FormHelper` forms) and **CSP**:
+  `htmx-config` with `allowEval: false`, no injected styles and the page's nonce.
+- If an htmx request requires login, `AppRedirectHandler` responds with `HX-Redirect` (full navigation).
+- Controller helpers: `$this->Htmx->isRequest()`, `->trigger('event')`, `->redirect($url)`, `->refresh()`.
 
-Patrón habitual: el formulario hace `hx-post`, el controlador redirige como siempre y htmx sigue la redirección y
-cambia solo el fragmento:
+Common pattern: the form does `hx-post`, the controller redirects as usual and htmx follows the redirect and swaps
+only the fragment:
 
 ```php
 <?= $this->Form->create($entity, [
     'hx-post' => $this->Url->build(['action' => 'edit', $entity->id]),
-    'hx-target' => '#mi-bloque',
-    'hx-select' => '#mi-bloque',
+    'hx-target' => '#my-block',
+    'hx-select' => '#my-block',
     'hx-swap' => 'outerHTML',
 ]) ?>
 ```
 
-En uso: listado de usuarios (orden, paginación y borrado con `hx-boost`), matriz de permisos (guardar con toast) y
-tarjeta de verificación en dos pasos (cada paso cambia solo la tarjeta).
+In use: the users list (sorting, pagination and deletion with `hx-boost`), the permissions matrix (save with a toast)
+and the two-step verification card (each step swaps only the card).
 
-## Producción
+## Production
 
-Imágenes autocontenidas (`docker/app/Dockerfile`): `prod` (PHP-FPM, `composer --no-dev`, opcache sin revalidar,
-usuario `www-data`) y `web` (nginx con los estáticos). El CSS se compila en una etapa Node (Tailwind v4 + basecoat-css)
-y se autoalojan Basecoat JS, Chart.js, htmx y la fuente Geist; las URLs llevan `?<mtime>` para invalidar la caché en
-cada deploy. `config/app_local.php` no entra en la imagen: todo va por variables de entorno.
+Self-contained images (`docker/app/Dockerfile`): `prod` (PHP-FPM, `composer --no-dev`, opcache without revalidation,
+`www-data` user) and `web` (nginx with the static files). CSS is compiled in a Node stage (Tailwind v4 + basecoat-css)
+and Basecoat JS, Chart.js, htmx and the Geist font are self-hosted; URLs carry `?<mtime>` to bust the cache on every
+deploy. `config/app_local.php` is not included in the image: everything is configured through environment variables.
 
 ```bash
-bin/dev-https-cert                                  # local: certificado de mkcert (en real, el del dominio)
+bin/dev-https-cert                                  # local: mkcert certificate (in real deployments, the domain's)
 export SECURITY_SALT=$(openssl rand -hex 32) COOKIE_KEY=$(openssl rand -hex 32)
-docker compose -f compose.prod.yaml up -d --build   # https://admindashboard.localhost (dev y prod, uno cada vez)
+docker compose -f compose.prod.yaml up -d --build   # https://admindashboard.localhost (dev and prod, one at a time)
 docker compose -f compose.prod.yaml exec app bin/cake migrations migrate -p CakeDC/Users --no-lock
 docker compose -f compose.prod.yaml exec app bin/cake migrations migrate --no-lock
 docker compose -f compose.prod.yaml exec app bin/cake permissions sync
 docker compose -f compose.prod.yaml exec app bin/cake users add_superuser
 ```
 
-| Variable | Por defecto | Uso |
+| Variable | Default | Purpose |
 | --- | --- | --- |
-| `SECURITY_SALT` | — (obligatoria) | Sal de seguridad |
-| `APP_FULL_BASE_URL` | `https://admindashboard.localhost` | URL pública (enlaces de emails, dominio de WebAuthn: las llaves quedan atadas a él) |
-| `DATABASE_URL` | PostgreSQL del compose | `postgres://user:pass@host:5432/db` |
-| `EMAIL_TRANSPORT_DEFAULT_URL`, `EMAIL_FROM` | Mailpit del compose | SMTP de salida |
-| `COOKIE_KEY` | derivada de la sal | Clave AES de la cookie «recordarme» (≥ 32 caracteres) |
-| `HTTPS_ENFORCE` | `true` en la imagen | HTTP → HTTPS + HSTS (`HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`) |
-| `CSP_REPORT_ONLY` | `false` en la imagen (`DEBUG` en dev) | CSP en modo solo informe |
-| `TRUSTED_PROXIES` | vacío | IPs del balanceador cuyo `X-Forwarded-For` se acepta (separadas por comas) |
-| `SESSION_TIMEOUT` | `240` | Minutos de inactividad |
-| `TWO_FACTOR_ENABLED` | `true` | Interruptor general del 2FA y las passkeys |
-| `DEBUG` | `false` | Nunca `true` en producción |
-| `THEME_COMPILED_ASSETS`, `ASSET_TIMESTAMP`, `LOG_TO_STDERR` | fijadas en la imagen | Assets propios, cache busting, logs a la salida del contenedor |
-| `HTTPS_PORT` | `8445` | Puerto HTTPS que publica nginx |
+| `SECURITY_SALT` | — (required) | Security salt |
+| `APP_FULL_BASE_URL` | `https://admindashboard.localhost` | Public URL (email links, WebAuthn domain: keys are bound to it) |
+| `DATABASE_URL` | compose PostgreSQL | `postgres://user:pass@host:5432/db` |
+| `EMAIL_TRANSPORT_DEFAULT_URL`, `EMAIL_FROM` | compose Mailpit | Outgoing SMTP |
+| `COOKIE_KEY` | derived from the salt | AES key for the "remember me" cookie (≥ 32 characters) |
+| `HTTPS_ENFORCE` | `true` in the image | HTTP → HTTPS + HSTS (`HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`) |
+| `CSP_REPORT_ONLY` | `false` in the image (`DEBUG` in dev) | CSP in report-only mode |
+| `TRUSTED_PROXIES` | empty | Load balancer IPs whose `X-Forwarded-For` is accepted (comma-separated) |
+| `SESSION_TIMEOUT` | `240` | Idle minutes |
+| `TWO_FACTOR_ENABLED` | `true` | Global switch for 2FA and passkeys |
+| `DEBUG` | `false` | Never `true` in production |
+| `THEME_COMPILED_ASSETS`, `ASSET_TIMESTAMP`, `LOG_TO_STDERR` | set in the image | Self-hosted assets, cache busting, logs to the container output |
+| `HTTPS_PORT` | `8445` | HTTPS port published by nginx |
 
-En un despliegue real:
-- Certificado del dominio en `docker/certs/` (o TLS en el balanceador + `TRUSTED_PROXIES`) y `APP_FULL_BASE_URL` fijo.
-- **Sesiones y límite de intentos en PostgreSQL** (tablas `sessions` y `auth_throttles`): sobreviven a los redeploys
-  y los comparten todas las réplicas; no hace falta Redis.
-- Purga diaria en cron: `bin/cake permissions purge` y `bin/cake activity purge`.
+In a real deployment:
+- Domain certificate in `docker/certs/` (or TLS at the load balancer + `TRUSTED_PROXIES`) and a fixed
+  `APP_FULL_BASE_URL`.
+- **Sessions and rate limiting in PostgreSQL** (`sessions` and `auth_throttles` tables): they survive redeploys and
+  are shared by all replicas; no Redis needed.
+- Daily purge via cron: `bin/cake permissions purge` and `bin/cake activity purge`.
 
-## Dónde está cada cosa
+## Where things live
 
-| Qué | Dónde |
+| What | Where |
 | --- | --- |
-| Middlewares y servicios (DI) | `src/Application.php`, `src/Http/SecurityMiddlewares.php` |
-| Config de CakeDC/Users, 2FA, roles | `config/users.php` |
-| Reglas de sistema del RBAC | `config/permissions.php` (el resto, en BD: *Access control › Permissions*) |
-| Seguridad (`Security.*`), sesión, caché | `config/app.php` |
-| Casos de uso | `src/UseCase/` |
-| Actividad de la cuenta | `src/Account/`, `src/View/Cell/AccountActivityCell.php`, `templates/cell/AccountActivity/` |
-| Tema, layout y menú | `src/Controller/AppController.php`, `src/View/AppView.php`, `src/Navigation/SidebarMenu.php` |
+| Middlewares and services (DI) | `src/Application.php`, `src/Http/SecurityMiddlewares.php` |
+| CakeDC/Users, 2FA and roles config | `config/users.php` |
+| RBAC system rules | `config/permissions.php` (the rest in the database: *Access control › Permissions*) |
+| Security (`Security.*`), session, cache | `config/app.php` |
+| Use cases | `src/UseCase/` |
+| Account activity | `src/Account/`, `src/View/Cell/AccountActivityCell.php`, `templates/cell/AccountActivity/` |
+| Theme, layout and menu | `src/Controller/AppController.php`, `src/View/AppView.php`, `src/Navigation/SidebarMenu.php` |
 | htmx | `src/Controller/Component/HtmxComponent.php`, `templates/layout/htmx.php`, `webroot/js/app.js` |
 | WebAuthn / passkeys | `src/Webauthn/`, `src/Controller/{TwoFactor,WebauthnLogin,PasskeyLogin}Controller.php`, `webroot/js/webauthn.js` |
-| Pantallas de usuarios (override) | `templates/plugin/CakeDC/Users/Users/` |
+| User screens (overrides) | `templates/plugin/CakeDC/Users/Users/` |
 | Emails | `src/Mailer/`, `templates/layout/email/`, `templates/email/`, `templates/plugin/CakeDC/Users/email/` |
 | PDF | `src/Controller/ReportsController.php`, `templates/Reports/pdf/` |
-| Docker, nginx, certificados | `compose.yaml`, `compose.prod.yaml`, `docker/`, `bin/dev-https-cert` |
-| Assets de producción | `package.json`, `resources/css/app.css` |
-| Traducciones | `resources/locales/` |
+| Docker, nginx, certificates | `compose.yaml`, `compose.prod.yaml`, `docker/`, `bin/dev-https-cert` |
+| Production assets | `package.json`, `resources/css/app.css` |
+| Translations | `resources/locales/` |
