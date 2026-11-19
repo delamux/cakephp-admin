@@ -1,314 +1,314 @@
 # ROADMAP — CakePHP Admin Skeleton
 
-Esqueleto de administración completo: login, gestión de usuarios y dashboard, listo para clonar y arrancar proyectos.
+Complete admin skeleton: login, user management and dashboard, ready to clone and kick-start projects.
 
-## Reglas del proyecto (no negociables)
+## Project rules (non-negotiable)
 
-- **PHP 8.5** (`"php": ">=8.5"` en composer.json).
-- **Última versión de CakePHP** (5.4.x).
-- **Context7 siempre** para consultar la API de CakePHP/plugins (`/cakephp/docs`, `/cakedc/users`, `/cakephp/authentication`, `/cakephp/authorization`, `/cakephp/migrations`, `/friendsofcake/cakepdf`).
-- Catálogo de plugins de referencia: https://github.com/FriendsOfCake/awesome-cakephp
-- **Antes de instalar cualquier plugin/paquete: preguntar al usuario y explicar para qué sirve.**
-- **Todo en Docker local**, BD **PostgreSQL 18**.
-- Correos con **Mailpit** en desarrollo.
-- Correos HTML **bonitos y con máxima compatibilidad** (tablas, CSS inline, 600px, versión texto, dark mode).
-- PDFs con **CakePdf** (Dompdf).
-- Inspiración visual: https://shadcnuikit.com/dashboard/default
-- El usuario es autor del tema basecoat y autoriza modificarlo si hace falta (confirmar antes de push/PR).
+- **PHP 8.5** (`"php": ">=8.5"` in composer.json).
+- **Latest CakePHP version** (5.4.x).
+- **Always use Context7** to look up the CakePHP/plugin APIs (`/cakephp/docs`, `/cakedc/users`, `/cakephp/authentication`, `/cakephp/authorization`, `/cakephp/migrations`, `/friendsofcake/cakepdf`).
+- Reference plugin catalogue: https://github.com/FriendsOfCake/awesome-cakephp
+- **Before installing any plugin/package: ask the user and explain what it is for.**
+- **Everything in local Docker**, database **PostgreSQL 18**.
+- Emails via **Mailpit** in development.
+- **Good-looking, maximally compatible** HTML emails (tables, inline CSS, 600px, plain-text version, dark mode).
+- PDFs with **CakePdf** (Dompdf).
+- Visual inspiration: https://shadcnuikit.com/dashboard/default
+- The user is the author of the basecoat theme and allows modifying it if needed (confirm before push/PR).
 
 ## Stack
 
-| Pieza | Paquete | Estado |
+| Piece | Package | Status |
 | --- | --- | --- |
 | Framework | `cakephp/cakephp` 5.4.* (skeleton `cakephp/app` 5.4.0) | ✅ |
-| Usuarios/login/RBAC | `cakedc/users` ^16.0 (+ `cakedc/auth`, `cakephp/authentication`, `cakephp/authorization`) | ✅ (pedido) |
-| Tema UI | `delamux/cakephp-basecoat-theme` dev-main (VCS GitHub, no está en Packagist; PHP >= 8.2 desde `b3dd6e5`) | ✅ (pedido) |
-| PDFs | `friendsofcake/cakepdf` 5.3 + `dompdf/dompdf` 3.1 | ✅ (aprobado) |
-| CSS inline emails | `pelago/emogrifier` 8.3 | ✅ (aprobado) |
-| Análisis estático | `phpstan/phpstan` 2.3 (dev) | ✅ (aprobado) |
-| Infra | Docker Compose: nginx + `php:8.5-fpm` (Dockerfile multi-stage dev/prod/web), `postgres:18-alpine`, `axllent/mailpit` | ✅ (FrankenPHP → PHP-FPM el 2026-11-18, decisión del usuario) |
+| Users/login/RBAC | `cakedc/users` ^16.0 (+ `cakedc/auth`, `cakephp/authentication`, `cakephp/authorization`) | ✅ (requested) |
+| UI theme | `delamux/cakephp-basecoat-theme` dev-main (GitHub VCS, not on Packagist; PHP >= 8.2 since `b3dd6e5`) | ✅ (requested) |
+| PDFs | `friendsofcake/cakepdf` 5.3 + `dompdf/dompdf` 3.1 | ✅ (approved) |
+| Inline CSS for emails | `pelago/emogrifier` 8.3 | ✅ (approved) |
+| Static analysis | `phpstan/phpstan` 2.3 (dev) | ✅ (approved) |
+| Infra | Docker Compose: nginx + `php:8.5-fpm` (multi-stage dev/prod/web Dockerfile), `postgres:18-alpine`, `axllent/mailpit` | ✅ (FrankenPHP → PHP-FPM on 2026-11-18, user's decision) |
 
-Puertos: app http://localhost:8080 · Mailpit UI http://localhost:8026 (SMTP host 1026) · Postgres localhost:5433.
-(8025 lo usa el Mailpit de otro proyecto local.)
+Ports: app http://localhost:8080 · Mailpit UI http://localhost:8026 (SMTP host 1026) · Postgres localhost:5433.
+(8025 is used by another local project's Mailpit.)
 
-## Fases
+## Phases
 
-### Fase 0 — Base ✅
+### Phase 0 — Base ✅
 - [x] `composer create-project cakephp/app:~5.4`, PHP >=8.5
 - [x] cakedc/users + basecoat theme
 - [x] ROADMAP.md
 
-### Fase 1 — Configuración base ✅
-- [x] Docker: FrankenPHP + PG18 (+ BD de tests `cakephp_admin_test`) + Mailpit (sustituido por nginx + PHP-FPM en la Fase 12)
-- [x] Driver Postgres / encoding utf8 en `config/app.php`; URLs por env
-- [x] Plugins en `src/Application.php` (`CakeDC/Users`, `BasecoatTheme`, `CakePdf`)
-- [x] `config/users.php` (loginRedirect → Dashboard, reCaptcha off, RememberMe, OneTimeLogin, mailer propio, mensaje de acceso denegado)
-- [x] `config/permissions.php` (Dashboard para todos los logueados, admin todo, superuser bypass)
-- [x] Migraciones CakeDC/Users + superusuario `admin`
-- [x] Seed de demo `bin/cake seeds run DemoUsers`
+### Phase 1 — Base configuration ✅
+- [x] Docker: FrankenPHP + PG18 (+ test database `cakephp_admin_test`) + Mailpit (replaced by nginx + PHP-FPM in Phase 12)
+- [x] Postgres driver / utf8 encoding in `config/app.php`; URLs from env
+- [x] Plugins in `src/Application.php` (`CakeDC/Users`, `BasecoatTheme`, `CakePdf`)
+- [x] `config/users.php` (loginRedirect → Dashboard, reCaptcha off, RememberMe, OneTimeLogin, custom mailer, access-denied message)
+- [x] `config/permissions.php` (Dashboard for every logged-in user, admin everything, superuser bypass)
+- [x] CakeDC/Users migrations + `admin` superuser
+- [x] Demo seed `bin/cake seeds run DemoUsers`
 
-### Fase 2 — Tema y layout ✅
-- [x] `AppController::beforeRender`: tema BasecoatTheme, layout `auth` sin identidad, sidebar/usuario por request
+### Phase 2 — Theme and layout ✅
+- [x] `AppController::beforeRender`: BasecoatTheme theme, `auth` layout without identity, sidebar/user per request
 - [x] `AppView`: `loadBasecoatHelpers()` + `CakeDC/Users.User` / `AuthLink`
-- [x] `App\Navigation\SidebarMenu` (TDD): menú según rol, bloque de usuario con Perfil / Cambiar contraseña / Log out
+- [x] `App\Navigation\SidebarMenu` (TDD): role-based menu, user block with Profile / Change password / Log out
 
-### Fase 3 — Plantillas CakeDC/Users ✅
+### Phase 3 — CakeDC/Users templates ✅
 - [x] login, register, request_reset_password, request_login_link, resend_token_validation, change_password
-- [x] profile, index (sort, paginación, menú de fila, columnas responsive), view, add, edit (+ danger zone)
+- [x] profile, index (sorting, pagination, row menu, responsive columns), view, add, edit (+ danger zone)
 
-### Fase 4 — Dashboard ✅
-- [x] `DashboardStatsService` (TDD): totales, activos, pendientes, admins, nuevos 30d vs 30d previos, serie diaria, recientes, administradores
-- [x] KPIs, gráfico de barras de altas, últimos usuarios, equipo; usuario normal ve tarjeta de bienvenida
+### Phase 4 — Dashboard ✅
+- [x] `DashboardStatsService` (TDD): totals, active, pending, admins, new in the last 30d vs the previous 30d, daily series, recent, administrators
+- [x] KPIs, sign-ups bar chart, latest users, team; regular users see a welcome card
 
-### Fase 5 — Correo ✅
-- [x] SMTP → Mailpit por `EMAIL_TRANSPORT_DEFAULT_URL`
-- [x] `CssInliner` (TDD) + `InlineCssTrait` (inline antes del wrap del body) + `AppMailer` / `UsersMailer`
-- [x] Layout HTML (tablas, 600px, preheader, botón bulletproof, MSO, dark mode, móvil) + layout texto
-- [x] Emails CakeDC sobrescritos: validación, reset, social, login link; asuntos propios
-- [x] Probado en Mailpit: html-check ~90–92 % soportado (resto: @media/<style> como mejora progresiva)
+### Phase 5 — Email ✅
+- [x] SMTP → Mailpit via `EMAIL_TRANSPORT_DEFAULT_URL`
+- [x] `CssInliner` (TDD) + `InlineCssTrait` (inlining before the body wrap) + `AppMailer` / `UsersMailer`
+- [x] HTML layout (tables, 600px, preheader, bulletproof button, MSO, dark mode, mobile) + text layout
+- [x] Overridden CakeDC emails: validation, reset, social, login link; custom subjects
+- [x] Tested in Mailpit: html-check ~90–92 % supported (the rest: @media/<style> as progressive enhancement)
 
-### Fase 6 — PDF ✅
-- [x] `/reports/users.pdf` (admins): KPIs + tabla; `?download=1` fuerza descarga `users-report-YYYYMMDD-HHMMSS.pdf`
+### Phase 6 — PDF ✅
+- [x] `/reports/users.pdf` (admins): KPIs + table; `?download=1` forces the download `users-report-YYYYMMDD-HHMMSS.pdf`
 
-### Fase 7 — Calidad ✅
-- [x] `composer check` = phpunit (26 tests) + phpcs (CakePHP standard) + phpstan nivel 8, todo verde
+### Phase 7 — Quality ✅
+- [x] `composer check` = phpunit (26 tests) + phpcs (CakePHP standard) + phpstan level 8, all green
 - [x] README
 
-### Fase 8 — QA UI/UX ✅ (2026-11-18)
-Recorrido con Chrome DevTools (desktop 1280, móvil 390, light/dark, admin y usuario normal, emails en Mailpit, PDF).
-Corregido durante la QA:
+### Phase 8 — UI/UX QA ✅ (2026-11-18)
+Walkthrough with Chrome DevTools (desktop 1280, mobile 390, light/dark, admin and regular user, emails in Mailpit, PDF).
+Fixed during QA:
 - [x] Plural "1 admins" → `__n`
-- [x] Tabla "Latest users": fechas largas empujaban el menú de acciones → fechas compactas + `whitespace-nowrap` + scroll-x
-- [x] Gráfico: línea suavizada exageraba datos diarios → barras
-- [x] "Team" solo mostraba admins entre los 8 últimos → `administrators()` (TDD)
-- [x] Listado de usuarios cortado → email bajo el nombre, columnas secundarias ocultas por container query
-- [x] Header en móvil desbordado → acciones icon-only (`element/header_action`, label sr-only) y fecha oculta en móvil
-- [x] Badge de estado sin icono en ficha de usuario
-- [x] Mensaje "not authorized … Location = URL" (debug) → mensaje propio con título
-- [x] Rango de fechas visible a usuarios sin estadísticas → solo admins
-- [x] Perfil/ficha/edición apilados a 1280px → breakpoint `@3xl`
-- [x] Flash de error pegado al primer campo en formularios auth → dentro del grid del form
-- [x] Email login link mostraba un "código" de 32 hex con form de 6 dígitos (inconsistencia del plugin) → solo enlace
-- [x] Emails: quitado `word-break` y hacks de preheader con soporte bajo
-- [x] PDF: "1 / 0" (Dompdf no soporta `counter(pages)`) → "Page N"
+- [x] "Latest users" table: long dates pushed the actions menu out → compact dates + `whitespace-nowrap` + scroll-x
+- [x] Chart: a smoothed line exaggerated the daily data → bars
+- [x] "Team" only showed admins among the latest 8 → `administrators()` (TDD)
+- [x] Users list cut off → email under the name, secondary columns hidden with a container query
+- [x] Header overflowing on mobile → icon-only actions (`element/header_action`, sr-only label) and date hidden on mobile
+- [x] Status badge without an icon on the user page
+- [x] "not authorized … Location = URL" message (debug) → custom message with a title
+- [x] Date range visible to users without statistics → admins only
+- [x] Profile/user page/edit stacked at 1280px → `@3xl` breakpoint
+- [x] Error flash stuck to the first field in auth forms → inside the form grid
+- [x] Login link email showed a 32-hex "code" with a 6-digit form (plugin inconsistency) → link only
+- [x] Emails: removed `word-break` and poorly supported preheader hacks
+- [x] PDF: "1 / 0" (Dompdf doesn't support `counter(pages)`) → "Page N"
 
-### Fase 9 — Permisos por base de datos (TDD) ✅ (2026-11-18)
+### Phase 9 — Database-backed permissions (TDD) ✅ (2026-11-18)
 
-**Objetivo:** dejar de definir los permisos de cada rol en `config/permissions.php` y gestionarlos desde la BD
-con una UI: descubrir automáticamente los controladores y sus acciones públicas y asignarlas a cada rol.
+**Goal:** stop defining each role's permissions in `config/permissions.php` and manage them from the database through
+a UI: automatically discover controllers and their public actions and assign them to each role.
 
-**Punto de enganche (sin tocar CakeDC):** `CakeDC\Auth\Rbac` acepta `permissions_provider_class`
-(hoy `ConfigProvider`, que lee el fichero). Se implementa `App\Rbac\DatabasePermissionsProvider`
-(extiende `AbstractProvider`) y se configura en `Auth.RbacPolicy` → el RBAC de CakeDC sigue igual,
-solo cambia de dónde salen las reglas.
+**Hook point (without touching CakeDC):** `CakeDC\Auth\Rbac` accepts `permissions_provider_class`
+(currently `ConfigProvider`, which reads the file). We implement `App\Rbac\DatabasePermissionsProvider`
+(extends `AbstractProvider`) and configure it in `Auth.RbacPolicy` → CakeDC's RBAC stays the same,
+only the source of the rules changes.
 
-**Propuesta de diseño (a confirmar):**
-- `App\Rbac\ActionDiscovery`: descubre controladores (app + plugins elegidos) y sus acciones públicas
-  vía reflexión (métodos `public` declarados en el controlador o sus traits, sin `initialize`,
-  `beforeFilter`, callbacks ni métodos de `Controller`), con prefix/plugin/controller/action.
-- Tablas: `permissions` (catálogo descubierto: plugin, prefix, controller, action, `public` para acciones
-  sin login) y `roles_permissions` (rol ↔ permiso, `allowed`).
-- Comando `bin/cake permissions sync` (+ botón en la UI) que sincroniza el catálogo con el código:
-  añade acciones nuevas, marca huérfanas las que ya no existen.
-- Reglas que **no** van a BD (siguen en código por seguridad): acciones públicas de login/registro/reset,
-  `superadmin` = todo (y `is_superuser` sigue saltándose el RBAC), DebugKit en debug.
-- UI: matriz *controlador/acción × rol* con checkboxes, solo para superadmin; cambios en caché
-  (`_cake_rbac_`) invalidada al guardar.
-- Seguridad: no permitir quitarse acceso a la propia pantalla de permisos; superadmin no editable;
-  auditoría (quién cambió qué y cuándo) opcional.
+**Design proposal (to be confirmed):**
+- `App\Rbac\ActionDiscovery`: discovers controllers (app + selected plugins) and their public actions
+  via reflection (`public` methods declared in the controller or its traits, excluding `initialize`,
+  `beforeFilter`, callbacks and `Controller` methods), with prefix/plugin/controller/action.
+- Tables: `permissions` (discovered catalogue: plugin, prefix, controller, action, `public` for actions
+  without login) and `roles_permissions` (role ↔ permission, `allowed`).
+- `bin/cake permissions sync` command (+ a button in the UI) that syncs the catalogue with the code:
+  adds new actions, flags as orphaned those that no longer exist.
+- Rules that do **not** go to the database (they stay in code for security): public login/sign-up/reset actions,
+  `superadmin` = everything (and `is_superuser` still bypasses the RBAC), DebugKit in debug.
+- UI: *controller/action × role* matrix with checkboxes, superadmin only; changes cached
+  (`_cake_rbac_`) and invalidated on save.
+- Security: don't allow removing your own access to the permissions screen; superadmin not editable;
+  optional auditing (who changed what and when).
 
-**Tests (TDD):** descubrimiento de acciones (qué cuenta como acción pública), sync del catálogo,
-provider → reglas CakeDC equivalentes a las actuales de `permissions.php` (test de no-regresión:
-mismas decisiones allow/deny para los 4 roles), matriz UI → reglas, invalidación de caché, guards
-(nadie se bloquea a sí mismo).
+**Tests (TDD):** action discovery (what counts as a public action), catalogue sync,
+provider → CakeDC rules equivalent to the current ones in `permissions.php` (non-regression test:
+same allow/deny decisions for the 4 roles), UI matrix → rules, cache invalidation, guards
+(nobody locks themselves out).
 
-**Decisiones (usuario, 2026-11-18):**
-| Tema | Decisión |
+**Decisions (user, 2026-11-18):**
+| Topic | Decision |
 | --- | --- |
-| Alcance del descubrimiento | Controladores de la app + CakeDC/Users (Users, SocialAccounts). Excluidos DebugKit, Bake y plugins técnicos |
-| Roles | Pasan a BD con CRUD (tabla `roles`, seed con superadmin/admin/editor/user). `superadmin` protegido: no se borra ni se renombra |
-| Granularidad | Lista blanca *allow* por acción (todas las extensiones). Lo no marcado se deniega |
-| `config/permissions.php` | Solo reglas de sistema: acciones públicas (login/registro/reset/validación), superadmin = todo, DebugKit, perfil/logout propios. El resto desde la BD, con seed que replica los permisos actuales |
+| Discovery scope | App controllers + CakeDC/Users (Users, SocialAccounts). DebugKit, Bake and technical plugins excluded |
+| Roles | Move to the database with CRUD (`roles` table, seeded with superadmin/admin/editor/user). `superadmin` protected: cannot be deleted or renamed |
+| Granularity | *Allow* whitelist per action (all extensions). Anything unchecked is denied |
+| `config/permissions.php` | System rules only: public actions (login/sign-up/reset/validation), superadmin = everything, DebugKit, own profile/logout. The rest from the database, with a seed that replicates the current permissions |
 
-**Plan de implementación (cada paso: test rojo → verde → refactor):**
-1. Migraciones: `roles` (slug único, nombre, `protected`), `permissions` (plugin, prefix, controller, action, único por combinación, `orphan`), `roles_permissions`. `users.role` sigue siendo el slug.
-2. `App\Rbac\ActionDiscovery`: lista de acciones públicas (reflexión; excluye métodos de `Controller`/`AppController`, callbacks y no públicos; incluye traits como los de CakeDC).
-3. `bin/cake permissions sync`: inserta nuevas, marca huérfanas, idempotente.
-4. Seed de no-regresión: permisos por rol equivalentes a los actuales (admin = todo salvo sistema; editor = Users::index/view + Reports::users; user = Dashboard::index).
-5. `App\Rbac\DatabasePermissionsProvider` (configurado en `Auth.RbacPolicy`): reglas de sistema del fichero + reglas de BD, en caché; test de no-regresión de las decisiones allow/deny de los 4 roles.
-6. `UserRoleManager` lee los roles de BD (lista blanca dinámica); `superadmin` sigue sincronizado con `is_superuser`.
-7. UI (solo superadmin): CRUD de roles + matriz controlador/acción × rol; invalidación de caché al guardar; guards (no quitarse acceso a la pantalla de permisos, `superadmin` no editable, no borrar un rol con usuarios asignados).
-8. QA UI/UX + roast rápido de seguridad.
+**Implementation plan (each step: red test → green → refactor):**
+1. Migrations: `roles` (unique slug, name, `protected`), `permissions` (plugin, prefix, controller, action, unique per combination, `orphan`), `roles_permissions`. `users.role` remains the slug.
+2. `App\Rbac\ActionDiscovery`: list of public actions (reflection; excludes `Controller`/`AppController` methods, callbacks and non-public methods; includes traits such as CakeDC's).
+3. `bin/cake permissions sync`: inserts new ones, flags orphans, idempotent.
+4. Non-regression seed: per-role permissions equivalent to the current ones (admin = everything except system; editor = Users::index/view + Reports::users; user = Dashboard::index).
+5. `App\Rbac\DatabasePermissionsProvider` (configured in `Auth.RbacPolicy`): system rules from the file + database rules, cached; non-regression test of the allow/deny decisions for the 4 roles.
+6. `UserRoleManager` reads roles from the database (dynamic whitelist); `superadmin` stays in sync with `is_superuser`.
+7. UI (superadmin only): roles CRUD + controller/action × role matrix; cache invalidation on save; guards (can't remove your own access to the permissions screen, `superadmin` not editable, can't delete a role with assigned users).
+8. UI/UX QA + quick security roast.
 
-**Hecho:** pasos 1–8 completos, 120 tests verdes + phpcs + phpstan nivel 8.
-- Tablas `roles`/`permissions`/`roles_permissions` (migración `20261118130000`), `RolesTable` con reglas (protegido, en uso, slug).
-- `App\Rbac\ActionDiscovery` (criterio de `Controller::isAction()` + `App.permissions.ignoredActions`), `PermissionsSynchronizer`, `bin/cake permissions sync [--reset]`.
-- `App\Rbac\DatabasePermissionsProvider` (extiende el `ConfigProvider` de CakeDC) en `Auth.RbacPolicy`; caché `PermissionsCache` invalidada en cada cambio. Test de no regresión: 18 decisiones allow/deny idénticas al fichero anterior.
-- `config/permissions.php` = solo reglas de sistema (públicas, superadmin, perfil/logout, dashboard, Pages, DebugKit).
-- UI superadmin: `/roles` (CRUD) y `/permissions` (matriz con filas bloqueadas: Public / All roles / Superadmin only) + botón "Sync actions"; sidebar "Access control".
-- QA/roast: (1) filas de sistema se mostraban editables sin efecto → bloqueadas; (2) **escalada**: un admin podía recibir `Permissions::*`/`Roles::*` desde la matriz y auto-concederse todo → `App.permissions.superadminOnly`, filtrado en `PermissionsSynchronizer` (test); (3) acción desconocida vía rutas fallback ahora se deniega por RBAC (lista blanca) en vez de 404.
+**Done:** steps 1–8 complete, 120 green tests + phpcs + phpstan level 8.
+- `roles`/`permissions`/`roles_permissions` tables (migration `20261118130000`), `RolesTable` with rules (protected, in use, slug).
+- `App\Rbac\ActionDiscovery` (`Controller::isAction()` criterion + `App.permissions.ignoredActions`), `PermissionsSynchronizer`, `bin/cake permissions sync [--reset]`.
+- `App\Rbac\DatabasePermissionsProvider` (extends CakeDC's `ConfigProvider`) in `Auth.RbacPolicy`; `PermissionsCache` invalidated on every change. Non-regression test: 18 allow/deny decisions identical to the previous file.
+- `config/permissions.php` = system rules only (public, superadmin, profile/logout, dashboard, Pages, DebugKit).
+- Superadmin UI: `/roles` (CRUD) and `/permissions` (matrix with locked rows: Public / All roles / Superadmin only) + "Sync actions" button; "Access control" in the sidebar.
+- QA/roast: (1) system rows were shown as editable with no effect → locked; (2) **escalation**: an admin could be granted `Permissions::*`/`Roles::*` from the matrix and grant themselves everything → `App.permissions.superadminOnly`, filtered in `PermissionsSynchronizer` (test); (3) unknown actions via fallback routes are now denied by the RBAC (whitelist) instead of a 404.
 
-### Fase 10 — Auditoría de permisos (TDD) ✅ (2026-11-18)
-- Tabla `permission_audits` (migración `20261118140000`): user_id, username, event, role_slug, added/removed/details (JSON), created. Append-only.
-- `App\Rbac\PermissionAudit::record()`; eventos `grants_changed` (solo roles con diff real), `role_created`, `role_updated` (campos `[antes, después]`), `role_deleted` (solo si se borra), `sync` (conteos + `reset`; actor `console` desde `bin/cake`).
-- `PermissionsSynchronizer::setGrants()` devuelve `{added, removed}`.
-- Pantalla `/permissions/audit` (superadmin, paginada, + concedido / − revocado); sidebar *Access control › History*.
-- Bug encontrado en QA: guardar la matriz revocaba las filas bloqueadas (el navegador no las envía) → ahora se conservan (test).
-- Purga ✅: `bin/cake permissions purge [--days N] [--dry-run]`, retención `App.permissions.auditRetentionDays` (365, mínimo 30 → error), registra `audit_purged` solo si borra algo (cron diario sin ruido). Lógica en `PermissionAudit::purge()/countOlderThan()`.
+### Phase 10 — Permissions auditing (TDD) ✅ (2026-11-18)
+- `permission_audits` table (migration `20261118140000`): user_id, username, event, role_slug, added/removed/details (JSON), created. Append-only.
+- `App\Rbac\PermissionAudit::record()`; events `grants_changed` (only roles with an actual diff), `role_created`, `role_updated` (fields `[before, after]`), `role_deleted` (only if actually deleted), `sync` (counts + `reset`; actor `console` from `bin/cake`).
+- `PermissionsSynchronizer::setGrants()` returns `{added, removed}`.
+- `/permissions/audit` screen (superadmin, paginated, + granted / − revoked); sidebar *Access control › History*.
+- Bug found in QA: saving the matrix revoked the locked rows (the browser doesn't submit them) → they are now preserved (test).
+- Purge ✅: `bin/cake permissions purge [--days N] [--dry-run]`, retention `App.permissions.auditRetentionDays` (365, minimum 30 → error), records `audit_purged` only if something is deleted (quiet daily cron). Logic in `PermissionAudit::purge()/countOlderThan()`.
 
-### Fase 11 — Refactor DDD-lite (TDD) ✅ (2026-11-18)
-Objetivo: controladores y comandos finos; la orquestación en casos de uso inyectados por el contenedor DI de CakePHP 5 (sin paquetes nuevos). Sin DDD completo (agregados/modelo separado del ORM): el admin es mayormente CRUD.
-- Capas: `src/UseCase/` (aplicación: orquesta, transacción, auditoría, caché) → reglas de dominio puras ya existentes (`UserRoleManager`, `PermissionsSynchronizer`, `ActionDiscovery`) → Tables como repositorios (infraestructura). Namespace `App\UseCase` (no `App\Application`, choca con la clase `App\Application`).
-- Pasos:
-  1. Contenedor: `Application::services()` con `ReflectionContainer` (autowiring) + factorías `fromConfig()` de los servicios configurables. Value object `Actor` (usuario o consola).
-  2. Permisos: `PermissionMatrix` (read model: grupos + filas bloqueadas, saca `matchesSystemRule` del controlador), `UpdateRolePermissions`, `SyncPermissions`.
-  3. Roles: `ManageRoles` (crear/editar/borrar + caché + auditoría).
-  4. Histórico: `PermissionAuditLog` (instancia inyectable en vez de estáticos) + `PurgePermissionHistory`; comandos con inyección por constructor.
-  5. Test de arquitectura (sin StructArmed): controladores/comandos no llaman a `PermissionAudit`, `PermissionsCache` ni `::fromConfig()`.
-  6. Suite completa verde sin cambiar comportamiento (los tests de integración existentes son la red de seguridad).
-- **Hecho:** 148 tests verdes + phpcs + phpstan 8.
-  - `App\UseCase\Actor` (VO usuario/consola), `Permissions\{PermissionMatrix, UpdateRolePermissions (transacción), SyncPermissions, PurgePermissionHistory}`, `Roles\{ManageRoles, RoleResult}`, `Users\ChangeUserRole`.
-  - `App\Rbac\PermissionAuditLog` (instancia, repositorio de `permission_audits`) sustituye al estático `PermissionAudit`.
-  - `PermissionMatrix` devuelve códigos de bloqueo (`public`/`all_roles`/`superadmin`); la plantilla los traduce.
-  - Contenedor: registros explícitos en `Application::services()` (sin `ReflectionContainer` global: autowirearía todos los controladores, también los de CakeDC). Inyección en acciones (`index(PermissionMatrix $matrix, …)`) y por constructor en comandos.
-  - `AppController::actor()`; `ArchitectureTest` bloquea en controladores/comandos: `PermissionAudit*`, `PermissionsCache::`, `::fromConfig(` y escrituras directas a tablas de auditoría/permisos. Excepción documentada: `AppController` (guards en `beforeFilter` de los controladores de CakeDC, sin inyección).
+### Phase 11 — DDD-lite refactor (TDD) ✅ (2026-11-18)
+Goal: thin controllers and commands; orchestration in use cases injected by the CakePHP 5 DI container (no new packages). No full DDD (aggregates/model separate from the ORM): the admin is mostly CRUD.
+- Layers: `src/UseCase/` (application: orchestration, transactions, auditing, caching) → existing pure domain rules (`UserRoleManager`, `PermissionsSynchronizer`, `ActionDiscovery`) → Tables as repositories (infrastructure). Namespace `App\UseCase` (not `App\Application`, which clashes with the `App\Application` class).
+- Steps:
+  1. Container: `Application::services()` with `ReflectionContainer` (autowiring) + `fromConfig()` factories for the configurable services. `Actor` value object (user or console).
+  2. Permissions: `PermissionMatrix` (read model: groups + locked rows, moves `matchesSystemRule` out of the controller), `UpdateRolePermissions`, `SyncPermissions`.
+  3. Roles: `ManageRoles` (create/edit/delete + cache + auditing).
+  4. History: `PermissionAuditLog` (injectable instance instead of statics) + `PurgePermissionHistory`; commands with constructor injection.
+  5. Architecture test (without StructArmed): controllers/commands don't call `PermissionAudit`, `PermissionsCache` or `::fromConfig()`.
+  6. Full suite green with no behaviour change (the existing integration tests are the safety net).
+- **Done:** 148 green tests + phpcs + phpstan 8.
+  - `App\UseCase\Actor` (user/console VO), `Permissions\{PermissionMatrix, UpdateRolePermissions (transaction), SyncPermissions, PurgePermissionHistory}`, `Roles\{ManageRoles, RoleResult}`, `Users\ChangeUserRole`.
+  - `App\Rbac\PermissionAuditLog` (instance, repository for `permission_audits`) replaces the static `PermissionAudit`.
+  - `PermissionMatrix` returns lock codes (`public`/`all_roles`/`superadmin`); the template translates them.
+  - Container: explicit registrations in `Application::services()` (no global `ReflectionContainer`: it would autowire every controller, CakeDC's included). Injection into actions (`index(PermissionMatrix $matrix, …)`) and via constructor in commands.
+  - `AppController::actor()`; `ArchitectureTest` blocks in controllers/commands: `PermissionAudit*`, `PermissionsCache::`, `::fromConfig(` and direct writes to the audit/permissions tables. Documented exception: `AppController` (guards in `beforeFilter` for CakeDC's controllers, without injection).
 
-### Fase 12 — Producción ✅ (2026-11-18)
-- Decisiones del usuario: Tailwind compilado en etapa **Node de Docker** (npm `tailwindcss`, `@tailwindcss/cli`, `basecoat-css`, solo build) y **PHP-FPM en vez de FrankenPHP** (sin worker mode: CakePHP no tiene soporte oficial y el estado estático se filtraría entre peticiones).
-- `docker/app/Dockerfile` multi-stage: `base` (php:8.5-fpm + extensiones), `dev` (composer/git, bind mount), `vendor` (`--no-dev`, autoload classmap-authoritative), `assets` (node:22 → `webroot/css/app.css` + `webroot/js/basecoat`), `prod` (opcache `validate_timestamps=0`, `www-data`, `plugin assets copy`), `web` (nginx + estáticos).
-- `docker/app/fpm-pool.conf` (`clear_env = no`: sin esto PHP-FPM no ve `DATABASE_URL`/`SECURITY_SALT`), `php-dev.ini` / `php-prod.ini` (errores a stderr, cookies `secure`/`httponly`/`SameSite=Lax`), `docker/nginx/default.conf`.
-- `compose.yaml` (dev): servicios `web` (nginx :8080) + `app` (FPM). `compose.prod.yaml`: falla si faltan `SECURITY_SALT` / `APP_FULL_BASE_URL`.
-- Config: `Datasources.default.url = env('DATABASE_URL')` en `app.php`; `config/app_local.php` fuera de la imagen (`.dockerignore`); `DebugKit` opcional (no existe con `--no-dev`); `BasecoatTheme.compiledAssets` (`THEME_COMPILED_ASSETS`) → `AppView::themeConfig()` (`css: app`, sin Tailwind browser, JS propia).
-- Verificado: 148 tests en el contenedor FPM; stack prod en :8081 migrado, sync (41 acciones), login superadmin, matriz y dashboard (gráfica) sin errores de consola; `app.css` 235 KB sin comprimir (gzip en nginx).
-- Autoalojado (2026-11-18, aprobado por el usuario): npm `chart.js@4.4.7` (misma versión que el CDN) → `webroot/js/vendor/chart.umd.js`; `@fontsource-variable/geist@5.3.0` (OFL) → `webroot/font/geist/` (subconjuntos latin + latin-ext, `@font-face` en `resources/css/app.css`); `AppView::themeConfig()` con `font: false` y `chartJs` local. Producción ya no hace ninguna petición externa (verificado: solo el propio origen).
-- Cache busting: `Asset.timestamp = env('ASSET_TIMESTAMP', true)`, `force` en la imagen prod → `app.css?<mtime>`. Encontrado en QA: con `Expires` de nginx el navegador seguía usando el `app.css` viejo tras un deploy. nginx cachea los estáticos 7 días.
-- Logs a stderr (2026-11-18): `LOG_TO_STDERR=true` en la imagen prod → los loggers `debug`/`error`/`queries` de `config/app.php` usan `ConsoleLog` (`php://stderr`, sin colores) en vez de `FileLog`. Verificado: un 404 aparece en `docker compose logs app` y `logs/` queda vacío. Dev sigue con ficheros.
-- TLS (2026-11-18, revisado a petición del usuario): flujo de filae con **mkcert** — `bin/dev-https-cert` genera `docker/certs/admindashboard.localhost{,-key}.pem` (fuera de git), nginx sirve `https://admindashboard.localhost` en 443 (sin puerto en la URL) solo si existe el certificado (`docker/nginx/https.conf` + `10-enable-https.sh`), en dev y en el stack prod. HSTS y cabeceras de seguridad en nginx. Caddy eliminado. Convivencia con filae (decisión del usuario: proxy compartido): `~/code/local-https-proxy` (nginx stream, `ssl_preread`, passthrough por SNI) en 443/80 → `admindashboard.localhost` :8445 (`HTTPS_PORT`), `filae.localhost` :8444 (`APP_HTTPS_PORT=8444` en el `.env` de filae; sin tocar su código). Verificado: los dos dominios sin puerto a la vez, certificados válidos, 80 → 301 HTTPS.
-- Notas: en prod usar `migrations migrate --no-lock` (el código es de solo lectura para `www-data`).
+### Phase 12 — Production ✅ (2026-11-18)
+- User's decisions: Tailwind compiled in a **Docker Node stage** (npm `tailwindcss`, `@tailwindcss/cli`, `basecoat-css`, build only) and **PHP-FPM instead of FrankenPHP** (no worker mode: CakePHP has no official support and static state would leak between requests).
+- Multi-stage `docker/app/Dockerfile`: `base` (php:8.5-fpm + extensions), `dev` (composer/git, bind mount), `vendor` (`--no-dev`, classmap-authoritative autoload), `assets` (node:22 → `webroot/css/app.css` + `webroot/js/basecoat`), `prod` (opcache `validate_timestamps=0`, `www-data`, `plugin assets copy`), `web` (nginx + static files).
+- `docker/app/fpm-pool.conf` (`clear_env = no`: without it PHP-FPM doesn't see `DATABASE_URL`/`SECURITY_SALT`), `php-dev.ini` / `php-prod.ini` (errors to stderr, `secure`/`httponly`/`SameSite=Lax` cookies), `docker/nginx/default.conf`.
+- `compose.yaml` (dev): `web` (nginx :8080) + `app` (FPM) services. `compose.prod.yaml`: fails if `SECURITY_SALT` / `APP_FULL_BASE_URL` are missing.
+- Config: `Datasources.default.url = env('DATABASE_URL')` in `app.php`; `config/app_local.php` kept out of the image (`.dockerignore`); `DebugKit` optional (it doesn't exist with `--no-dev`); `BasecoatTheme.compiledAssets` (`THEME_COMPILED_ASSETS`) → `AppView::themeConfig()` (`css: app`, no Tailwind browser build, custom JS).
+- Verified: 148 tests in the FPM container; prod stack on :8081 migrated, synced (41 actions), superadmin login, matrix and dashboard (chart) with no console errors; `app.css` 235 KB uncompressed (gzip in nginx).
+- Self-hosted (2026-11-18, approved by the user): npm `chart.js@4.4.7` (same version as the CDN) → `webroot/js/vendor/chart.umd.js`; `@fontsource-variable/geist@5.3.0` (OFL) → `webroot/font/geist/` (latin + latin-ext subsets, `@font-face` in `resources/css/app.css`); `AppView::themeConfig()` with `font: false` and local `chartJs`. Production no longer makes any external request (verified: only its own origin).
+- Cache busting: `Asset.timestamp = env('ASSET_TIMESTAMP', true)`, `force` in the prod image → `app.css?<mtime>`. Found in QA: with nginx's `Expires` the browser kept using the old `app.css` after a deploy. nginx caches static files for 7 days.
+- Logs to stderr (2026-11-18): `LOG_TO_STDERR=true` in the prod image → the `debug`/`error`/`queries` loggers in `config/app.php` use `ConsoleLog` (`php://stderr`, no colours) instead of `FileLog`. Verified: a 404 shows up in `docker compose logs app` and `logs/` stays empty. Dev still uses files.
+- TLS (2026-11-18, revised at the user's request): filae's **mkcert** flow — `bin/dev-https-cert` generates `docker/certs/admindashboard.localhost{,-key}.pem` (outside git), nginx serves `https://admindashboard.localhost` on 443 (no port in the URL) only if the certificate exists (`docker/nginx/https.conf` + `10-enable-https.sh`), in dev and in the prod stack. HSTS and security headers in nginx. Caddy removed. Coexistence with filae (user's decision: shared proxy): `~/code/local-https-proxy` (nginx stream, `ssl_preread`, SNI passthrough) on 443/80 → `admindashboard.localhost` :8445 (`HTTPS_PORT`), `filae.localhost` :8444 (`APP_HTTPS_PORT=8444` in filae's `.env`; without touching its code). Verified: both domains without a port at the same time, valid certificates, 80 → 301 HTTPS.
+- Notes: in prod use `migrations migrate --no-lock` (the code is read-only for `www-data`).
 
-### Fase 13 — 2FA (TOTP + llave) y passkeys (TDD) ✅ (2026-11-18)
-Referencia: implementación de filae (`../filae`, specs `openspec/specs/{two-factor-auth,passkey-login}`). Paquetes aprobados: fork `delamux/CakeDC-users` rama `issue/4-webauthn-lib-5` (alias 16.0.5; webauthn-lib 5), `robthree/twofactorauth` ^3, `web-auth/webauthn-lib` ^5.3.5, `endroid/qr-code` ^6.2.
-- Reglas: 2FA opcional para todos los roles; métodos TOTP y/o llave (independientes); con TOTP activo se pide el código; la llave solo si es el único método; passkey = login sin contraseña con la misma llave. Activar/desactivar con la contraseña actual; email en cada cambio (sin secretos). Sin códigos de recuperación: el superadmin resetea a otros (no a otros superadmins) y `bin/cake two_factor reset` para el propio superadmin. `TWO_FACTOR_ENABLED` (por defecto activo). El enlace de acceso por email también pasa por 2FA.
-- Diferencias con filae: sin prefijos (pantalla de perfil de CakeDC), casos de uso en `src/UseCase/TwoFactor` (DDD-lite), JS sin build (`webroot/js/webauthn.js`), HTTPS en dev con Caddy (`https://admindashboard.localhost:8443`; WebAuthn lo exige).
-- Pasos: 1) checkers opcionales + métodos en `UsersTable` · 2) activar/desactivar en el perfil (TOTP con QR, llave) + emails · 3) login con 2FA (verify, llave) · 4) passkeys · 5) reset por superadmin + comando · 6) limitación por IP · 7) HTTPS dev + QA.
-- **Hecho** (191 tests + phpcs + phpstan 8):
-  - Datos: sin migraciones (CakeDC ya trae `secret`, `secret_verified`, `additional_data`). `App\Model\Entity\User` protege de asignación masiva `secret`, `secret_verified` y `additional_data` (la entidad de CakeDC lo permitía: se podía plantar un secreto TOTP o una llave desde un formulario).
+### Phase 13 — 2FA (TOTP + security key) and passkeys (TDD) ✅ (2026-11-18)
+Reference: filae's implementation (`../filae`, specs `openspec/specs/{two-factor-auth,passkey-login}`). Approved packages: fork `delamux/CakeDC-users` branch `issue/4-webauthn-lib-5` (alias 16.0.5; webauthn-lib 5), `robthree/twofactorauth` ^3, `web-auth/webauthn-lib` ^5.3.5, `endroid/qr-code` ^6.2.
+- Rules: optional 2FA for every role; TOTP and/or security key methods (independent); with TOTP enabled the code is requested; the key only if it is the only method; passkey = passwordless login with the same key. Enabling/disabling requires the current password; email on every change (no secrets). No recovery codes: the superadmin resets other users (not other superadmins) and `bin/cake two_factor reset` covers the superadmin themselves. `TWO_FACTOR_ENABLED` (enabled by default). The email sign-in link also goes through 2FA.
+- Differences from filae: no prefixes (CakeDC's profile screen), use cases in `src/UseCase/TwoFactor` (DDD-lite), JS without a build step (`webroot/js/webauthn.js`), HTTPS in dev with Caddy (`https://admindashboard.localhost:8443`; WebAuthn requires it).
+- Steps: 1) optional checkers + methods in `UsersTable` · 2) enable/disable in the profile (TOTP with QR, key) + emails · 3) login with 2FA (verify, key) · 4) passkeys · 5) reset by superadmin + command · 6) per-IP rate limiting · 7) dev HTTPS + QA.
+- **Done** (191 tests + phpcs + phpstan 8):
+  - Data: no migrations (CakeDC already ships `secret`, `secret_verified`, `additional_data`). `App\Model\Entity\User` protects `secret`, `secret_verified` and `additional_data` from mass assignment (CakeDC's entity allowed it: a TOTP secret or a key could be planted from a form).
   - `UsersTable`: `twoFactorMethods`, `enableTotp`, `disableTotp`, `disableWebauthn`, `disableTwoFactor`, `markPasskey`, `isLegacyWebauthnKey`, `findPasskeyOwner`, `recordLogin`. Checkers `App\Authentication\Optional*Checker`.
-  - Caso de uso `App\UseCase\TwoFactor\TwoFactorSettings` (contraseña, TOTP/QR, confirmar, llave registrada, desactivar, reset, email `twoFactorChanged`). `TwoFactorController` (pasos POST, 10 min en sesión, reset superadmin con defensa en profundidad), celda `TwoFactor` (tarjeta del perfil y estado en la ficha de usuario).
-  - Login: plantillas `verify` / `webauthn2fa`, `WebauthnLoginController` (adaptador propio: CakeDC lo crea dentro de su acción). Passkeys: `App\Webauthn\PasskeyLoginAdapter` (reto de un solo uso, 5 min, sin `allowCredentials`, `userHandle`), `PasskeyLoginController` (activa, bloqueo si está configurado, recordarme, solo redirecciones internas), rutas `/passkey/{options,login}`. `StandardAlgorithmsTrait` evita el aviso Ed256/Ed512 que rompía el JSON.
-  - JS sin build `webroot/js/webauthn.js` (registro, segundo paso, passkey con autorrelleno condicional; CSRF por cabecera, base64url).
-  - `bin/cake two_factor reset <usuario|email>`. `TwoFactor::reset` en `PermissionsSynchronizer::SUPERADMIN_ONLY` (fuente única).
-  - Límite por IP (`App\Http\AuthThrottle`, `App\Middleware\AuthThrottleMiddleware`, caché `throttle`, `Security.throttle`): accesos fallidos + códigos erróneos + passkeys fallidas 20/15 min; registro/reset/reenvío 5/h; 429 + `Retry-After`. En tests, caché en memoria.
-  - Cookie «recordarme» `secure` (si la app es HTTPS) y `SameSite=Lax`. El enlace de acceso por email también pide 2FA.
-  - Tests con firmas reales (EC P-256, `WebauthnTestTrait`): segundo paso con llave y passkey de extremo a extremo, reto de un solo uso/caducado, contador creciente (anti-clonado), llaves antiguas, sin verificación de usuario, cuentas inactivas.
-  - QA (https://admindashboard.localhost): activar TOTP con QR, email, acceso con código, estado y reset desde la ficha de un usuario, email de reset; traducciones es_ES (57 cadenas nuevas).
-- Reutilización de códigos TOTP cerrada (2026-11-18, TDD): columna `users.totp_last_step` (migración `20261118160000`), `UsersTable::claimTotpStep()` (un único `UPDATE ... WHERE totp_last_step IS NULL OR < :step`: atómico, sin carreras), `TwoFactorSettings::verifyLoginCode()` y `App\Controller\Component\OneTimePasswordAuthenticatorComponent` (sustituye al de CakeDC en `AppController::beforeFilter()`). El código de activación cuenta como usado. Verificado en la app: código de activación rechazado, código nuevo entra, el mismo otra vez rechazado.
-- Limitaciones conocidas: el registro/uso real de llaves y passkeys necesita un dispositivo (Touch ID, llave, gestor de contraseñas): cubierto por tests con firmas reales, no probado a mano. (Proxies de confianza: resuelto en la Fase 15 con `TRUSTED_PROXIES`.)
+  - Use case `App\UseCase\TwoFactor\TwoFactorSettings` (password, TOTP/QR, confirm, registered key, disable, reset, `twoFactorChanged` email). `TwoFactorController` (POST steps, 10 min in session, superadmin reset with defence in depth), `TwoFactor` cell (profile card and status on the user page).
+  - Login: `verify` / `webauthn2fa` templates, `WebauthnLoginController` (custom adapter: CakeDC creates it inside its action). Passkeys: `App\Webauthn\PasskeyLoginAdapter` (single-use challenge, 5 min, no `allowCredentials`, `userHandle`), `PasskeyLoginController` (active, lockout if configured, remember me, internal redirects only), routes `/passkey/{options,login}`. `StandardAlgorithmsTrait` avoids the Ed256/Ed512 warning that broke the JSON.
+  - Build-free JS `webroot/js/webauthn.js` (registration, second step, passkey with conditional autofill; CSRF via header, base64url).
+  - `bin/cake two_factor reset <user|email>`. `TwoFactor::reset` in `PermissionsSynchronizer::SUPERADMIN_ONLY` (single source of truth).
+  - Per-IP rate limiting (`App\Http\AuthThrottle`, `App\Middleware\AuthThrottleMiddleware`, `throttle` cache, `Security.throttle`): failed sign-ins + wrong codes + failed passkeys 20/15 min; sign-up/reset/resend 5/h; 429 + `Retry-After`. In tests, in-memory cache.
+  - "Remember me" cookie `secure` (if the app runs over HTTPS) and `SameSite=Lax`. The email sign-in link also asks for 2FA.
+  - Tests with real signatures (EC P-256, `WebauthnTestTrait`): end-to-end second step with a key and passkey, single-use/expired challenge, increasing counter (anti-cloning), legacy keys, no user verification, inactive accounts.
+  - QA (https://admindashboard.localhost): enabling TOTP with QR, email, sign-in with a code, status and reset from a user's page, reset email; es_ES translations (57 new strings).
+- TOTP code reuse closed (2026-11-18, TDD): `users.totp_last_step` column (migration `20261118160000`), `UsersTable::claimTotpStep()` (a single `UPDATE ... WHERE totp_last_step IS NULL OR < :step`: atomic, race-free), `TwoFactorSettings::verifyLoginCode()` and `App\Controller\Component\OneTimePasswordAuthenticatorComponent` (replaces CakeDC's in `AppController::beforeFilter()`). The activation code counts as used. Verified in the app: activation code rejected, new code accepted, the same code again rejected.
+- Known limitations: actually registering/using keys and passkeys requires a device (Touch ID, security key, password manager): covered by tests with real signatures, not tested by hand. (Trusted proxies: resolved in Phase 15 with `TRUSTED_PROXIES`.)
 
-### Fase 14 — CI con GitHub Actions ✅ (2026-11-18)
-- `.github/workflows/ci.yml` (sustituye al del esqueleto de CakePHP): en push a `main`, pull requests y a mano. Un job en `ubuntu-24.04` con PHP 8.5 (mismas extensiones que la imagen) y PostgreSQL 18 como servicio: `composer install` → `config/app_local.example.php` como config local → **PHPUnit**, **CodeSniffer** (anotaciones en el PR con `cs2pr`), **PHPStan** nivel 8 (formato `github`) y **`composer audit`**. Cada paso de calidad corre aunque falle el anterior, para verlo todo de una vez.
-- Decisiones del usuario: solo tests y análisis (sin construir imágenes Docker) y sin pasos de migraciones (el esquema de tests lo crea el bootstrap de la suite).
-- Verificado reproduciendo el job en local desde cero (copia limpia sin `vendor/` ni `app_local.php`, PostgreSQL vacío): 194 tests, phpcs, phpstan y audit en verde.
-- Para que corra: crear el repositorio git y subirlo a GitHub (el proyecto aún no es un repo). Dependabot ya actualiza Composer y las actions cada semana.
+### Phase 14 — CI with GitHub Actions ✅ (2026-11-18)
+- `.github/workflows/ci.yml` (replaces the one from the CakePHP skeleton): on push to `main`, pull requests and manually. One job on `ubuntu-24.04` with PHP 8.5 (same extensions as the image) and PostgreSQL 18 as a service: `composer install` → `config/app_local.example.php` as local config → **PHPUnit**, **CodeSniffer** (PR annotations with `cs2pr`), **PHPStan** level 8 (`github` format) and **`composer audit`**. Each quality step runs even if the previous one fails, so you see everything at once.
+- User's decisions: tests and analysis only (no Docker image builds) and no migration steps (the test schema is created by the suite's bootstrap).
+- Verified by reproducing the job locally from scratch (clean copy without `vendor/` or `app_local.php`, empty PostgreSQL): 194 tests, phpcs, phpstan and audit all green.
+- To make it run: create the git repository and push it to GitHub (the project isn't a repo yet). Dependabot already updates Composer and the actions weekly.
 
-### Fase 15 — Seguridad (book.cakephp.org/5.x/security) ✅ (2026-11-18)
-Decisiones del usuario: CSP estricta en producción y en modo Report-Only en dev; tema sin JS en línea (sin opción de config) publicado directo a main; paquetes aprobados `paragonie/csp-builder` (CspMiddleware) y `htmx.org` (npm).
-- Pasos: 1) tema sin `onclick`/`<script>` en línea (delegación de eventos + `Html->scriptBlock` con nonce) · 2) `SecurityHeadersMiddleware` · 3) `HttpsEnforcerMiddleware` + HSTS (producción) · 4) `CspMiddleware` con nonces (report-only con debug) · 5) CSRF `secure` + `SameSite` · 6) `FormProtection` en los controladores de la app · 7) `EncryptedCookieMiddleware` para «recordarme» · 8) sesión endurecida · 9) proxies de confianza (IP real tras balanceador).
-- **Hecho** (`SecurityTest`, 208 tests + phpcs + phpstan 8):
-  - Tema (directo a main, `c3842c0` + `fabdb9d`): sidebar, diálogos, alertas, toasts, barras de progreso y «Volver» con `data-*` + delegación en `basecoat-theme.js`; nonces en el script de modo oscuro y el `<style>` de Tailwind; reinicio tras `htmx:load`.
-  - App: `App\Http\SecurityMiddlewares` (fábrica) y `App\Middleware\TrustedProxiesMiddleware`; config `Security.{https,csp,cookieKey,trustedProxies}` y `Session.ini`; nginx ya no duplica cabeceras.
-  - Plantillas sin JS en línea: `data-confirm` y `data-submit-form` (`webroot/js/app.js`); fuera las plantillas flash del esqueleto (las del tema mandan) y la tarjeta antigua «Reset authenticator» de CakeDC (duplicaba el reset de la Fase 13).
-  - QA en el stack de producción con la CSP aplicada: sin errores de consola en login, dashboard, usuarios, permisos y perfil (2FA). Encontrado por QA: `style="width"` de `ProgressHelper` y `javascript:history.back()` del layout de error (bloqueados por la CSP) → corregidos en el tema.
-  - Tests: `configRequest()` mezcla recursivamente y `app.php` se carga una vez por proceso (en tests se usa `Configure::write`); el listener de accesos fallidos se registraba en cada bootstrap → cierre estático.
-- Sesiones en PostgreSQL (2026-11-18, decisión del usuario): migración `20261118170000_CreateSessions` (`id` varchar 128 PK, `data` bytea, `expires` int con índice, `created`/`modified`), `Session.defaults = database` en todos los entornos (la endurecida `Session.ini` y el `timeout` se mantienen). Verificado: la sesión queda en `sessions` y sigue abierta tras recrear el contenedor `app`. El GC de PHP borra las caducadas (`expires < now`).
-- Contadores del límite en PostgreSQL (2026-11-18, decisión del usuario): migración `20261118180000_CreateAuthThrottles` (PK `bucket` + `ip_hash` SHA-256, `hits`, `window_ends` con índice); `App\Http\AuthThrottle` hace un único `INSERT … ON CONFLICT DO UPDATE` atómico (reinicia la ventana caducada; sin conteos perdidos con peticiones simultáneas) y purga las filas caducadas de vez en cuando (`purgeExpired()`). Fuera la caché `throttle`. `AuthThrottlesTable` existe para el ORM (fixtures; sin clases de tabla de reserva). Tests: el bootstrap vacía la tabla al empezar; los que cuentan usan el fixture.
+### Phase 15 — Security (book.cakephp.org/5.x/security) ✅ (2026-11-18)
+User's decisions: strict CSP in production and Report-Only mode in dev; theme without inline JS (no config option) published straight to main; approved packages `paragonie/csp-builder` (CspMiddleware) and `htmx.org` (npm).
+- Steps: 1) theme without inline `onclick`/`<script>` (event delegation + `Html->scriptBlock` with nonce) · 2) `SecurityHeadersMiddleware` · 3) `HttpsEnforcerMiddleware` + HSTS (production) · 4) `CspMiddleware` with nonces (report-only in debug) · 5) CSRF `secure` + `SameSite` · 6) `FormProtection` in the app's controllers · 7) `EncryptedCookieMiddleware` for "remember me" · 8) hardened session · 9) trusted proxies (real IP behind a load balancer).
+- **Done** (`SecurityTest`, 208 tests + phpcs + phpstan 8):
+  - Theme (straight to main, `c3842c0` + `fabdb9d`): sidebar, dialogs, alerts, toasts, progress bars and "Back" with `data-*` + delegation in `basecoat-theme.js`; nonces on the dark-mode script and Tailwind's `<style>`; re-initialisation after `htmx:load`.
+  - App: `App\Http\SecurityMiddlewares` (factory) and `App\Middleware\TrustedProxiesMiddleware`; config `Security.{https,csp,cookieKey,trustedProxies}` and `Session.ini`; nginx no longer duplicates headers.
+  - Templates without inline JS: `data-confirm` and `data-submit-form` (`webroot/js/app.js`); removed the skeleton's flash templates (the theme's take precedence) and CakeDC's old "Reset authenticator" card (it duplicated the Phase 13 reset).
+  - QA on the production stack with the CSP enforced: no console errors on login, dashboard, users, permissions and profile (2FA). Found by QA: `ProgressHelper`'s `style="width"` and the error layout's `javascript:history.back()` (blocked by the CSP) → fixed in the theme.
+  - Tests: `configRequest()` merges recursively and `app.php` is loaded once per process (tests use `Configure::write`); the failed sign-in listener was registered on every bootstrap → static closure.
+- Sessions in PostgreSQL (2026-11-18, user's decision): migration `20261118170000_CreateSessions` (`id` varchar 128 PK, `data` bytea, indexed `expires` int, `created`/`modified`), `Session.defaults = database` in every environment (the hardened `Session.ini` and the `timeout` are kept). Verified: the session is stored in `sessions` and stays open after recreating the `app` container. PHP's GC deletes expired ones (`expires < now`).
+- Rate-limit counters in PostgreSQL (2026-11-18, user's decision): migration `20261118180000_CreateAuthThrottles` (PK `bucket` + SHA-256 `ip_hash`, `hits`, indexed `window_ends`); `App\Http\AuthThrottle` performs a single atomic `INSERT … ON CONFLICT DO UPDATE` (resets an expired window; no lost counts with concurrent requests) and occasionally purges expired rows (`purgeExpired()`). The `throttle` cache is gone. `AuthThrottlesTable` exists for the ORM (fixtures; no fallback table classes). Tests: the bootstrap empties the table at start; the ones that count use the fixture.
 
-### Fase 16 — htmx ✅ (2026-11-18)
-- Integración propia inspirada en `zunnu/cake-htmx` (sin el plugin, no mantenido): componente `Htmx` (detección `HX-Request`, render parcial, `HX-Trigger`, `HX-Redirect`), htmx 2.0.11 autoalojado en producción, CSRF por cabecera, compatible con la CSP (`allowEval: false`, sin estilos en línea). Aplicado a: tarjeta de 2FA, listado de usuarios (búsqueda/orden/paginación) y matriz de permisos.
-- **Hecho** (`HtmxTest`): layout `htmx` con flash como toasts fuera de banda (`hx-swap-oob` al toaster: se ven aunque `hx-select` tome otro elemento), `Vary: HX-Request`, peticiones `hx-boost` con `hx-target` también parciales, `HX-Redirect` cuando una petición htmx necesita login, `htmx-config` con el nonce de la página, `webauthn.js` reenlazado tras `htmx:load`. Verificado en producción (CSP estricta): ordenar usuarios sin recargar (URL en el historial), guardar permisos con toast, paso de 2FA cambiando solo la tarjeta.
-- README reescrito con todo el stack, seguridad y htmx.
+### Phase 16 — htmx ✅ (2026-11-18)
+- Custom integration inspired by `zunnu/cake-htmx` (without the plugin, which is unmaintained): `Htmx` component (`HX-Request` detection, partial rendering, `HX-Trigger`, `HX-Redirect`), htmx 2.0.11 self-hosted in production, CSRF via header, CSP-compatible (`allowEval: false`, no inline styles). Applied to: the 2FA card, the users list (search/sort/pagination) and the permissions matrix.
+- **Done** (`HtmxTest`): `htmx` layout with flash messages as out-of-band toasts (`hx-swap-oob` into the toaster: visible even when `hx-select` picks another element), `Vary: HX-Request`, `hx-boost` requests with `hx-target` also partial, `HX-Redirect` when an htmx request needs login, `htmx-config` with the page's nonce, `webauthn.js` re-bound after `htmx:load`. Verified in production (strict CSP): sorting users without a reload (URL in the history), saving permissions with a toast, 2FA step swapping only the card.
+- README rewritten with the full stack, security and htmx.
 
-### Fase 17 — Registro de actividad de la cuenta (TDD) ✅ (2026-11-18)
-- Tabla `account_activities` (id autoincremental = orden de inserción, `user_id` FK con CASCADE, `actor_id` FK SET NULL, `event`, `ip`, `user_agent` ≤255, `created`). Decisiones con el usuario: **IP completa**, **los fallos con usuario inexistente no se guardan** (los cubre el throttle; nunca se guarda lo tecleado), **perfil + ficha de usuario** (solo superadmin), **retención 180 días** (`App.accountActivity.retentionDays`, `bin/cake activity purge`, mínimo 30).
-- Eventos: `login`, `passkey_login`, `login_failed`, `two_factor_failed` (código o llave incorrectos tras la contraseña correcta), `logout`, `password_changed` / `password_reset` (por token), `totp_enabled` / `totp_disabled`, `key_added` / `key_removed`, `two_factor_reset` (con quién lo hizo).
-- Dónde: `App\Account\AccountActivityListener` para los eventos de CakeDC (sustituye al closure estático de los fallos: un solo listener, registrado una vez por EventManager con un `WeakMap`), `TwoFactorSettings` para el 2FA, `PasskeyLoginController` y `WebauthnLoginController`. Un fallo al escribir va al log y no rompe la acción.
-- UI: cell `AccountActivity` (últimos 20, fallos en rojo, «Chrome en macOS» con `App\Account\UserAgent`, IP, «por X» si actuó otro). Traducido al español. Probado en el navegador.
-- Tests: `AccountActivityTest`, `UserAgentTest`, aserción en `PasskeyLoginTest`. 226 tests verdes, phpcs y phpstan en verde.
-- AuditStash (`lorenzo/audit-stash`) se descartó para esto (audita cambios de registros del ORM, no inicios/fallos/cierres de sesión); queda como opción para auditar entidades de negocio.
+### Phase 17 — Account activity log (TDD) ✅ (2026-11-18)
+- `account_activities` table (auto-increment id = insertion order, `user_id` FK with CASCADE, `actor_id` FK SET NULL, `event`, `ip`, `user_agent` ≤255, `created`). Decisions with the user: **full IP**, **failures for non-existent users are not stored** (the throttle covers them; what was typed is never stored), **profile + user page** (superadmin only), **180-day retention** (`App.accountActivity.retentionDays`, `bin/cake activity purge`, minimum 30).
+- Events: `login`, `passkey_login`, `login_failed`, `two_factor_failed` (wrong code or key after the correct password), `logout`, `password_changed` / `password_reset` (via token), `totp_enabled` / `totp_disabled`, `key_added` / `key_removed`, `two_factor_reset` (with who did it).
+- Where: `App\Account\AccountActivityListener` for CakeDC's events (replaces the static closure for failures: a single listener, registered once per EventManager with a `WeakMap`), `TwoFactorSettings` for 2FA, `PasskeyLoginController` and `WebauthnLoginController`. A write failure goes to the log and doesn't break the action.
+- UI: `AccountActivity` cell (latest 20, failures in red, "Chrome on macOS" via `App\Account\UserAgent`, IP, "by X" if someone else acted). Translated into Spanish. Tested in the browser.
+- Tests: `AccountActivityTest`, `UserAgentTest`, an assertion in `PasskeyLoginTest`. 226 green tests, phpcs and phpstan green.
+- AuditStash (`lorenzo/audit-stash`) was ruled out for this (it audits ORM record changes, not sign-ins/failures/sign-outs); it remains an option for auditing business entities.
 
-### Fase 18 — Cola (dereuromark/cakephp-queue) ⏳
-- Decisiones (2026-11-18): AuditStash **descartado** por ahora (no hay entidades de negocio que auditar; usuarios y roles ya los cubren la actividad de la cuenta y `permission_audits`). Queue sí:
-  - **Todos los emails** por la cola (transporte `queue` delante del real; CakeDC, 2FA, avisos).
-  - **Worker como servicio Docker** propio (`bin/cake queue run`, reinicio automático), en dev, prod y Coolify.
-  - **Pantalla propia** con Basecoat (la del plugin usa Bootstrap por CDN, incompatible con la CSP): contadores, fallidos con su error, reintentar/borrar, workers. Solo superadmin.
-  - Fallos: pantalla + log de errores (stderr). Sin emails de aviso.
-  - PDF de usuarios sigue síncrono.
-  - **`bin/cake maintenance`**: un comando para el cron diario (purga de actividad, de histórico de permisos, limpieza de la cola).
-- Puertos locales sin cambios (dev). En producción no hay Mailpit.
+### Phase 18 — Queue (dereuromark/cakephp-queue) ⏳
+- Decisions (2026-11-18): AuditStash **ruled out** for now (there are no business entities to audit; users and roles are already covered by account activity and `permission_audits`). Queue, yes:
+  - **All emails** through the queue (`queue` transport in front of the real one; CakeDC, 2FA, notifications).
+  - **Worker as its own Docker service** (`bin/cake queue run`, automatic restart), in dev, prod and Coolify.
+  - **Custom screen** with Basecoat (the plugin's uses Bootstrap from a CDN, incompatible with the CSP): counters, failed jobs with their error, retry/delete, workers. Superadmin only.
+  - Failures: screen + error log (stderr). No notification emails.
+  - The users PDF stays synchronous.
+  - **`bin/cake maintenance`**: one command for the daily cron (activity purge, permissions history purge, queue cleanup).
+- Local ports unchanged (dev). No Mailpit in production.
 
-### Fase 19 — Despliegue en Coolify ⏳
-- Compose propio para Coolify: PostgreSQL como **recurso de BD de Coolify** (copias S3; la app recibe `DATABASE_URL`), **nginx solo HTTP** detrás de Traefik (TLS de Coolify, `TRUSTED_PROXIES`, HSTS desde la app), imagen **construida por Coolify desde el repo**, cron con **Scheduled Tasks** de Coolify (`bin/cake maintenance`).
+### Phase 19 — Deployment on Coolify ⏳
+- Custom compose for Coolify: PostgreSQL as a **Coolify database resource** (S3 backups; the app receives `DATABASE_URL`), **HTTP-only nginx** behind Traefik (Coolify's TLS, `TRUSTED_PROXIES`, HSTS from the app), image **built by Coolify from the repo**, cron via Coolify **Scheduled Tasks** (`bin/cake maintenance`).
 
-### Fase 20 — Documentación (`docs/`) ⏳
-- Guía por área con todo el potencial de la app; README como resumen e índice; crons a ejecutar siempre documentados.
+### Phase 20 — Documentation (`docs/`) ⏳
+- A guide per area covering everything the app can do; README as summary and index; the crons to run always documented.
 
-## Pendiente / siguientes pasos
+## Pending / next steps
 
-- [x] **Mejoras genéricas del tema basecoat** (2026-11-18, aprobado). Clon en `../cakephp-basecoat-theme`,
-  rama `feat/admin-improvements`, TDD (83 tests verdes):
-  - TableHelper: indicador de orden (`chevrons-up-down` / `arrow-up` / `arrow-down`) + `aria-sort` en la
-    columna activa; config `sortIcons` (false = enlaces planos) y `classes.sort*`.
-  - ButtonHelper: opción `collapse` (`sm|md|lg|xl|true`) → icon-only bajo el breakpoint, label sr-only + `title`.
-  - Layout: título `flex-1` truncable y acciones `shrink-0`.
-  - FormHelper: `nestedCheckboxAndRadio` = false por defecto (checkbox plano, sin "choice card");
-    `nestedInput => true` para la tarjeta. `checkboxWrapper`/`radioWrapper` con `{{input}}{{label}}`
-    (arregla radios/multicheckbox sin anidar).
-  - README del tema actualizado.
-  - [x] Publicado directo a `main` del tema (commit `419a5a5`) y la app actualizada con
-    `composer update delamux/cakephp-basecoat-theme` (lock en `419a5a5`).
-- [x] **Gestión de roles desde el CRUD** (2026-11-18, TDD + `/grill:roast` rápido previo):
-  - `App\Service\UserRoleManager`: roles en lista blanca (`App.roles` en `config/users.php`), solo admins/superusers,
-    nadie cambia su propio rol (siempre queda ≥1 admin: el que actúa), solo superusers gestionan superusers,
-    nadie borra su propia cuenta, "cambiar contraseña de otro" igual que CakeDC (`Users.Superuser.allowedToChangePasswords`).
-  - `POST /user-roles/{id}` (`UserRolesController`, ruta `user-roles:edit`, id uuid → 404 si no lo es); `is_superuser` nunca desde la UI.
-  - Guards en `AppController::beforeFilter` para `edit`/`delete` del CRUD de CakeDC (aplican también a superusers,
-    que se saltan el RBAC por la política `Rbac|Superuser`).
-  - UI: tarjeta "Role" en edición; editar/borrar/cambiar contraseña solo si está permitido (listado, ficha, edición).
-  - Hallazgos del roast cerrados: (1) admin podía cambiar el email de un superuser → takeover vía reset; (2) borrarse a sí
-    mismo / borrar superusers; (3) enlace "Change password" de otros roto.
-  - QA cazó un bug no cubierto: ruta con `setMethods` no encontrada en reverse routing → test de URL + 404 para ids inválidos.
-- [x] Mensaje de sesión caducada: `App\Middleware\UnauthorizedHandler\AppRedirectHandler` → sin sesión "Please sign in to continue.", con sesión y sin permiso "Access denied".
-- [x] **Roles por defecto `superadmin`, `admin`, `editor`, `user`** (2026-11-18, TDD):
-  | Rol | Puede |
+- [x] **Generic basecoat theme improvements** (2026-11-18, approved). Clone in `../cakephp-basecoat-theme`,
+  branch `feat/admin-improvements`, TDD (83 green tests):
+  - TableHelper: sort indicator (`chevrons-up-down` / `arrow-up` / `arrow-down`) + `aria-sort` on the
+    active column; `sortIcons` config (false = plain links) and `classes.sort*`.
+  - ButtonHelper: `collapse` option (`sm|md|lg|xl|true`) → icon-only below the breakpoint, sr-only label + `title`.
+  - Layout: truncatable `flex-1` title and `shrink-0` actions.
+  - FormHelper: `nestedCheckboxAndRadio` = false by default (plain checkbox, no "choice card");
+    `nestedInput => true` for the card. `checkboxWrapper`/`radioWrapper` with `{{input}}{{label}}`
+    (fixes non-nested radios/multicheckbox).
+  - Theme README updated.
+  - [x] Published straight to the theme's `main` (commit `419a5a5`) and the app updated with
+    `composer update delamux/cakephp-basecoat-theme` (lock at `419a5a5`).
+- [x] **Role management from the CRUD** (2026-11-18, TDD + a quick `/grill:roast` beforehand):
+  - `App\Service\UserRoleManager`: whitelisted roles (`App.roles` in `config/users.php`), admins/superusers only,
+    nobody changes their own role (there's always ≥1 admin: the one acting), only superusers manage superusers,
+    nobody deletes their own account, "change another user's password" same as CakeDC (`Users.Superuser.allowedToChangePasswords`).
+  - `POST /user-roles/{id}` (`UserRolesController`, route `user-roles:edit`, uuid id → 404 otherwise); `is_superuser` never from the UI.
+  - Guards in `AppController::beforeFilter` for CakeDC's CRUD `edit`/`delete` (they also apply to superusers,
+    who bypass the RBAC through the `Rbac|Superuser` policy).
+  - UI: "Role" card on the edit page; edit/delete/change password only if allowed (list, user page, edit).
+  - Roast findings closed: (1) an admin could change a superuser's email → takeover via reset; (2) deleting
+    yourself / deleting superusers; (3) broken "Change password" link for other users.
+  - QA caught an uncovered bug: route with `setMethods` not found by reverse routing → URL test + 404 for invalid ids.
+- [x] Session-expired message: `App\Middleware\UnauthorizedHandler\AppRedirectHandler` → without a session "Please sign in to continue.", with a session but no permission "Access denied".
+- [x] **Default roles `superadmin`, `admin`, `editor`, `user`** (2026-11-18, TDD):
+  | Role | Can |
   | --- | --- |
-  | superadmin | Todo; único que gestiona superadmins y concede/quita superadmin. Sincronizado con `is_superuser` de CakeDC |
-  | admin | Usuarios y roles (no superadmins, no concede superadmin), informes |
-  | editor | Solo lectura: listado/ficha de usuarios, informe PDF, estadísticas del dashboard |
-  | user | Dashboard y su perfil |
-  - `App\Model\Table\UsersTable` (vía `Users.table = 'Users'`, CakeDC mapea sus alias) sincroniza rol ⇄ flag en `beforeSave` (cubre CRUD, cambio de rol y `bin/cake users add_superuser`).
-  - Migración `20261118120000_SuperadminRole`: superusers existentes → rol `superadmin`.
-  - RBAC (`config/permissions.php`): superadmin/admin todo; editor `Users::index/view` + `Reports::users`.
-  - UI: selector de rol con `assignableRoles()` (admin no ve "Superadmin"), badge de rol unificado (`element/Users/role_badge`), acciones solo si están permitidas.
-- [x] **Roast rápido sobre los roles**: la sesión guardaba la entidad completa → un admin degradado/borrado/desactivado conservaba acceso hasta cerrar sesión. Ahora `AppController::refreshIdentity()` relee el usuario en cada request (1 query por PK): refresca la identidad o cierra la sesión ("Your session has ended"). Cerrado después con `App\Middleware\RefreshIdentityMiddleware` (vía `Users.middlewareQueueLoader` → `App\Loader\MiddlewareQueueLoader`), que corre entre Authentication y Authorization: el RBAC ya ve el rol actual desde la primera request.
-- [x] i18n español (2026-11-18): `LocaleSelectorMiddleware(['en_US','es_ES'])` elige por `Accept-Language` (por defecto `App.defaultLocale`). `resources/locales/default.pot` (227 cadenas, `bin/cake i18n extract --paths src,templates --output resources/locales`) + `es_ES/default.po` y `es_ES/cake.po`. CakeDC/Users y el tema traen su propio `es`. Al añadir cadenas: re-extraer y completar el `.po` (luego `bin/cake cache clear_all`).
-- [x] Producción (2026-11-18): ver Fase 12.
-- [x] `composer self-update` en host (2026-11-18, hecho por el usuario): Composer 2.11.2, `composer diagnose` OK con PHP 8.5.12.
+  | superadmin | Everything; the only one who manages superadmins and grants/revokes superadmin. Synced with CakeDC's `is_superuser` |
+  | admin | Users and roles (not superadmins, can't grant superadmin), reports |
+  | editor | Read-only: users list/page, PDF report, dashboard statistics |
+  | user | Dashboard and their profile |
+  - `App\Model\Table\UsersTable` (via `Users.table = 'Users'`, CakeDC maps its aliases) syncs role ⇄ flag in `beforeSave` (covers the CRUD, role changes and `bin/cake users add_superuser`).
+  - Migration `20261118120000_SuperadminRole`: existing superusers → `superadmin` role.
+  - RBAC (`config/permissions.php`): superadmin/admin everything; editor `Users::index/view` + `Reports::users`.
+  - UI: role selector with `assignableRoles()` (admins don't see "Superadmin"), unified role badge (`element/Users/role_badge`), actions only if allowed.
+- [x] **Quick roast of the roles**: the session stored the full entity → a demoted/deleted/deactivated admin kept access until signing out. Now `AppController::refreshIdentity()` re-reads the user on every request (1 query by PK): it refreshes the identity or ends the session ("Your session has ended"). Later replaced by `App\Middleware\RefreshIdentityMiddleware` (via `Users.middlewareQueueLoader` → `App\Loader\MiddlewareQueueLoader`), which runs between Authentication and Authorization: the RBAC sees the current role from the very first request.
+- [x] Spanish i18n (2026-11-18): `LocaleSelectorMiddleware(['en_US','es_ES'])` picks based on `Accept-Language` (default `App.defaultLocale`). `resources/locales/default.pot` (227 strings, `bin/cake i18n extract --paths src,templates --output resources/locales`) + `es_ES/default.po` and `es_ES/cake.po`. CakeDC/Users and the theme ship their own `es`. When adding strings: re-extract and fill in the `.po` (then `bin/cake cache clear_all`).
+- [x] Production (2026-11-18): see Phase 12.
+- [x] `composer self-update` on the host (2026-11-18, done by the user): Composer 2.11.2, `composer diagnose` OK with PHP 8.5.12.
 
 ## Testing (TDD)
 
-- **TDD solo para funcionalidad propia / reglas de negocio** (rojo → verde → refactor).
-- **No** testear templates ni lo ya testeado por framework/plugins.
-- Cubierto: `DashboardStatsService`, `SidebarMenu`, `CssInliner`, `UsersMailer` (inline + multipart + layout), reglas de acceso + PDF (`AccessRulesTest`).
-- `docker compose exec app vendor/bin/phpunit` (BD `cakephp_admin_test` en PG18).
-- Fixture `UsersFixture` usa `tableAlias = 'CakeDC/Users.Users'` porque la app desactiva las Table fallback.
+- **TDD only for the project's own functionality / business rules** (red → green → refactor).
+- **Don't** test templates or what the framework/plugins already test.
+- Covered: `DashboardStatsService`, `SidebarMenu`, `CssInliner`, `UsersMailer` (inline + multipart + layout), access rules + PDF (`AccessRulesTest`).
+- `docker compose exec app vendor/bin/phpunit` (database `cakephp_admin_test` on PG18).
+- The `UsersFixture` fixture uses `tableAlias = 'CakeDC/Users.Users'` because the app disables fallback Tables.
 
-## Decisiones / notas
+## Decisions / notes
 
-- CakeDC/Users carga Authentication + Authorization por sí mismo. Política `Rbac|Superuser`.
-- Las plantillas CakeDC llevan prefijo de plugin → el layout de email se resuelve en el plugin primero; `templates/plugin/CakeDC/Users/layout/email/*` incluyen el layout de la app (una sola fuente).
-- El inline de CSS se hace en `render()` antes de `Message::setBody()` para que el wrap de líneas no parta atributos/URLs.
-- El skeleton `PagesControllerTest` y `templates/Pages/home.php` (bienvenida de CakePHP) se eliminaron: `/` es el dashboard y todo requiere login.
+- CakeDC/Users loads Authentication + Authorization by itself. `Rbac|Superuser` policy.
+- CakeDC templates carry a plugin prefix → the email layout is resolved in the plugin first; `templates/plugin/CakeDC/Users/layout/email/*` include the app's layout (single source).
+- CSS inlining happens in `render()` before `Message::setBody()` so line wrapping doesn't split attributes/URLs.
+- The skeleton's `PagesControllerTest` and `templates/Pages/home.php` (CakePHP welcome page) were removed: `/` is the dashboard and everything requires login.
 
-## Registro
+## Log
 
-- 2026-11-18: Fases 0–8 completadas. Tests 26/26, phpcs y phpstan nivel 8 en verde.
+- 2026-11-18: Phases 0–8 completed. Tests 26/26, phpcs and phpstan level 8 green.
