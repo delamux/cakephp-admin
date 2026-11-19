@@ -46,11 +46,13 @@ bin/dev-https-cert          # creates docker/certs/cakeadmin.local{,-key}.pem (o
 ```bash
 docker compose up -d --build            # web (nginx), app (PHP-FPM), worker (queue), db (PostgreSQL 18), mailpit
 docker compose exec app composer install
-docker compose exec app bin/migrate     # CakeDC/Users + Queue + app migrations, in that order
-docker compose exec app bin/cake permissions sync
-docker compose exec app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
-docker compose exec app bin/cake seeds run DemoUsers     # optional: 40 demo users (password Demo1234!)
+docker compose exec -u www-data app bin/deploy     # migrations (CakeDC/Users, Queue, app) + permissions sync
+docker compose exec -u www-data app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
+docker compose exec -u www-data app bin/cake seeds run DemoUsers     # optional: 40 demo users (password Demo1234!)
 ```
+
+Run the `bin/` commands as **`www-data`** (`-u www-data`), the same user as PHP-FPM. As root they create cache files
+in `tmp/` and logs in `logs/` that the app can't overwrite later, and the app fails with permission errors.
 
 | Service | Where |
 | --- | --- |
@@ -65,7 +67,7 @@ Ports are configurable with `APP_PORT`, `HTTPS_PORT`, `MAILPIT_UI_PORT`, `MAILPI
 
 ```bash
 docker compose exec app composer check      # PHPUnit + CodeSniffer + PHPStan level 8 (same as CI)
-docker compose exec app bin/cake permissions sync   # after creating controllers or actions
+docker compose exec -u www-data app bin/cake permissions sync   # after creating controllers or actions
 docker compose restart worker               # after changing code the worker uses (or wait for it to recycle)
 ```
 

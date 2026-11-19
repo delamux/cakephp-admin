@@ -66,8 +66,8 @@ echo 'HTTPS_PORT=443' > .env                                       # project roo
 brew install mkcert && mkcert -install && bin/dev-https-cert     # local HTTPS (WebAuthn requires it)
 docker compose up -d --build                                       # web, app, worker, db, mailpit
 docker compose exec app composer install
-docker compose exec app bin/deploy                                 # migrations + permissions catalogue
-docker compose exec app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
+docker compose exec -u www-data app bin/deploy                     # migrations + permissions catalogue
+docker compose exec -u www-data app bin/cake users add_superuser -u admin -p 'Admin1234!' -e admin@cakephp-admin.test
 ```
 
 App at https://cakeadmin.local · emails at http://localhost:8026. Details in
