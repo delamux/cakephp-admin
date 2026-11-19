@@ -1,0 +1,5 @@
+# PHP-FPM address. The nginx image renders this template into conf.d/ (envsubst) at start.
+# PHP_FPM_HOST: `app` in docker compose; on Coolify ${SERVICE_NAME_APP} (unique on shared networks).
+upstream php_fpm {
+    server ${PHP_FPM_HOST}:9000;
+}

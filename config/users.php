@@ -8,6 +8,7 @@ use App\Mailer\UsersMailer;
 use App\Middleware\UnauthorizedHandler\AppRedirectHandler;
 use App\Rbac\DatabasePermissionsProvider;
 use App\Rbac\PermissionsSynchronizer;
+use App\Rbac\Rule\Owner;
 use CakeDC\Auth\Rbac\Rbac;
 use RobThree\Auth\Providers\Qr\EndroidQrCodeProvider;
 
@@ -89,7 +90,7 @@ return [
     // Permissions managed from the database (Phase 9). `bin/cake permissions sync` discovers the
     // actions of the app + these plugins and grants `defaults` to NEW actions (patterns on
     // `Plugin.Prefix/Controller::action`, `!` excludes). Superadmin bypasses RBAC: no grants needed.
-    // Public actions, profile/logout and the dashboard are system rules (config/permissions.php).
+    // Public actions, superadmin and profile/logout are system rules (config/permissions.php).
     'App.permissions' => [
         'plugins' => ['CakeDC/Users'],
         'ignoredActions' => ['getUsersTable', 'setUsersTable', 'validateReCaptcha'],
@@ -97,10 +98,20 @@ return [
         'superadminOnly' => PermissionsSynchronizer::SUPERADMIN_ONLY,
         // Permissions history kept for N days (`bin/cake permissions purge`, minimum 30)
         'auditRetentionDays' => 365,
+        // `*` = every role (also roles created later); `pattern => rule` grants with a rule of
+        // App\Rbac\RuleCatalog (owner). Superadmin/admin accounts are protected in code (UserRoleManager).
         'defaults' => [
-            'admin' => ['*', '!Roles::*', '!Permissions::*'],
+            '*' => [
+                'Dashboard::index', 'Pages::display', 'TwoFactor::*',
+                'CakeDC/Users.Users::resetOneTimePasswordAuthenticator' => 'owner',
+            ],
+            'admin' => [
+                '*', '!Roles::*', '!Permissions::*',
+            ],
             'editor' => ['CakeDC/Users.Users::index', 'CakeDC/Users.Users::view', 'Reports::users'],
         ],
+        // Actions whose first passed parameter is a user account (rule `owner`: the account is the user)
+        'accountActions' => Owner::ACCOUNT_ACTIONS,
     ],
     // Account activity log (App\Account\ActivityLog): kept for N days, then deleted by
     // `bin/cake activity purge` (daily cron, minimum 30). It holds IPs and browsers (personal data).

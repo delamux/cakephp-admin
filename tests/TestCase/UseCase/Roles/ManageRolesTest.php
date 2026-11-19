@@ -20,7 +20,7 @@ class ManageRolesTest extends TestCase
 
     private function roles(): ManageRoles
     {
-        return new ManageRoles($this->auditLog());
+        return new ManageRoles($this->auditLog(), null, $this->synchronizer());
     }
 
     public function testCreateUpdateDeleteAreAudited(): void
@@ -64,5 +64,17 @@ class ManageRolesTest extends TestCase
         $this->assertTrue($this->roles()->isSlugLocked($roles->findBySlug('superadmin')->firstOrFail()));
         $this->assertTrue($this->roles()->isSlugLocked($roles->findBySlug('editor')->firstOrFail()));
         $this->assertFalse($this->roles()->isSlugLocked($roles->findBySlug('user')->firstOrFail()));
+    }
+
+    public function testANewRoleGetsTheEveryRoleDefaults(): void
+    {
+        $this->synchronizer()->sync([
+            ['plugin' => '', 'prefix' => '', 'controller' => 'Dashboard', 'action' => 'index'],
+            ['plugin' => '', 'prefix' => '', 'controller' => 'Reports', 'action' => 'users'],
+        ]);
+
+        $this->roles()->create(['slug' => 'support', 'name' => 'Support'], $this->root());
+
+        $this->assertSame(['Dashboard::index' => null], $this->synchronizer()->rules()['support'], 'Like the dashboard every role had before');
     }
 }

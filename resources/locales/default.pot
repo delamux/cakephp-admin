@@ -1307,3 +1307,52 @@ msgstr ""
 msgid "Thanks for signing up! Please confirm your email address to activate your account:"
 msgstr ""
 
+
+
+
+
+
+msgid "System actions"
+msgstr ""
+
+msgid "Public (no sign-in)"
+msgstr ""
+
+msgid "Every signed-in user"
+msgstr ""
+
+msgid "Not allowed"
+msgstr ""
+
+msgid "Allowed"
+msgstr ""
+
+msgid "Permission"
+msgstr ""
+
+msgid "Save permissions of {0}"
+msgstr ""
+
+msgid "Decided by"
+msgstr ""
+
+msgid "Public and system actions"
+msgstr ""
+
+msgid "Decided by config/permissions.php or reserved to superadmin. Read only."
+msgstr ""
+
+msgid "Choose, for each role, whether an action is not allowed, allowed, or allowed under a rule (for example, only the own account). Public and system actions are fixed in config/permissions.php."
+msgstr ""
+
+msgid "Hide"
+msgstr ""
+
+msgid "Unknown role."
+msgstr ""
+
+msgid "Permissions of {0} saved."
+msgstr ""
+
+msgid "Owner only"
+msgstr ""

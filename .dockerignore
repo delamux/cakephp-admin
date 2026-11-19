@@ -11,3 +11,6 @@ webroot/js/basecoat
 webroot/js/vendor
 webroot/font/geist
 docker/certs
+
+# Uploaded files are data (a volume in production), never part of the image
+storage/uploads/*

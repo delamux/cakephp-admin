@@ -1363,3 +1363,237 @@ msgstr "Navegador desconocido"
 
 msgid "{0} on {1}"
 msgstr "{0} en {1}"
+
+# Queue screen
+msgid "System"
+msgstr "Sistema"
+
+msgid "Queue"
+msgstr "Cola"
+
+msgid "Retry all failed"
+msgstr "Reintentar todos los fallidos"
+
+msgid "Queue the {0} failed jobs again?"
+msgstr "¿Volver a encolar los {0} trabajos fallidos?"
+
+msgid "Done"
+msgstr "Hecho"
+
+msgid "Failed"
+msgstr "Fallido"
+
+msgid "Retrying"
+msgstr "Reintentando"
+
+msgid "Running"
+msgstr "En curso"
+
+msgid "Scheduled"
+msgstr "Programado"
+
+msgid "Waiting"
+msgstr "En espera"
+
+msgid "Ready for a worker"
+msgstr "Listos para un worker"
+
+msgid "Being processed now"
+msgstr "Procesándose ahora"
+
+msgid "Waiting for their time"
+msgstr "Esperando su hora"
+
+msgid "Retries used up"
+msgstr "Sin reintentos"
+
+msgid "Last 24 hours"
+msgstr "Últimas 24 horas"
+
+msgid "No worker is running: jobs (emails included) wait until one starts. In Docker it is the `worker` service (`bin/cake queue run`)."
+msgstr "No hay ningún worker en marcha: los trabajos (también los emails) esperan hasta que arranque uno. En Docker es el servicio `worker` (`bin/cake queue run`)."
+
+msgid "Queue stopped"
+msgstr "Cola parada"
+
+msgid "Retry"
+msgstr "Reintentar"
+
+msgid "Delete job {0}? It will not run again."
+msgstr "¿Borrar el trabajo {0}? No volverá a ejecutarse."
+
+msgid "No failed jobs"
+msgstr "Sin trabajos fallidos"
+
+msgid "Jobs that use up their retries appear here with their error."
+msgstr "Aquí aparecen, con su error, los trabajos que agotan sus reintentos."
+
+msgid "Job"
+msgstr "Trabajo"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Attempts"
+msgstr "Intentos"
+
+msgid "Last attempt"
+msgstr "Último intento"
+
+msgid "Failed jobs"
+msgstr "Trabajos fallidos"
+
+msgid "Retry once the cause is fixed (e.g. the mail server is back), or delete them."
+msgstr "Reinténtalos cuando la causa esté resuelta (p. ej. vuelve el servidor de correo) o bórralos."
+
+msgid "No jobs yet"
+msgstr "Sin trabajos todavía"
+
+msgid "Emails and other background work will be listed here."
+msgstr "Aquí aparecerán los emails y el resto del trabajo en segundo plano."
+
+msgid "Queued"
+msgstr "Encolado"
+
+msgid "Finished"
+msgstr "Terminado"
+
+msgid "Recent jobs"
+msgstr "Trabajos recientes"
+
+msgid "The last 20, without their data."
+msgstr "Los 20 últimos, sin sus datos."
+
+msgid "No active workers."
+msgstr "No hay workers activos."
+
+msgid "Worker"
+msgstr "Worker"
+
+msgid "Last heartbeat"
+msgstr "Último latido"
+
+msgid "Workers"
+msgstr "Workers"
+
+msgid "Processes running `bin/cake queue run`."
+msgstr "Procesos que ejecutan `bin/cake queue run`."
+
+msgid "Job {0} queued again."
+msgstr "Trabajo {0} encolado de nuevo."
+
+msgid "Job {0} is not a failed job."
+msgstr "El trabajo {0} no es un trabajo fallido."
+
+msgid "{0} failed jobs queued again."
+msgstr "{0} trabajos fallidos encolados de nuevo."
+
+msgid "Job {0} deleted."
+msgstr "Trabajo {0} borrado."
+
+msgid "Only failed jobs can be deleted."
+msgstr "Solo se pueden borrar los trabajos fallidos."
+
+
+
+
+
+msgid "System actions"
+msgstr "Acciones de sistema"
+
+msgid "Public (no sign-in)"
+msgstr "Pública (sin sesión)"
+
+msgid "Every signed-in user"
+msgstr "Cualquier usuario con sesión"
+
+msgid "Not allowed"
+msgstr "No permitido"
+
+msgid "Allowed"
+msgstr "Permitido"
+
+msgid "Permission"
+msgstr "Permiso"
+
+msgid "Save permissions of {0}"
+msgstr "Guardar permisos de {0}"
+
+msgid "Decided by"
+msgstr "Decidido por"
+
+msgid "Public and system actions"
+msgstr "Acciones públicas y de sistema"
+
+msgid "Decided by config/permissions.php or reserved to superadmin. Read only."
+msgstr "Las decide config/permissions.php o son solo de superadmin. Solo lectura."
+
+msgid "Choose, for each role, whether an action is not allowed, allowed, or allowed under a rule (for example, only the own account). Public and system actions are fixed in config/permissions.php."
+msgstr "Elige, para cada rol, si una acción no está permitida, está permitida o está permitida con una regla (por ejemplo, solo su propia cuenta). Las acciones públicas y de sistema están fijadas en config/permissions.php."
+
+msgid "Hide"
+msgstr "Ocultar"
+
+msgid "Unknown role."
+msgstr "Rol desconocido."
+
+msgid "Permissions of {0} saved."
+msgstr "Permisos de {0} guardados."
+
+# User photo
+msgid "Photo"
+msgstr "Foto"
+
+msgid "New photo"
+msgstr "Nueva foto"
+
+msgid "Upload photo"
+msgstr "Subir foto"
+
+msgid "Remove photo"
+msgstr "Quitar foto"
+
+msgid "Remove the photo?"
+msgstr "¿Quitar la foto?"
+
+msgid "JPEG, PNG or WebP, up to 2 MB. It is cropped to a square."
+msgstr "JPEG, PNG o WebP, hasta 2 MB. Se recorta en cuadrado."
+
+msgid "Shown next to your name across the app."
+msgstr "Se muestra junto a tu nombre en toda la app."
+
+msgid "Shown next to this user's name across the app."
+msgstr "Se muestra junto al nombre de este usuario en toda la app."
+
+msgid "Photo updated."
+msgstr "Foto actualizada."
+
+msgid "Photo removed."
+msgstr "Foto quitada."
+
+msgid "Photo changed"
+msgstr "Foto cambiada"
+
+msgid "You cannot change the photo of this user."
+msgstr "No puedes cambiar la foto de este usuario."
+
+msgid "Choose a photo first."
+msgstr "Elige primero una foto."
+
+msgid "The photo could not be saved. Try again."
+msgstr "No se pudo guardar la foto. Inténtalo de nuevo."
+
+msgid "The photo cannot be larger than 2 MB."
+msgstr "La foto no puede pasar de 2 MB."
+
+msgid "The photo could not be uploaded. Try again."
+msgstr "No se pudo subir la foto. Inténtalo de nuevo."
+
+msgid "The photo must be a JPEG, PNG or WebP image."
+msgstr "La foto debe ser una imagen JPEG, PNG o WebP."
+
+msgid "The photo cannot be larger than {0} × {0} pixels."
+msgstr "La foto no puede pasar de {0} × {0} píxeles."
+
+msgid "Owner only"
+msgstr "Solo el propietario"

@@ -13,7 +13,7 @@ $this->assign('title', $name);
 $this->start('breadcrumb');
 echo $this->Breadcrumb->render([__('Users') => ['action' => 'index'], h($user->username)]);
 $this->end();
-if ($roleManager->canManage($currentUser, $user)) {
+if (!$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'edit', $user->id])) {
     $this->start('header_actions');
     echo $this->element('header_action', ['text' => __('Edit'), 'url' => ['action' => 'edit', $user->id], 'icon' => 'pencil', 'variant' => 'outline']);
     $this->end();
@@ -47,7 +47,7 @@ foreach ($user->social_accounts ?? [] as $account) {
 ?>
 <div class="grid gap-4 px-4 lg:px-6 @3xl/main:grid-cols-3">
     <?= $this->Card->render(
-        '<div class="flex flex-col items-center gap-3 text-center">' . $this->Avatar->render($name, ['size' => 'lg', 'class' => 'size-20 text-xl'])
+        '<div class="flex flex-col items-center gap-3 text-center">' . $this->Avatar->render($name, array_filter(['src' => $this->UserPhoto->url($user), 'size' => 'lg', 'class' => 'size-20 text-xl']))
         . '<div><p class="text-lg font-semibold">' . h($name) . '</p><p class="text-sm text-muted-foreground">' . h($user->email) . '</p></div></div>',
         ['footer' => $roleManager->canChangePasswordOf($currentUser, $user)
             ? $this->Button->link(__('Change password'), ['action' => 'changePassword', $user->id], ['variant' => 'outline', 'class' => 'w-full'])

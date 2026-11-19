@@ -61,10 +61,10 @@ class UserRoleManagerTest extends TestCase
         $this->assertFalse(UserRoleManager::canViewUsers(null));
     }
 
-    public function testAdminChangesRolesOfOtherNonSuperadminUsers(): void
+    public function testAdminChangesRolesOfUsersBelowAdmin(): void
     {
         $this->assertNull($this->manager->roleChangeError($this->users['admin'], $this->users['user'], 'editor'));
-        $this->assertNull($this->manager->roleChangeError($this->users['admin'], $this->users['otherAdmin'], 'user'));
+        $this->assertNotNull($this->manager->roleChangeError($this->users['admin'], $this->users['otherAdmin'], 'user'), 'Admins do not touch other admins');
         $this->assertTrue($this->manager->canChangeRole($this->users['super'], $this->users['admin'], 'user'));
     }
 
@@ -108,6 +108,18 @@ class UserRoleManagerTest extends TestCase
         $this->assertFalse($this->manager->canDelete($this->users['admin'], $this->users['super']));
         $this->assertTrue($this->manager->canManage($this->users['otherSuper'], $this->users['super']));
         $this->assertFalse($this->manager->canManage($this->users['editor'], $this->users['user']), 'Editors are read-only');
+    }
+
+    public function testSuperadminAndAdminAccountsAreProtectedFromNonSuperadmins(): void
+    {
+        $this->assertTrue($this->manager->isProtected($this->users['admin'], $this->users['super']), 'Only a superadmin edits a superadmin');
+        $this->assertTrue($this->manager->isProtected($this->users['admin'], $this->users['otherAdmin']), 'An admin does not edit other admins');
+        $this->assertTrue($this->manager->isProtected($this->users['editor'], $this->users['admin']));
+        $this->assertFalse($this->manager->isProtected($this->users['admin'], $this->users['admin']), 'Own account: the role permissions decide');
+        $this->assertFalse($this->manager->isProtected($this->users['admin'], $this->users['editor']));
+        $this->assertFalse($this->manager->isProtected($this->users['super'], $this->users['otherSuper']), 'Superadmin can do everything');
+        $this->assertFalse($this->manager->isProtected($this->users['super'], $this->users['admin']));
+        $this->assertFalse($this->manager->canManage($this->users['admin'], $this->users['otherAdmin']), 'Role changes follow the protection');
     }
 
     public function testNobodyDeletesTheirOwnAccountFromTheCrud(): void

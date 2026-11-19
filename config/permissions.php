@@ -2,16 +2,17 @@
 declare(strict_types=1);
 
 use App\Service\UserRoleManager;
+
 /**
- * SYSTEM RBAC rules (CakeDC/Auth), not editable from the UI. Evaluated top-down, first match wins.
- * Role permissions (allow-list per action) live in the database and are appended after these
- * rules by App\Rbac\DatabasePermissionsProvider.
+ * SYSTEM RBAC rules (CakeDC/Auth), not editable from the UI: public actions (no identity), the
+ * superadmin role and what every signed-in user always keeps (profile, logout, social links).
+ * Evaluated top-down, first match wins. Everything else is a role permission in the database
+ * (Permissions screen, optionally with a rule of App\Rbac\RuleCatalog) appended after these rules
+ * by App\Rbac\DatabasePermissionsProvider.
  * Superusers (`is_superuser = true`) bypass these rules through the Superuser policy.
  *
  * Plugin defaults: vendor/cakedc/users/config/permissions.php
  */
-use Cake\Http\ServerRequest;
-use Cake\Utility\Hash;
 
 return [
     'CakeDC/Auth.permissions' => [
@@ -39,9 +40,8 @@ return [
             'bypassAuth' => true,
         ],
         // Superadmin role: everything (superadmins also have `is_superuser`, which bypasses RBAC).
-        // The rest of the role permissions come from the database (Roles → Permissions screen,
-        // App\Rbac\DatabasePermissionsProvider). Account-level limits (superadmins, own account)
-        // are enforced by App\Service\UserRoleManager.
+        // Account limits of the other roles (own account, not superadmins) are rules of the
+        // database permissions (App\Rbac\RuleCatalog).
         [
             'role' => UserRoleManager::SUPERADMIN,
             'prefix' => '*',
@@ -57,16 +57,13 @@ return [
             'controller' => 'Users',
             'action' => ['profile', 'logout', 'linkSocial', 'callbackLinkSocial'],
         ],
+        // User photos: any signed-in role; whose photo may be changed is decided by
+        // App\UseCase\Users\ChangeUserPhoto (own always; others' with admin access)
         [
             'role' => '*',
-            'plugin' => 'CakeDC/Users',
-            'controller' => 'Users',
-            'action' => 'resetOneTimePasswordAuthenticator',
-            'allowed' => function (array $user, $role, ServerRequest $request): bool {
-                $userId = Hash::get($request->getAttribute('params'), 'pass.0');
-
-                return !empty($userId) && !empty($user) && $userId === $user['id'];
-            },
+            'plugin' => null,
+            'controller' => 'UserPhoto',
+            'action' => ['update', 'delete', 'show'],
         ],
         // Passwordless login with a passkey (App\Controller\PasskeyLoginController)
         [
@@ -83,25 +80,6 @@ return [
             'controller' => 'WebauthnLogin',
             'action' => 'authenticate',
             'bypassAuth' => true,
-        ],
-        // Any logged-in user: own two-factor settings (password re-checked in each step)
-        [
-            'role' => '*',
-            'plugin' => null,
-            'controller' => 'TwoFactor',
-            'action' => ['start', 'confirm', 'cancel', 'disable', 'webauthnOptions', 'webauthnRegister'],
-        ],
-        // Any logged-in user: dashboard
-        [
-            'role' => '*',
-            'plugin' => null,
-            'controller' => 'Dashboard',
-            'action' => 'index',
-        ],
-        [
-            'role' => '*',
-            'controller' => 'Pages',
-            'action' => 'display',
         ],
         [
             'role' => '*',

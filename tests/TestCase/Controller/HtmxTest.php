@@ -84,6 +84,6 @@ class HtmxTest extends TestCase
         $this->assertMatchesRegularExpression('/id="users-list"[^>]*hx-boost="true"|hx-boost="true"[^>]*id="users-list"/', $this->body());
 
         $this->get('/permissions');
-        $this->assertMatchesRegularExpression('/<form[^>]+id="permissions-form"[^>]+hx-post=/', $this->body());
+        $this->assertMatchesRegularExpression('/<form[^>]+id="permissions-form-editor"[^>]+hx-post=/', $this->body());
     }
 }

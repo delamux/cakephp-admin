@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Rbac;
 
 use App\Rbac\PermissionsSynchronizer;
+use App\Service\UserRoleManager;
 use App\Test\TestCase\PermissionsTestTrait;
 use App\Test\TestCase\UserFactoryTrait;
+use App\UseCase\Permissions\PermissionMatrix;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -48,41 +50,58 @@ class PermissionAuditTest extends TestCase
 
     public function testSetGrantsReturnsWhatChanged(): void
     {
-        $diff = PermissionsSynchronizer::fromConfig()->setGrants('editor', ['CakeDC/Users.Users::index', 'Dashboard::index']);
+        $sync = PermissionsSynchronizer::fromConfig();
+        $keep = array_diff_key($sync->rules()['editor'], ['CakeDC/Users.Users::view' => true]);
 
-        $this->assertSame(['Dashboard::index'], $diff['added']);
-        $this->assertSame(['CakeDC/Users.Users::view', 'Reports::users'], $diff['removed']);
+        $diff = $sync->setGrants('editor', $keep + ['CakeDC/Users.Users::edit' => 'owner']);
+
+        $this->assertSame(['CakeDC/Users.Users::edit [owner]'], $diff['added']);
+        $this->assertSame(['CakeDC/Users.Users::view'], $diff['removed']);
     }
 
-    public function testSavingTheMatrixAuditsOnlyTheRolesThatChanged(): void
+    /**
+     * Select values of the editor tab as the browser sends them.
+     *
+     * @return array<string, string>
+     */
+    private function editorForm(): array
     {
-        $current = PermissionsSynchronizer::fromConfig()->grants();
-        $this->post('/permissions', ['grants' => [
-            'admin' => $current['admin'],
-            'editor' => ['CakeDC/Users.Users::index', 'CakeDC/Users.Users::edit'],
-        ]]);
+        return (new PermissionMatrix(PermissionsSynchronizer::fromConfig(), UserRoleManager::fromConfig()))->values('editor');
+    }
 
+    public function testSavingATabAuditsOnlyThatRoleWhenItChanged(): void
+    {
+        $this->post('/permissions', ['role' => 'editor', 'grants' => ['CakeDC/Users.Users::edit' => 'owner', 'CakeDC/Users.Users::view' => 'deny'] + $this->editorForm()]);
+
+        $this->assertRedirect(['controller' => 'Permissions', 'action' => 'index', '?' => ['role' => 'editor']]);
         $audits = $this->audits();
-        $this->assertCount(1, $audits, 'admin unchanged, user had nothing and still has nothing');
+        $this->assertCount(1, $audits);
         $this->assertSame('grants_changed', $audits[0]['event']);
         $this->assertSame('editor', $audits[0]['role_slug']);
         $this->assertSame('root', $audits[0]['username']);
         $this->assertSame($this->super->id, $audits[0]['user_id']);
-        $this->assertSame(['CakeDC/Users.Users::edit'], $audits[0]['added']);
-        $this->assertSame(['CakeDC/Users.Users::view', 'Reports::users'], $audits[0]['removed']);
+        $this->assertSame(['CakeDC/Users.Users::edit [owner]'], $audits[0]['added']);
+        $this->assertSame(['CakeDC/Users.Users::view'], $audits[0]['removed']);
     }
 
-    public function testLockedRowsAreNotRevokedWhenTheBrowserDoesNotSendThem(): void
+    public function testSystemRowsAreNotRevokedWhenTheBrowserDoesNotSendThem(): void
     {
         $sync = PermissionsSynchronizer::fromConfig();
-        $before = $sync->grants()['admin'];
-        // The browser only sends the editable checkboxes (locked rows have none)
-        $editable = array_values(array_filter($before, fn(string $k): bool => !str_starts_with($k, 'Dashboard::') && !str_contains($k, '::login')));
+        $before = $sync->rules()['admin'];
+        $this->assertArrayHasKey('CakeDC/Users.Users::login', $before);
 
-        $this->post('/permissions', ['grants' => ['admin' => $editable, 'editor' => $sync->grants()['editor']]]);
+        $this->post('/permissions', ['role' => 'admin', 'grants' => (new PermissionMatrix($sync, UserRoleManager::fromConfig()))->values('admin')]);
 
-        $this->assertSame($before, $sync->grants()['admin']);
+        $this->assertSame($before, $sync->rules()['admin']);
         $this->assertSame([], $this->audits(), 'Nothing really changed');
+    }
+
+    public function testSavingSuperadminOrAnUnknownRoleIsRejected(): void
+    {
+        $this->post('/permissions', ['role' => 'superadmin', 'grants' => ['Dashboard::index' => 'allow']]);
+
+        $this->assertResponseCode(400);
+        $this->assertSame([], $this->audits());
     }
 
     public function testRoleLifecycleIsAudited(): void
@@ -121,13 +140,12 @@ class PermissionAuditTest extends TestCase
 
     public function testAuditScreenIsSuperadminOnly(): void
     {
-        PermissionsSynchronizer::fromConfig()->setGrants('editor', []);
-        $this->post('/permissions', ['grants' => ['editor' => ['Dashboard::index']]]);
+        $this->post('/permissions', ['role' => 'editor', 'grants' => ['Reports::users' => 'deny'] + $this->editorForm()]);
 
         $this->get('/permissions/audit');
         $this->assertResponseOk();
         $this->assertResponseContains('root');
-        $this->assertResponseContains('Dashboard::index');
+        $this->assertResponseContains('Reports::users');
 
         $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
         $this->get('/permissions/audit');

@@ -88,63 +88,74 @@ class RolesAndPermissionsTest extends TestCase
         $this->assertFalse($this->roleExists('user'));
     }
 
-    public function testMatrixListsActionsPerRoleWithoutSuperadminColumn(): void
+    public function testOneTabPerRoleWithASelectPerActionAndNoSuperadmin(): void
     {
         $this->loginAsSuperadmin();
 
         $this->get('/permissions');
 
         $this->assertResponseOk();
-        $this->assertResponseContains('name="grants[editor][]"');
-        $this->assertResponseNotContains('name="grants[superadmin][]"');
-        $this->assertResponseContains('value="CakeDC/Users.Users::edit"');
-        $this->assertResponseContains('Public', 'Public (system) actions are flagged');
+        $this->assertResponseContains('id="permissions-form-editor"');
+        $this->assertResponseNotContains('id="permissions-form-superadmin"');
+        $this->assertResponseContains('name="grants[CakeDC/Users.Users::edit]"');
+        $this->assertResponseContains('value="owner"', 'Account actions offer the owner rule');
+        $this->assertResponseContains('Owner only');
     }
 
-    public function testSavingTheMatrixReplacesGrantsAndTakesEffect(): void
+    public function testSavingATabReplacesThatRoleAndTakesEffect(): void
     {
         $this->loginAsSuperadmin();
+        $admin = PermissionsSynchronizer::fromConfig()->rules()['admin'];
 
-        $this->post('/permissions', ['grants' => [
-            'editor' => ['CakeDC/Users.Users::index', 'CakeDC/Users.Users::edit'],
-            'superadmin' => ['Dashboard::index'],
+        $this->post('/permissions', ['role' => 'editor', 'grants' => [
+            'CakeDC/Users.Users::index' => 'allow',
+            'CakeDC/Users.Users::edit' => 'owner',
+            'Dashboard::index' => 'allow',
         ]]);
 
-        $this->assertRedirect(['controller' => 'Permissions', 'action' => 'index']);
-        $grants = PermissionsSynchronizer::fromConfig()->grants();
-        $this->assertSame(['CakeDC/Users.Users::edit', 'CakeDC/Users.Users::index'], $grants['editor']);
-        $this->assertArrayNotHasKey('superadmin', $grants, 'Superadmin is not editable');
-        $this->assertNotContains('CakeDC/Users.Users::edit', $grants['admin'] ?? [], 'Roles missing from the form lose their editable grants');
-        $this->assertContains('Dashboard::index', $grants['admin'] ?? [], 'Locked (system) rows are kept');
+        $this->assertRedirect(['controller' => 'Permissions', 'action' => 'index', '?' => ['role' => 'editor']]);
+        $rules = PermissionsSynchronizer::fromConfig()->rules();
+        $this->assertSame('owner', $rules['editor']['CakeDC/Users.Users::edit']);
+        $this->assertArrayNotHasKey('CakeDC/Users.Users::view', $rules['editor'], 'Missing from the form = not allowed');
+        $this->assertSame($admin, $rules['admin'], 'Only the submitted role changes');
 
-        // The editor lost `view` (RBAC reads the new allow-list)
+        // RBAC reads the new grants and their rules
         $editor = $this->createUser(['role' => 'editor']);
         $target = $this->createUser(['role' => 'user']);
         $this->session(['Auth' => $editor]);
         $this->get('/users/view/' . $target->id);
         $this->assertResponseCode(302, 'view was removed from the editor');
+        $this->get('/users/edit/' . $target->id);
+        $this->assertResponseCode(302, 'owner: not another account');
+        $this->get('/users/edit/' . $editor->id);
+        $this->assertResponseOk();
     }
 
     public function testAccessControlScreensCannotBeGrantedFromTheMatrix(): void
     {
         $this->loginAsSuperadmin();
 
-        $this->post('/permissions', ['grants' => ['admin' => ['Permissions::index', 'Roles::edit', 'Dashboard::index']]]);
+        $this->post('/permissions', ['role' => 'admin', 'grants' => ['Permissions::index' => 'allow', 'Roles::edit' => 'allow', 'Dashboard::index' => 'allow']]);
 
         $admin = PermissionsSynchronizer::fromConfig()->grants()['admin'];
         $this->assertEmpty(preg_grep('/^(Roles|Permissions)::/', $admin), 'No self-escalation path');
-        $this->assertNotContains('CakeDC/Users.Users::edit', $admin, 'Unticked editable rows are revoked');
+        $this->assertNotContains('CakeDC/Users.Users::edit', $admin, 'Editable rows missing from the form are revoked');
     }
 
-    public function testSystemRowsAreShownAsLockedNotAsCheckboxes(): void
+    public function testSystemActionsAreReadOnlyBehindAButton(): void
     {
         $this->loginAsSuperadmin();
 
         $this->get('/permissions');
 
-        $this->assertResponseNotContains('value="Dashboard::index"', 'Dashboard is a system rule for every role');
-        $this->assertResponseNotContains('value="Permissions::index"', 'Superadmin only');
-        $this->assertResponseContains('All roles');
+        $this->assertResponseNotContains('name="grants[Permissions::index]"', 'Superadmin only');
+        $this->assertResponseNotContains('name="grants[CakeDC/Users.Users::login]"', 'Public: config/permissions.php');
+        $this->assertResponseContains('name="grants[Dashboard::index]"', 'Moved to the database: editable');
+        $this->assertMatchesRegularExpression('/<input type="checkbox" role="switch"[^>]+name="grants\\[Dashboard::index\\]"/', $this->_response->getBody()->__toString(), 'No rule can decide it: a switch');
+        $this->assertResponseContains('id="system-actions" hidden');
+        $this->assertResponseContains('data-reveal="system-actions"');
+        $this->assertResponseContains('Public (no sign-in)');
+        $this->assertResponseContains('Every signed-in user');
         $this->assertResponseContains('Superadmin only');
     }
 

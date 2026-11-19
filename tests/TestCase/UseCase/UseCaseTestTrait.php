@@ -16,18 +16,14 @@ trait UseCaseTestTrait
 {
     protected function synchronizer(): PermissionsSynchronizer
     {
-        return new PermissionsSynchronizer([
-            'admin' => ['*', '!Roles::*', '!Permissions::*'],
-            'editor' => ['CakeDC/Users.Users::index', 'CakeDC/Users.Users::view', 'Reports::users'],
-        ]);
+        // The app defaults (config/users.php)
+        return new PermissionsSynchronizer((require CONFIG . 'users.php')['App.permissions']['defaults']);
     }
 
     protected function matrix(): PermissionMatrix
     {
-        return new PermissionMatrix($this->synchronizer(), UserRoleManager::fromConfig(), [
-            ['role' => '*', 'controller' => 'Dashboard', 'action' => 'index'],
-            ['role' => '*', 'plugin' => 'CakeDC/Users', 'controller' => 'Users', 'action' => ['login', 'logout'], 'bypassAuth' => true],
-        ]);
+        // System rules of config/permissions.php
+        return new PermissionMatrix($this->synchronizer(), UserRoleManager::fromConfig());
     }
 
     protected function auditLog(): PermissionAuditLog

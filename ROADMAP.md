@@ -236,7 +236,7 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
 - Tests: `AccountActivityTest`, `UserAgentTest`, an assertion in `PasskeyLoginTest`. 226 green tests, phpcs and phpstan green.
 - AuditStash (`lorenzo/audit-stash`) was ruled out for this (it audits ORM record changes, not sign-ins/failures/sign-outs); it remains an option for auditing business entities.
 
-### Phase 18 — Queue (dereuromark/cakephp-queue) ⏳
+### Phase 18 — Queue (dereuromark/cakephp-queue) ✅ (2026-11-18)
 - Decisions (2026-11-18): AuditStash **ruled out** for now (there are no business entities to audit; users and roles are already covered by account activity and `permission_audits`). Queue, yes:
   - **All emails** through the queue (`queue` transport in front of the real one; CakeDC, 2FA, notifications).
   - **Worker as its own Docker service** (`bin/cake queue run`, automatic restart), in dev, prod and Coolify.
@@ -245,12 +245,42 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
   - The users PDF stays synchronous.
   - **`bin/cake maintenance`**: one command for the daily cron (activity purge, permissions history purge, queue cleanup).
 - Local ports unchanged (dev). No Mailpit in production.
+- **Done** (TDD; 235 tests + phpcs + phpstan 8):
+  - `dereuromark/cakephp-queue` 8.18 (`addPlugin('Queue', ['routes' => false])`), tables from its migrations; `bin/migrate` (CakeDC → Queue → app) and `bin/deploy` (migrate + `permissions sync`).
+  - Emails: `queue` transport (`Queue.Queue` in front of `default`), `Email.default` → `queue` (`EMAIL_QUEUE=false` to disable). `QueuedEmailTest`: the email is queued and the worker delivers the already rendered message (inline CSS). Testing note: `EmailTrait` replaces every transport and never restores them.
+  - `App\Queue\QueueFailureListener`: failed attempt → warning, retries exhausted → error; first line only, no trace or data.
+  - `bin/cake maintenance` (`App\UseCase\Maintenance\DailyMaintenance`): activity, permissions history, queue (`cleanOldJobs`), expired sessions, rate-limit counters; a failing step doesn't stop the rest.
+  - `/queue` screen (`QueueController` + `App\UseCase\Queue\QueueMonitor`, `Queue::*` in `SUPERADMIN_ONLY`, menu *System › Queue*): counters, failed jobs with their error (retry/delete/retry all; only failed jobs can be deleted), recent jobs without data, workers; warning if no worker is running. Verified with no inline styles/events and no scripts without a nonce.
+  - `Queue` config in `app.php` (600 s lifetime + jitter, sleeptime 5, 3 retries, 1 worker per container, completed kept 7 days / failed 30). `pcntl` in the image (graceful shutdown).
+  - Docker: `worker` service in dev and prod; one-shot `migrate` in prod; nginx with a `PHP_FPM_HOST` upstream (template `00-upstream.conf.template`) and `/healthz`.
+  - Verified end to end in dev and on the production stack: queued email → worker → Mailpit; `migrate` exits with 0.
+  - Found: CakeDC's `bin/cake users password_email` sends nothing (it doesn't pass `type => password` to `resetToken()`); documented.
 
-### Phase 19 — Deployment on Coolify ⏳
+### Phase 19 — Deployment on Coolify ✅ (2026-11-18)
 - Custom compose for Coolify: PostgreSQL as a **Coolify database resource** (S3 backups; the app receives `DATABASE_URL`), **HTTP-only nginx** behind Traefik (Coolify's TLS, `TRUSTED_PROXIES`, HSTS from the app), image **built by Coolify from the repo**, cron via Coolify **Scheduled Tasks** (`bin/cake maintenance`).
+- **Done:** `compose.coolify.yaml` (services `web`, `app`, `worker`, `migrate` with `restart: "no"` + `exclude_from_hc`; no ports; `SERVICE_URL_WEB_80` → `APP_FULL_BASE_URL`; `SERVICE_HEX_64_*` for the salt and the cookie key; `DATABASE_URL`/SMTP required; `PHP_FPM_HOST=${SERVICE_NAME_APP}` to avoid clashes on the shared network). Checked against the Coolify documentation (Context7).
+  - `TRUSTED_PROXIES` accepts IPv4/IPv6 **CIDR ranges** (`TrustedProxiesMiddleware`, TDD): behind Traefik `X-Forwarded-For` and `X-Forwarded-Proto` are honoured (no redirect loop, HSTS, `secure` cookies); defaults to Docker's private ranges. `HttpsEnforcerMiddleware` no longer repeats `setTrustedProxies`.
+  - Simulated locally with the production stack: HTTP request with `X-Forwarded-Proto: https` from another container → 200 with HSTS and CSP; without the header → 301; outside the range → the header isn't trusted.
+  - Pending on the user's side: push the repo, create the database and the app in Coolify (steps in `docs/deploy-coolify.md`).
 
-### Phase 20 — Documentation (`docs/`) ⏳
+### Phase 20 — Documentation (`docs/`) ✅ (2026-11-18)
 - A guide per area covering everything the app can do; README as summary and index; the crons to run always documented.
+- **Done:** `docs/` with 13 guides (getting started, architecture and how to add a module, accounts and roles, permissions, 2FA, activity, queue and custom jobs, emails and PDF, security and CSP templates, htmx, configuration, Coolify, operations and crons); README reduced to a summary + index. Internal links checked.
+
+### Phase 21 — File uploads: user photo (TDD) ✅ (2026-11-19)
+- Approved package: `josegonzalez/cakephp-upload` 8.1.1 (FriendsOfCake) + `league/flysystem` 3. User's decisions: **`<table>/<id>/<field>/<uuid>.<ext>` convention** for every entity (not the original name nor the controller), **private Docker volume** (served by a controller with a session), everyone manages their own photo + admins can manage others'.
+- `App\Storage\Uploads` (root `Uploads.path`/`UPLOADS_PATH`, `attachImage()` = `upload.file` type + behavior, `deleteRecord()`), `App\Storage\ImageProcessor` (GD: real type via `finfo`, 2 MB, 6000 px; 256×256 cropped WebP, EXIF orientation, no metadata), `App\UseCase\Users\ChangeUserPhoto` (permissions via `canManage`, deletes the previous one, `photo_changed`/`photo_removed` activity with actor), `UserPhotoController` (update/delete/show; system rule for every role), `UserPhotoHelper` (URL with `?v=`), card on profile and edit pages, photo on the user page, list, dashboard and sidebar. Migration `20261119090000_AddPhotoToUsers` (`photo`, `photo_dir`, not mass-assignable).
+- Docker: `exif` extension; `storage/uploads` owned by `www-data` in the image; `uploads` volume on `app` and `worker` (prod and Coolify; a single `app` replica while files live on a local volume).
+- Verified: `UserPhotoTest` (7 tests) and end to end in dev (upload from the form → `users/<id>/photo/<uuid>.webp`, WebP served with private caching, CSP `img-src 'self'`). Documented in `docs/uploads.md`.
+- Note: in parallel another session reworked the permissions matrix (per-role rules, migration `20261119000000_AddRuleToRolesPermissions`); its files were not touched. Full suite green at the end: 258 tests.
+
+### Phase 22 — Performance review of migrations and relations ✅ (2026-11-19)
+- Reviewed the actual PG indexes against the app's and CakeDC's queries. PostgreSQL doesn't index FKs on its own and CakeDC/Users doesn't create indexes on `username`/`email`.
+- Migration `20261119100000_AddPerformanceIndexes` (`up`/`down`, rollback verified):
+  - `users`: UNIQUE `username` and UNIQUE `email` (login, cookie, and preventing duplicates from races: `isUnique` only checks in PHP), `api_token` (Token authenticator `?api_key=`), `token` (email validation / reset), `created` (dashboard).
+  - `account_activities`: `(user_id, created)` → `(user_id, id)` (the list orders by `id`); `actor_id` (without it, deleting a user scanned the whole table for the `SET NULL`).
+  - `social_accounts` `user_id` and `(provider, reference)`; `failed_password_attempts` `(user_id, created)`; `roles_permissions` `permission_id`.
+- `EXPLAIN` confirms the indexes are used. Full suite green: 261 tests.
 
 ## Pending / next steps
 

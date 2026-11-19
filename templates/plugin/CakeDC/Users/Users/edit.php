@@ -45,6 +45,9 @@ if (!$canChangeRole) {
             'action' => $this->element('Users/role_badge', ['user' => $user]),
             'footer' => $roleFooter,
         ]) ?>
+        <?php if ($isSelf || $roleManager->canManage($currentUser, $user)) : ?>
+            <?= $this->element('Users/photo_form', ['user' => $user, 'own' => $isSelf]) ?>
+        <?php endif; ?>
         <?php if ($roleManager->canChangePasswordOf($currentUser, $user)) : ?>
             <?= $this->Card->render(
                 '<p class="text-sm text-muted-foreground">' . __('Set a new password for this user. They will need to use it on their next sign in.') . '</p>',
@@ -54,7 +57,7 @@ if (!$canChangeRole) {
                 ],
             ) ?>
         <?php endif; ?>
-        <?php if ($roleManager->canDelete($currentUser, $user)) : ?>
+        <?php if (!$isSelf && !$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'delete', $user->id])) : ?>
             <?= $this->Card->render(
                 '<p class="text-sm text-muted-foreground">' . __('Permanently delete this account and all its data.') . '</p>',
                 [

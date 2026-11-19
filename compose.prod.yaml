@@ -1,13 +1,35 @@
-# Production-like stack: self-contained images (no bind mounts), compiled assets, DEBUG off, HTTPS.
+# Production-like stack, to try the real images locally: self-contained images (no bind mounts), compiled
+# assets, DEBUG off, HTTPS with the mkcert certificate. For a real server use compose.coolify.yaml.
 #   bin/dev-https-cert   # once: mkcert certificate in docker/certs
 #   SECURITY_SALT=$(openssl rand -hex 32) docker compose -f compose.prod.yaml up -d --build
-#   -> https://admindashboard.localhost (same port 443 as dev: run one stack at a time)
-#   docker compose -f compose.prod.yaml exec app bin/cake migrations migrate
+#   -> https://admindashboard.localhost (same port as dev: run one stack at a time)
+# Migrations run on every start (the one-shot `migrate` service); app and worker wait for it.
 # The database/SMTP here are local examples: point DATABASE_URL / EMAIL_TRANSPORT_DEFAULT_URL to real ones.
 name: cakephp-admin-prod
 
+x-app: &app
+  build:
+    context: .
+    dockerfile: docker/app/Dockerfile
+    target: prod
+  environment:
+    DEBUG: "false"
+    SECURITY_SALT: "${SECURITY_SALT:?Set SECURITY_SALT (e.g. openssl rand -hex 32)}"
+    APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
+    DATABASE_URL: "${DATABASE_URL:-postgres://cakephp:secret@db:5432/cakephp_admin}"
+    EMAIL_TRANSPORT_DEFAULT_URL: "${EMAIL_TRANSPORT_DEFAULT_URL:-smtp://mailpit:1025}"
+    EMAIL_FROM: "${EMAIL_FROM:-admin@cakephp-admin.test}"
+    THEME_COMPILED_ASSETS: "true"
+    ASSET_TIMESTAMP: "force"
+    LOG_TO_STDERR: "true"
+    # book.cakephp.org/5.x/security: HTTPS + HSTS, CSP enforced (see docs/security.md)
+    HTTPS_ENFORCE: "true"
+    CSP_REPORT_ONLY: "false"
+    COOKIE_KEY: "${COOKIE_KEY:-}"
+    TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
+
 services:
-  # nginx: HTTPS with the certificate of docker/certs (mkcert locally; real certificates in production)
+  # nginx: HTTPS with the certificate of docker/certs (mkcert locally)
   web:
     build:
       context: .
@@ -21,29 +43,35 @@ services:
       - app
     restart: unless-stopped
 
-  app:
-    build:
-      context: .
-      dockerfile: docker/app/Dockerfile
-      target: prod
-    environment:
-      DEBUG: "false"
-      SECURITY_SALT: "${SECURITY_SALT:?Set SECURITY_SALT (e.g. openssl rand -hex 32)}"
-      APP_FULL_BASE_URL: "${APP_FULL_BASE_URL:-https://admindashboard.localhost}"
-      DATABASE_URL: "${DATABASE_URL:-postgres://cakephp:secret@db:5432/cakephp_admin}"
-      EMAIL_TRANSPORT_DEFAULT_URL: "${EMAIL_TRANSPORT_DEFAULT_URL:-smtp://mailpit:1025}"
-      EMAIL_FROM: "${EMAIL_FROM:-admin@cakephp-admin.test}"
-      THEME_COMPILED_ASSETS: "true"
-      ASSET_TIMESTAMP: "force"
-      LOG_TO_STDERR: "true"
-      # book.cakephp.org/5.x/security: HTTPS + HSTS, CSP enforced (see README "Seguridad")
-      HTTPS_ENFORCE: "true"
-      CSP_REPORT_ONLY: "false"
-      COOKIE_KEY: "${COOKIE_KEY:-}"
-      TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
+  # One-shot: migrations + new actions into the permissions catalogue (bin/deploy), then exits
+  migrate:
+    <<: *app
+    command: ["bin/deploy"]
+    restart: "no"
     depends_on:
       db:
         condition: service_healthy
+
+  app:
+    <<: *app
+    volumes:
+      # Uploaded files (App\Storage\Uploads): persistent, private
+      - uploads:/app/storage/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  # Background jobs (emails...): bin/cake queue run
+  worker:
+    <<: *app
+    command: ["bin/cake", "queue", "run"]
+    volumes:
+      - uploads:/app/storage/uploads
+    stop_grace_period: 60s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   db:
@@ -60,8 +88,10 @@ services:
       timeout: 5s
       retries: 10
 
+  # Local stand-in for a real SMTP server (there is no Mailpit in production)
   mailpit:
     image: axllent/mailpit:latest
 
 volumes:
   pgdata:
+  uploads:

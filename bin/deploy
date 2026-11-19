@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# Run on every deployment (the one-shot `migrate` service of compose.prod.yaml / compose.coolify.yaml):
+# all migrations, then register new controller actions with their default permissions (idempotent).
+set -e
+cd "$(dirname "$0")/.."
+bin/migrate
+bin/cake permissions sync

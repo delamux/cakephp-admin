@@ -27,7 +27,7 @@ $connect = $this->User->socialConnectLinkList($user->social_accounts ?? []);
 <div class="grid gap-4 px-4 lg:px-6 @3xl/main:grid-cols-3">
     <?= $this->Card->render(
         '<div class="flex flex-col items-center gap-3 text-center">'
-        . $this->Avatar->render($name, array_filter(['src' => $user->avatar ?? null, 'size' => 'lg', 'class' => 'size-20 text-xl']))
+        . $this->Avatar->render($name, array_filter(['src' => $this->UserPhoto->url($user), 'size' => 'lg', 'class' => 'size-20 text-xl']))
         . '<div><p class="text-lg font-semibold">' . h($name) . '</p><p class="text-sm text-muted-foreground">' . h($user->email) . '</p></div></div>',
         [
             'footer' => $isCurrentUser
@@ -41,6 +41,7 @@ $connect = $this->User->socialConnectLinkList($user->social_accounts ?? []);
         'description' => __('Details of your account.'),
     ]) ?>
     <?php if ($isCurrentUser) : ?>
+        <div class="@3xl/main:col-span-3"><?= $this->element('Users/photo_form', ['user' => $user, 'own' => true]) ?></div>
         <div class="grid items-start gap-4 @3xl/main:col-span-3 @5xl/main:grid-cols-2">
             <?= $this->cell('TwoFactor') ?>
             <div class="min-w-0"><?= $this->cell('AccountActivity', [(string)$user->id]) ?></div>

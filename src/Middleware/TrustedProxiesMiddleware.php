@@ -73,9 +73,12 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
     public static function inRange(string $ip, string $cidr): bool
     {
         [$subnet, $bits] = explode('/', $cidr, 2) + [1 => ''];
-        $ipBinary = @inet_pton($ip);
-        $subnetBinary = @inet_pton($subnet);
-        if ($ipBinary === false || $subnetBinary === false || strlen($ipBinary) !== strlen($subnetBinary)) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP) || !filter_var($subnet, FILTER_VALIDATE_IP)) {
+            return false;
+        }
+        $ipBinary = (string)inet_pton($ip);
+        $subnetBinary = (string)inet_pton($subnet);
+        if (strlen($ipBinary) !== strlen($subnetBinary)) {
             return false;
         }
         $bits = (int)$bits;
@@ -90,7 +93,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
         if ($rest === 0) {
             return true;
         }
-        $mask = 0xFF << (8 - $rest) & 0xFF;
+        $mask = 0xFF << 8 - $rest & 0xFF;
 
         return (ord($ipBinary[$bytes]) & $mask) === (ord($subnetBinary[$bytes]) & $mask);
     }

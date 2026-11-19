@@ -4,8 +4,9 @@
 # ---------- PHP base: extensions + common php.ini ----------
 FROM php:8.5-fpm AS base
 COPY --from=mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
-# PostgreSQL, intl (CakePHP), gd (Dompdf images), zip (composer), opcache
-RUN install-php-extensions pdo_pgsql intl mbstring gd zip opcache
+# PostgreSQL, intl (CakePHP), gd (Dompdf images, photo re-encoding), exif (photo orientation), zip
+# (composer), opcache, pcntl (queue worker: on SIGTERM it finishes the current job before exiting)
+RUN install-php-extensions pdo_pgsql intl mbstring gd exif zip opcache pcntl
 COPY docker/app/php.ini /usr/local/etc/php/conf.d/zz-app.ini
 COPY docker/app/fpm-pool.conf /usr/local/etc/php-fpm.d/zz-app.conf
 WORKDIR /app
@@ -60,12 +61,15 @@ ENV DEBUG=false \
     CSP_REPORT_ONLY=false
 # Plugin assets into webroot (served by nginx), writable tmp/logs, no root at runtime
 RUN SECURITY_SALT=build-time-only bin/cake plugin assets copy \
-    && mkdir -p tmp logs \
-    && chown -R www-data:www-data tmp logs
+    && mkdir -p tmp logs storage/uploads \
+    && chown -R www-data:www-data tmp logs storage
 USER www-data
 
 # ---------- web: nginx with the static files of the prod image ----------
 FROM nginx:1.29-alpine AS web
+# PHP-FPM service name (Coolify: ${SERVICE_NAME_APP})
+ENV PHP_FPM_HOST=app
+COPY docker/nginx/00-upstream.conf.template /etc/nginx/templates/00-upstream.conf.template
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY docker/nginx/app-locations.conf /etc/nginx/app-locations.conf
 COPY docker/nginx/https.conf /etc/nginx/https.conf.template

@@ -276,6 +276,33 @@ return [
     ],
 
     /*
+     * Uploaded files (App\Storage\Uploads): private, outside webroot, `<table>/<id>/<field>/<uuid>.<ext>`.
+     * Production: a persistent volume mounted here (compose.prod.yaml / compose.coolify.yaml `uploads`).
+     */
+    'Uploads' => [
+        'path' => env('UPLOADS_PATH', ROOT . DS . 'storage' . DS . 'uploads' . DS),
+    ],
+
+    /*
+     * Background jobs (dereuromark/cakephp-queue, tables in PostgreSQL). Worker: `bin/cake queue run`
+     * (the `worker` service). Screen: Queue (superadmin). Daily cleanup: `bin/cake maintenance`.
+     */
+    'Queue' => [
+        // A worker exits after this many seconds between jobs and Docker starts a fresh one
+        'workerLifetime' => (int)env('QUEUE_WORKER_LIFETIME', 600),
+        'workerLifetimeJitter' => 60,
+        // Seconds to wait when there is nothing to do (how soon a new email leaves)
+        'sleeptime' => (int)env('QUEUE_SLEEPTIME', 5),
+        // Retries after the first attempt (an SMTP outage of a few minutes does not lose emails)
+        'defaultJobRetries' => 3,
+        // Workers per server (one per `worker` container)
+        'maxworkers' => 1,
+        // Keep finished jobs 7 days and failed ones 30 (Queue screen), then `maintenance` deletes them
+        'cleanuptimeout' => 7 * 86400,
+        'cleanupAbortedTimeout' => 30 * 86400,
+    ],
+
+    /*
      * Email delivery profiles
      *
      * Delivery profiles allow you to predefine various properties about email
