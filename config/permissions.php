@@ -74,6 +74,14 @@ return [
             'bypassAuth' => true,
         ],
         // Login second step with the security key (not logged in yet; App\Controller\WebauthnLoginController)
+        // Invitation link (App\Controller\InvitationsController::accept()): choose the password
+        [
+            'role' => '*',
+            'plugin' => null,
+            'controller' => 'Invitations',
+            'action' => 'accept',
+            'bypassAuth' => true,
+        ],
         [
             'role' => '*',
             'plugin' => null,

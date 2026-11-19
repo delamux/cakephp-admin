@@ -28,5 +28,6 @@ class User extends BaseUser
         // Only App\UseCase\Users\ChangeUserPhoto (validated, re-encoded image)
         'photo' => false,
         'photo_dir' => false,
+        'invited_at' => false,
     ];
 }

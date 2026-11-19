@@ -26,7 +26,9 @@ $details = [
     __('Role') => $this->element('Users/role_badge', ['user' => $user]),
     __('Status') => $user->active
         ? $this->Badge->render(__('Active'), ['variant' => 'outline', 'icon' => $this->Icon->render('circle-check', ['class' => 'size-3.5 fill-green-500 text-background dark:fill-green-400', 'replaceClass' => true])])
-        : $this->Badge->render(__('Pending validation'), ['variant' => 'outline', 'icon' => 'loader']),
+        : ($user->get('invited_at') !== null
+            ? $this->Badge->render(__('Invited'), ['variant' => 'outline', 'icon' => 'mail'])
+            : $this->Badge->render(__('Pending validation'), ['variant' => 'outline', 'icon' => 'loader'])),
     __('Last login') => $date($user->last_login),
     __('Activation date') => $date($user->activation_date),
     __('Terms accepted') => $date($user->tos_date),

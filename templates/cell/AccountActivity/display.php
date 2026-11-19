@@ -26,6 +26,8 @@ $events = [
     ActivityLog::TWO_FACTOR_RESET => [__('Two-step verification reset'), 'shield'],
     ActivityLog::PHOTO_CHANGED => [__('Photo changed'), 'circle-user'],
     ActivityLog::PHOTO_REMOVED => [__('Photo removed'), 'circle-user'],
+    ActivityLog::INVITED => [__('Invited'), 'mail'],
+    ActivityLog::INVITATION_ACCEPTED => [__('Invitation accepted'), 'log-in'],
 ];
 
 $rows = [];

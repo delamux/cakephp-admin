@@ -120,6 +120,10 @@ return [
     'App.accountActivity' => [
         'retentionDays' => 180,
     ],
+    // Invitations (App\UseCase\Users\InviteUser): days the emailed link stays valid
+    'App.invitations' => [
+        'expirationDays' => 7,
+    ],
     // Not signed in → "Please sign in to continue."; signed in without permission → this flash
     // (the plugin default appends the raw URL in debug mode).
     'Auth.AuthorizationMiddleware.unauthorizedHandler' => [

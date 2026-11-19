@@ -13,22 +13,36 @@ $this->assign('title', __('Users'));
 
 $this->start('header_actions');
 echo $this->element('header_action', ['text' => __('Export'), 'url' => ['plugin' => false, 'controller' => 'Reports', 'action' => 'users', '_ext' => 'pdf', '?' => ['download' => 1]], 'icon' => 'arrow-down', 'variant' => 'outline']);
+$inviteUrl = ['plugin' => false, 'prefix' => false, 'controller' => 'Invitations', 'action' => 'add'];
+if ($this->AuthLink->isAuthorized($inviteUrl)) {
+    echo $this->element('header_action', ['text' => __('Invite user'), 'url' => $inviteUrl, 'icon' => 'mail', 'variant' => 'outline']);
+}
 if ($isAdmin) {
     echo $this->element('header_action', ['text' => __('New user'), 'url' => ['action' => 'add'], 'icon' => 'plus']);
 }
 $this->end();
+
+// Pending invitation (App\UseCase\Users\InviteUser): account created, password not chosen yet
+$isInvited = fn($user): bool => !$user->active && $user->get('invited_at') !== null;
+$canResend = fn($user): bool => $isInvited($user) && $roleManager->canManage($currentUser, $user)
+    && $this->AuthLink->isAuthorized(['plugin' => false, 'prefix' => false, 'controller' => 'Invitations', 'action' => 'resend', $user->id]);
 
 $displayName = fn($user): string => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: (string)$user->username;
 
 // Row actions: what the RBAC rules allow (role permissions, rule `owner`) and the account protections
 // allow (App\Service\UserRoleManager::isProtected(): superadmin/admin accounts, own account)
 $canDelete = fn($user): bool => $user->id !== $currentUser->id && !$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'delete', $user->id]);
-$rowMenu = function ($user, int $i) use ($roleManager, $currentUser, $canDelete): array {
+$rowMenu = function ($user, int $i) use ($roleManager, $currentUser, $canDelete, $canResend): array {
     // Links leave the list: normal navigation (the list container is htmx-boosted)
     $nav = ['attributes' => ['hx-boost' => 'false']];
     $items = [['label' => __('View'), 'url' => ['action' => 'view', $user->id], 'icon' => 'user'] + $nav];
     if (!$roleManager->isProtected($currentUser, $user) && $this->AuthLink->isAuthorized(['plugin' => 'CakeDC/Users', 'prefix' => false, 'controller' => 'Users', 'action' => 'edit', $user->id])) {
         $items[] = ['label' => __('Edit'), 'url' => ['action' => 'edit', $user->id], 'icon' => 'pencil'] + $nav;
+    }
+    if ($canResend($user)) {
+        $items[] = ['label' => __('Resend invitation'), 'url' => '#', 'icon' => 'mail', 'attributes' => [
+            'data-submit-form' => 'resend-invitation-' . $i,
+        ]];
     }
     if ($roleManager->canChangePasswordOf($currentUser, $user)) {
         $items[] = ['label' => __('Change password'), 'url' => ['action' => 'changePassword', $user->id], 'icon' => 'settings-2'] + $nav;
@@ -54,7 +68,9 @@ foreach ($users as $i => $user) {
         'role' => $this->element('Users/role_badge', ['user' => $user]),
         'active' => $user->active
             ? $this->Badge->render(__('Active'), ['variant' => 'outline', 'class' => 'text-muted-foreground', 'icon' => $this->Icon->render('circle-check', ['class' => 'size-3.5 fill-green-500 text-background dark:fill-green-400', 'replaceClass' => true])])
-            : $this->Badge->render(__('Pending'), ['variant' => 'outline', 'class' => 'text-muted-foreground', 'icon' => 'loader']),
+            : ($isInvited($user)
+                ? $this->Badge->render(__('Invited'), ['variant' => 'outline', 'class' => 'text-muted-foreground', 'icon' => 'mail'])
+                : $this->Badge->render(__('Pending'), ['variant' => 'outline', 'class' => 'text-muted-foreground', 'icon' => 'loader'])),
         'created' => '<span class="whitespace-nowrap text-muted-foreground">' . h($user->created?->i18nFormat('d MMM yyyy')) . '</span>',
         'actions' => $this->DropdownMenu->render('', $rowMenu($user, $i), [
             'id' => 'user-menu-' . $i,
@@ -66,6 +82,11 @@ foreach ($users as $i => $user) {
             'id' => 'delete-user-' . $i,
             'class' => 'hidden',
             'data-confirm' => __('Delete user {0}? This cannot be undone.', $user->username),
+        ]) . $this->Form->end() : '')
+        . ($canResend($user) ? $this->Form->create(null, [
+            'url' => ['plugin' => false, 'prefix' => false, 'controller' => 'Invitations', 'action' => 'resend', $user->id],
+            'id' => 'resend-invitation-' . $i,
+            'class' => 'hidden',
         ]) . $this->Form->end() : ''),
     ];
 }

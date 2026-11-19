@@ -21,7 +21,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  *   a failure if the second step did not pass; a passkey login if the response is not 200.
  * - Passkey options are refused when the bucket is exhausted but never counted: the login page
  *   requests them on every load (browser autofill).
- * - `register`, `requestResetPassword`, `resendTokenValidation`: every submission, own bucket.
+ * - `register`, `requestResetPassword`, `resendTokenValidation`, accepting an invitation: every
+ *   submission, own bucket.
  *
  * The client IP is REMOTE_ADDR as seen by nginx; behind a load balancer configure trusted proxies.
  */
@@ -76,6 +77,9 @@ class AuthThrottleMiddleware implements MiddlewareInterface
             return null;
         }
         $params = (array)$request->getAttribute('params', []);
+        if (empty($params['plugin']) && ($params['controller'] ?? null) === 'Invitations') {
+            return ($params['action'] ?? null) === 'accept' ? 'acceptInvitation' : null;
+        }
         if (empty($params['plugin']) && ($params['controller'] ?? null) === 'PasskeyLogin') {
             return match ($params['action'] ?? null) {
                 'login' => 'passkeyLogin',

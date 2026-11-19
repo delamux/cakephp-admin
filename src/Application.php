@@ -42,6 +42,7 @@ use App\UseCase\Roles\ManageRoles;
 use App\UseCase\TwoFactor\TwoFactorSettings;
 use App\UseCase\Users\ChangeUserPhoto;
 use App\UseCase\Users\ChangeUserRole;
+use App\UseCase\Users\InviteUser;
 use App\Webauthn\PasskeyLoginAdapter;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
@@ -205,6 +206,7 @@ class Application extends BaseApplication
         $container->add(ManageRoles::class)->addArgument(PermissionAuditLog::class);
         $container->add(ChangeUserRole::class)->addArgument(UserRoleManager::class);
         $container->add(ChangeUserPhoto::class);
+        $container->add(InviteUser::class);
         $container->add(TwoFactorSettings::class);
         $container->add(PurgeAccountActivity::class)->addArgument(ActivityLog::class);
         $container->add(QueueMonitor::class);
