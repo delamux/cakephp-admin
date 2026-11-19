@@ -18,6 +18,8 @@ Registro de los eventos de seguridad de cada cuenta, con **fecha, IP y navegador
 | Security key or passkey added / removed | WebAuthn |
 | Two-step verification reset | Por un superadmin (se guarda **quién**) o por consola |
 | Photo changed / removed | Foto de usuario (si la cambió un administrador, se guarda **quién**) |
+| Invited / Invitation accepted | [Invitaciones](accounts-and-roles.md#invitaciones) (se guarda **quién** invitó) |
+| Other sessions signed out | «Sign out of every other session» desde el perfil |
 
 **Nunca** se guarda lo que se escribió (contraseñas, códigos ni el usuario de un intento con una cuenta inexistente:
 esos solo cuentan en el límite por IP). Si falla la escritura del registro, va al log de errores y la acción sigue:

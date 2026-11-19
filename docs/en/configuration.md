@@ -41,6 +41,7 @@ another `HTTPS_PORT` in a `.env` file at the project root (ignored by git); see 
 | `App.roles` | `config/users.php` | Labels for the initial roles |
 | `App.permissions.{plugins,ignoredActions,defaults,superadminOnly,auditRetentionDays}` | `config/users.php` | [Permissions](permissions.md) |
 | `App.accountActivity.retentionDays` | `config/users.php` | [Activity](account-activity.md) retention (180) |
+| `App.invitations.expirationDays` | `config/users.php` | Days an [invitation](accounts-and-roles.md#invitations) link stays valid (7) |
 | `Users.*` (sign-up, emails, "remember me", social) | `config/users.php` | CakeDC/Users |
 | `OneTimePasswordAuthenticator`, `Webauthn2fa` | `config/users.php` | [2FA](two-factor.md) |
 | `Security.{throttle,https,csp,cookieKey,trustedProxies}` | `config/app.php` | [Security](security.md) |
@@ -48,3 +49,4 @@ another `HTTPS_PORT` in a `.env` file at the project root (ignored by git); see 
 | `EmailTransport.{default,queue}`, `Email.default` | `config/app.php` | [Emails](emails-and-pdf.md) |
 | `Session` | `config/app.php` | Hardened database-backed session |
 | `Uploads.path` | `config/app.php` | [File uploads](uploads.md) |
+| `Bake.theme` | `config/app.php` | Templates `bin/cake bake` uses (`BasecoatTheme`) |

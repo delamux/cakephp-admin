@@ -15,7 +15,7 @@ webauthn-lib 5), with its screens overridden in `templates/plugin/CakeDC/Users/U
 | Passkey | "Sign in with a passkey" on the login page, no password ([2FA and passkeys](two-factor.md)) |
 | Magic link | "Email me a sign-in link" (`OneTimeLogin`): single-use link by email; it also asks for 2FA |
 | Password recovery | "Forgot your password?": token link by email |
-| Profile | `/profile`: details, **photo**, change password, two-step verification and **recent activity** |
+| Profile | `/profile`: details, **photo**, change password, two-step verification, **where you are signed in** and **recent activity** |
 | Change password | Asks for the current one; recorded in their [activity](account-activity.md) |
 
 Every email goes out through the [queue](queue.md) and uses the [app layout](emails-and-pdf.md). Public forms are
@@ -35,6 +35,26 @@ Rules (`App\Service\UserRoleManager`, with tests):
 - Another user's password can only be changed by a superadmin, and only if `Users.Superuser.allowedToChangePasswords`
   is enabled.
 - The `superadmin` role is kept in sync with CakeDC's `is_superuser` flag.
+
+## Invitations
+
+*Administration › Users › Invite user*: enter the email, the role and (optionally) the name. The account is created
+**inactive** and the person gets an email (through the queue) with a link to choose their password; until then they
+cannot sign in. The list shows them as **Invited**, with **Resend invitation** in the row menu (new link, the old one
+stops working).
+
+- Only the roles the inviter may assign (an admin never invites a superadmin).
+- The link is single use and expires after `App.invitations.expirationDays` (**7 days**, `config/users.php`).
+- The accept page (`/invitations/accept/<token>`) is public and rate-limited per IP; passwords need at least 8 characters.
+- Invitation (with **who** invited) and acceptance go to the [account activity](account-activity.md).
+- Who can invite is a permission (`Invitations::add` / `resend`, admins by default) in the [matrix](permissions.md).
+
+## Where you are signed in
+
+The profile lists the account's **live sessions** (browser, IP, last activity; the current one marked as *This
+device*). The user can sign out one of them or **every other session**. The latter also invalidates the "remember me"
+cookies of those devices, so they cannot sign back in on their own (`users.session_key`, part of the cookie token). It
+is recorded in the [activity](account-activity.md).
 
 ## Roles
 
@@ -60,8 +80,8 @@ A role with assigned users can't be deleted. What each role can do is changed in
 
 ```bash
 bin/cake users add_superuser -u admin -p 'Secret1234!' -e admin@example.com
+bin/cake users password_email ana@example.com   # email a password reset link
 bin/cake seeds run DemoUsers          # 40 demo users (password Demo1234!), development only
 ```
 
-> CakeDC's `bin/cake users password_email` **doesn't send** the email (it doesn't pass the type to `resetToken()`):
-> for a reset use "Forgot your password?".
+`users password_email` is fixed in the CakeDC fork (it did not send the email).

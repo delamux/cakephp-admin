@@ -54,7 +54,9 @@ docs/                   # esta documentación
    regístralo en `Application::services()` e inyéctalo en la acción: `public function add(CreateCustomer $create)`.
 4. **Controlador fino** en `src/Controller/` (hereda FormProtection, htmx y los guards de `AppController`).
 5. **Plantillas** con los helpers del tema (`Card`, `Table`, `Button`, `Badge`, `EmptyState`…) y sin JS ni estilos en
-   línea (ver [Seguridad](security.md#plantillas-compatibles-con-la-csp)).
+   línea (ver [Seguridad](security.md#plantillas-compatibles-con-la-csp)). Para un CRUD, **bake** las genera ya con el
+   tema (`Bake.theme` = `BasecoatTheme` en `config/app.php`): `bin/cake bake all Customers` escribe tabla, entidad,
+   controlador, las cuatro pantallas (listado, ficha, formulario, borrado con diálogo) y los tests; luego se adaptan.
 6. **Permisos:** `bin/cake permissions sync` descubre las acciones nuevas; dales acceso por rol en
    *Access control › Permissions* (o en `App.permissions.defaults` de `config/users.php` para instalaciones nuevas).
    Si solo debe tocarlo el superadmin, añádelo a `PermissionsSynchronizer::SUPERADMIN_ONLY`.

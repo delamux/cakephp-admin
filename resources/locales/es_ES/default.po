@@ -1597,3 +1597,128 @@ msgstr "La foto no puede pasar de {0} × {0} píxeles."
 
 msgid "Owner only"
 msgstr "Solo el propietario"
+
+msgid "Session signed out."
+msgstr "Sesión cerrada."
+
+msgid "That session no longer exists."
+msgstr "Esa sesión ya no existe."
+
+msgid "Signed out of every other session."
+msgstr "Se han cerrado todas las demás sesiones."
+
+msgid "Invitation sent to {0}."
+msgstr "Invitación enviada a {0}."
+
+msgid "This invitation link is not valid or has expired."
+msgstr "Este enlace de invitación no es válido o ha caducado."
+
+msgid "Your account is ready. Sign in with your new password."
+msgstr "Tu cuenta está lista. Inicia sesión con tu nueva contraseña."
+
+msgid "You have been invited to {0}"
+msgstr "Te han invitado a {0}"
+
+msgid "Enter a valid email address."
+msgstr "Introduce un email válido."
+
+msgid "You cannot assign that role."
+msgstr "No puedes asignar ese rol."
+
+msgid "There is already an account with that email."
+msgstr "Ya existe una cuenta con ese email."
+
+msgid "The invitation could not be sent. Try again."
+msgstr "No se pudo enviar la invitación. Inténtalo de nuevo."
+
+msgid "That user has no pending invitation."
+msgstr "Ese usuario no tiene ninguna invitación pendiente."
+
+msgid "You cannot manage that user."
+msgstr "No puedes gestionar a ese usuario."
+
+msgid "Use at least 8 characters."
+msgstr "Usa al menos 8 caracteres."
+
+msgid "The passwords do not match."
+msgstr "Las contraseñas no coinciden."
+
+msgid "Your account could not be activated. Try again."
+msgstr "No se pudo activar tu cuenta. Inténtalo de nuevo."
+
+msgid "Accept invitation"
+msgstr "Aceptar invitación"
+
+msgid "Account: {0}"
+msgstr "Cuenta: {0}"
+
+msgid "Activate account"
+msgstr "Activar cuenta"
+
+msgid "Choose your password"
+msgstr "Elige tu contraseña"
+
+msgid "Invite user"
+msgstr "Invitar usuario"
+
+msgid "Send invitation"
+msgstr "Enviar invitación"
+
+msgid "They will get an email with a link to choose their password. Until then they cannot sign in."
+msgstr "Recibirá un email con un enlace para elegir su contraseña. Hasta entonces no podrá iniciar sesión."
+
+msgid "Photo removed"
+msgstr "Foto eliminada"
+
+msgid "Invited"
+msgstr "Invitado"
+
+msgid "Invitation accepted"
+msgstr "Invitación aceptada"
+
+msgid "Other sessions signed out"
+msgstr "Otras sesiones cerradas"
+
+msgid "This device"
+msgstr "Este dispositivo"
+
+msgid "Sign out"
+msgstr "Cerrar sesión"
+
+msgid "Sign out this session?"
+msgstr "¿Cerrar esta sesión?"
+
+msgid "Active {0}"
+msgstr "Activa {0}"
+
+msgid "No active sessions"
+msgstr "No hay sesiones activas"
+
+msgid "Where you are signed in"
+msgstr "Dónde tienes la sesión abierta"
+
+msgid "Devices with an open session. Something you do not recognise? Sign it out and change your password."
+msgstr "Dispositivos con la sesión abierta. ¿Alguno que no reconoces? Ciérralo y cambia tu contraseña."
+
+msgid "Sign out of every other session"
+msgstr "Cerrar todas las demás sesiones"
+
+msgid "Sign out of every other session? Those devices will have to sign in again."
+msgstr "¿Cerrar todas las demás sesiones? Esos dispositivos tendrán que volver a iniciar sesión."
+
+msgid "Choose a password to activate your account."
+msgstr "Elige una contraseña para activar tu cuenta."
+
+msgid "An account has been created for you. Click the button below to choose your password and activate it."
+msgstr "Se ha creado una cuenta para ti. Pulsa el botón para elegir tu contraseña y activarla."
+
+msgid "An account has been created for you in {0}. Open this link to choose your password and activate it:"
+msgstr "Se ha creado una cuenta para ti en {0}. Abre este enlace para elegir tu contraseña y activarla:"
+
+msgid "Resend invitation"
+msgstr "Reenviar invitación"
+
+msgid "This link expires in {0} day and can be used only once."
+msgid_plural "This link expires in {0} days and can be used only once."
+msgstr[0] "Este enlace caduca en {0} día y solo se puede usar una vez."
+msgstr[1] "Este enlace caduca en {0} días y solo se puede usar una vez."

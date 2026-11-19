@@ -42,6 +42,7 @@ En dev local la app está en `https://cakeadmin.local` en el puerto 443 (el valo
 | `App.roles` | `config/users.php` | Etiquetas de los roles iniciales |
 | `App.permissions.{plugins,ignoredActions,defaults,superadminOnly,auditRetentionDays}` | `config/users.php` | [Permisos](permissions.md) |
 | `App.accountActivity.retentionDays` | `config/users.php` | Retención de la [actividad](account-activity.md) (180) |
+| `App.invitations.expirationDays` | `config/users.php` | Días que vale el enlace de una [invitación](accounts-and-roles.md#invitaciones) (7) |
 | `Users.*` (registro, emails, «recordarme», social) | `config/users.php` | CakeDC/Users |
 | `OneTimePasswordAuthenticator`, `Webauthn2fa` | `config/users.php` | [2FA](two-factor.md) |
 | `Security.{throttle,https,csp,cookieKey,trustedProxies}` | `config/app.php` | [Seguridad](security.md) |
@@ -49,3 +50,4 @@ En dev local la app está en `https://cakeadmin.local` en el puerto 443 (el valo
 | `EmailTransport.{default,queue}`, `Email.default` | `config/app.php` | [Emails](emails-and-pdf.md) |
 | `Session` | `config/app.php` | Sesión en base de datos endurecida |
 | `Uploads.path` | `config/app.php` | [Subida de archivos](uploads.md) |
+| `Bake.theme` | `config/app.php` | Plantillas que usa `bin/cake bake` (`BasecoatTheme`) |

@@ -18,6 +18,8 @@ A log of each account's security events, with **date, IP and browser** (`account
 | Security key or passkey added / removed | WebAuthn |
 | Two-step verification reset | By a superadmin (**who** did it is stored) or from the console |
 | Photo changed / removed | User photo (if an administrator changed it, **who** did it is stored) |
+| Invited / Invitation accepted | [Invitations](accounts-and-roles.md#invitations) (**who** invited is stored) |
+| Other sessions signed out | "Sign out of every other session" from the profile |
 
 What was typed is **never** stored (passwords, codes, or the username of an attempt on a non-existent account: those
 only count towards the per-IP rate limit). If writing the log entry fails, it goes to the error log and the action

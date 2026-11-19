@@ -282,6 +282,27 @@ User's decisions: strict CSP in production and Report-Only mode in dev; theme wi
   - `social_accounts` `user_id` and `(provider, reference)`; `failed_password_attempts` `(user_id, created)`; `roles_permissions` `permission_id`.
 - `EXPLAIN` confirms the indexes are used. Full suite green: 261 tests.
 
+### Phase 23 — Security fixes, invitations, sessions and bake templates ✅ (2026-11-20)
+Branch `feat/security-invitations-sessions-bake` (PR to `main`), with branches in the CakeDC fork and the theme.
+- **Security** (TDD): CakeDC's Token authenticator (`?api_key=` on every URL) disabled; `bin/cake users password_email`
+  sends the email. Both fixed in the fork (`fix/password-email-and-optional-authenticators`, delamux/CakeDC-users#5:
+  `false` disables a default authenticator; the command passes the `password` type).
+- **Invitations** (TDD): `InviteUser` use case + `InvitationsController` (add/resend; `accept` public and rate
+  limited), inactive account until the password is chosen, single-use link (`App.invitations.expirationDays` = 7),
+  only assignable roles, activity `invited` / `invitation_accepted`. Migration `AddInvitedAtToUsers`.
+- **Where you are signed in** (TDD): `AppDatabaseSession` stores user, IP and browser per session (migration
+  `AddDevicesToSessions`, FK cascade); profile card; sign out one session or every other one, which rotates
+  `users.session_key` (part of the remember-me token: `remember_secret` virtual field), so other devices cannot sign
+  back in. Existing remember-me cookies stop working once after deploying.
+- **Bake templates** in the theme (`feat/bake-templates`, delamux/cakephp-basecoat-theme#1): index/view/add/edit with
+  the theme helpers, delete in a Dialog (CSP). Theme fix: the field wrapper carried `textarea`/`select` as a class
+  (styled as the component) → `data-type`. App: `Bake.theme = BasecoatTheme`. Verified by baking a throwaway table
+  (all field types, belongsTo, hasMany): lint, CRUD flows and screenshots; artifacts removed.
+- `bin/deploy` clears the table schema cache after migrating (with the code mounted in dev a stale cache ignored new
+  columns when saving).
+- Composer points to the fork/theme branches until their PRs are merged; then back to `dev-issue/4-webauthn-lib-5`
+  and `dev-main`.
+
 ## Pending / next steps
 
 - [x] **Generic basecoat theme improvements** (2026-11-18, approved). Clone in `../cakephp-basecoat-theme`,
