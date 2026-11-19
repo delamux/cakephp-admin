@@ -156,7 +156,8 @@ class PermissionsSynchronizer
             /** @var \App\Model\Entity\Permission $permission */
             $permission = $row->get('permission');
             $rule = $row->get('rule');
-            $rules[(string)$row->get('role')->get('slug')][$permission->key()] = is_string($rule) && $rule !== '' ? $rule : null;
+            $slug = (string)$row->get('role')->get('slug');
+            $rules[$slug][$permission->key()] = is_string($rule) && $rule !== '' ? $rule : null;
         }
         foreach ($rules as &$keys) {
             ksort($keys, SORT_STRING);
@@ -278,7 +279,9 @@ class PermissionsSynchronizer
      */
     private static function decide(string $key, array $patterns): array
     {
-        $plain = array_values(array_filter($patterns, fn($pattern, $index): bool => is_int($index), ARRAY_FILTER_USE_BOTH));
+        $plain = array_values(
+            array_filter($patterns, fn($pattern, $index): bool => is_int($index), ARRAY_FILTER_USE_BOTH),
+        );
         $rule = null;
         foreach ($patterns as $pattern => $name) {
             if (is_string($pattern) && fnmatch($pattern, $key, FNM_NOESCAPE)) {

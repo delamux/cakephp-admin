@@ -106,7 +106,11 @@ class PermissionMatrix
         foreach ($this->actions() as $group => $actions) {
             foreach ($actions as [$permission, $locked]) {
                 if ($locked !== null) {
-                    $groups[$group][] = ['key' => $permission->key(), 'action' => $permission->action, 'locked' => $locked];
+                    $groups[$group][] = [
+                        'key' => $permission->key(),
+                        'action' => $permission->action,
+                        'locked' => $locked,
+                    ];
                 }
             }
         }

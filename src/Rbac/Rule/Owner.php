@@ -153,7 +153,7 @@ class Owner implements PolicyRule
 
     /**
      * @param \Cake\ORM\Table $table Table of the record.
-     * @param string|int|float|bool $id Record id.
+     * @param string|float|int|bool $id Record id.
      * @param list<string> $path Owner path (App\Rbac\Rule\Owner::ownerPath()).
      * @return string|null `created_by` at the end of the path.
      */
@@ -191,7 +191,8 @@ class Owner implements PolicyRule
     private function isAccountAction(array $action): bool
     {
         /** @var list<string> $patterns */
-        $patterns = $this->accountActions ?? (array)Configure::read('App.permissions.accountActions', self::ACCOUNT_ACTIONS);
+        $patterns = $this->accountActions
+            ?? (array)Configure::read('App.permissions.accountActions', self::ACCOUNT_ACTIONS);
 
         return PermissionsSynchronizer::matches(ActionDiscovery::key($action), $patterns);
     }
