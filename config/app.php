@@ -54,6 +54,11 @@ return [
      *   `plugins`, `templates`, `locales` subkeys, which allow the definition of
      *   paths for plugins, view templates and locale files respectively.
      */
+    // `bin/cake bake` generates the CRUD screens with the theme components (docs/en/architecture.md)
+    'Bake' => [
+        'theme' => 'BasecoatTheme',
+    ],
+
     'App' => [
         'namespace' => 'App',
         'encoding' => env('APP_ENCODING', 'UTF-8'),
@@ -494,6 +499,8 @@ return [
         // PostgreSQL (`sessions` table, CakePHP DatabaseSession): sessions survive redeploys and are
         // shared by every app container
         'defaults' => 'database',
+        // Also stores the user, IP and browser of each session ("Where you're signed in" in the profile)
+        'handler' => ['engine' => \App\Http\Session\AppDatabaseSession::class],
         // Idle minutes before the session expires (CakePHP renews the id on login)
         'timeout' => (int)env('SESSION_TIMEOUT', 240),
         'ini' => [

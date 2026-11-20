@@ -12,8 +12,9 @@ Applied following [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/s
 | HTTPS + HSTS | `HTTPS_ENFORCE=true` (production image): HTTP → HTTPS and a 1-year `Strict-Transport-Security` (`HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`) |
 | CSRF | `httponly` cookie, `SameSite=Lax` and `secure` over HTTPS; `fetch`/htmx send `X-CSRF-Token` from `<meta name="csrf-token">` |
 | FormProtection | In every controller: `FormHelper` forms carry a token for their fields (only the WebAuthn JSON endpoints and the matrix checkboxes are unlocked) |
-| "Remember me" cookie | AES-encrypted (`EncryptedCookieMiddleware`, `COOKIE_KEY` or derived from the salt), `secure`, `SameSite=Lax` |
-| Session | Stored in **PostgreSQL** (`sessions` table); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` over HTTPS, idle timeout (`SESSION_TIMEOUT`, 240 min). Survives redeploys and is shared by every replica |
+| "Remember me" cookie | AES-encrypted (`EncryptedCookieMiddleware`, `COOKIE_KEY` or derived from the salt), `secure`, `SameSite=Lax`. Its token includes the password hash and `users.session_key`: changing the password or "Sign out of every other session" invalidates it |
+| `?api_key=` | CakeDC's Token authenticator (sign-in with `users.api_token` on any URL) is **disabled** (`Auth.Authenticators.Token => false`): the app has no API |
+| Session | Stored in **PostgreSQL** (`sessions` table); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` over HTTPS, idle timeout (`SESSION_TIMEOUT`, 240 min). Survives redeploys and is shared by every replica. Each row stores its user, IP and browser (`AppDatabaseSession`) for *Where you are signed in* |
 | Per-IP rate limiting | In **PostgreSQL** (`auth_throttles`, SHA-256-hashed IP, atomic upsert): 20 failed sign-ins / 2FA codes / passkeys every 15 min; sign-up, reset and resend 5 per hour → 429 + `Retry-After` (`Security.throttle`) |
 | Trusted proxies | `TRUSTED_PROXIES`: IPs or **CIDR ranges** from which `X-Forwarded-For` and `X-Forwarded-Proto` are accepted |
 | Accounts | 2FA and passkeys, single-use codes, 2FA fields not mass-assignable, only a superadmin manages superadmins, [account activity](account-activity.md), [permissions history](permissions.md#history) |

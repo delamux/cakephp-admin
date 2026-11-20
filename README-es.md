@@ -13,7 +13,8 @@ estado de cada fase: [ROADMAP.md](ROADMAP.md) (en inglés).
 ## Qué incluye
 
 - **Cuentas** (CakeDC/Users): acceso con usuario o email, registro con validación por email, reset de contraseña,
-  enlace mágico de acceso, «recordarme», perfil, CRUD de usuarios. → [Cuentas y roles](docs/es/accounts-and-roles.md)
+  enlace mágico de acceso, «recordarme», perfil, CRUD de usuarios, **invitaciones por email** y **dónde tienes la sesión
+  abierta** (cerrar los demás dispositivos). → [Cuentas y roles](docs/es/accounts-and-roles.md)
 - **Roles y permisos en base de datos**: matriz acción × rol con descubrimiento automático de controladores, reglas
   opcionales por permiso (propietario), acciones solo-superadmin bloqueadas e histórico de cambios. → [Permisos](docs/es/permissions.md)
 - **Verificación en dos pasos** opcional (app TOTP y/o llave de seguridad) y **passkeys** para entrar sin contraseña;
@@ -29,6 +30,8 @@ estado de cada fase: [ROADMAP.md](ROADMAP.md) (en inglés).
 - **Seguridad**: CSP estricta con nonces, cabeceras de seguridad, HTTPS + HSTS, CSRF y FormProtection, cookie cifrada,
   sesiones y límite por IP en PostgreSQL, proxies de confianza con rangos CIDR. → [Seguridad](docs/es/security.md)
 - **htmx** compatible con la CSP (listados, matriz, 2FA sin recargar). → [htmx](docs/es/htmx.md)
+- **Generador de CRUD**: `bin/cake bake all <Modelo>` escribe las pantallas con los componentes del tema (listado,
+  ficha, formulario, borrado con diálogo, compatible con la CSP). → [Arquitectura](docs/es/architecture.md)
 - **i18n** inglés y español · **Calidad**: TDD (≈260 tests), PHPStan nivel 8, CodeSniffer, `composer audit`, CI en
   GitHub Actions.
 

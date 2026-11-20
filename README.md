@@ -12,7 +12,8 @@ Docker for development, production and **Coolify**.
 ## What's included
 
 - **Accounts** (CakeDC/Users): sign-in with username or email, sign-up with email verification, password reset,
-  magic sign-in link, "remember me", profile, user CRUD. → [Accounts and roles](docs/en/accounts-and-roles.md)
+  magic sign-in link, "remember me", profile, user CRUD, **email invitations** and **where you are signed in** (sign
+  the other devices out). → [Accounts and roles](docs/en/accounts-and-roles.md)
 - **Database-backed roles and permissions**: an action × role matrix with automatic controller discovery, optional
   per-permission rules (owner), locked superadmin-only actions and a change history. → [Permissions](docs/en/permissions.md)
 - Optional **two-step verification** (TOTP app and/or security key) and **passkeys** for passwordless sign-in;
@@ -28,6 +29,8 @@ Docker for development, production and **Coolify**.
 - **Security**: strict CSP with nonces, security headers, HTTPS + HSTS, CSRF and FormProtection, encrypted cookie,
   sessions and per-IP rate limiting in PostgreSQL, trusted proxies with CIDR ranges. → [Security](docs/en/security.md)
 - CSP-compatible **htmx** (lists, matrix, 2FA without reloads). → [htmx](docs/en/htmx.md)
+- **CRUD generator**: `bin/cake bake all <Model>` writes the screens with the theme components (list, detail,
+  form, delete in a dialog, CSP-safe). → [Architecture](docs/en/architecture.md)
 - **i18n** English and Spanish · **Quality**: TDD (≈260 tests), PHPStan level 8, CodeSniffer, `composer audit`, CI on
   GitHub Actions.
 

@@ -83,4 +83,27 @@ class UsersMailer extends BaseUsersMailer
             ]);
         $this->viewBuilder()->setTemplate('two_factor_changed');
     }
+
+    /**
+     * Invitation (App\UseCase\Users\InviteUser): link to choose a password and activate the account.
+     *
+     * @param \Cake\Datasource\EntityInterface $user Invited user, with a fresh `token`.
+     * @param int $days Days the link stays valid.
+     * @return void
+     */
+    public function invitation(EntityInterface $user, int $days): void
+    {
+        $this
+            ->setTo((string)$user->get('email'))
+            ->setSubject(__('You have been invited to {0}', (string)env('APP_NAME', 'CakePHP Admin')))
+            ->setEmailFormat('both')
+            ->setViewVars([
+                'name' => (string)($user->get('first_name') ?: $user->get('email')),
+                'appName' => (string)env('APP_NAME', 'CakePHP Admin'),
+                'url' => ['plugin' => false, 'prefix' => false, 'controller' => 'Invitations', 'action' => 'accept',
+                    (string)$user->get('token')],
+                'days' => $days,
+            ]);
+        $this->viewBuilder()->setTemplate('invitation');
+    }
 }

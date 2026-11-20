@@ -59,6 +59,13 @@ return [
         ],
         // User photos: any signed-in role; whose photo may be changed is decided by
         // App\UseCase\Users\ChangeUserPhoto (own always; others' with admin access)
+        // Own sessions ("Where you're signed in" in the profile): always the signed-in user's
+        [
+            'role' => '*',
+            'plugin' => null,
+            'controller' => 'AccountSessions',
+            'action' => ['signOut', 'signOutOthers'],
+        ],
         [
             'role' => '*',
             'plugin' => null,
@@ -74,6 +81,14 @@ return [
             'bypassAuth' => true,
         ],
         // Login second step with the security key (not logged in yet; App\Controller\WebauthnLoginController)
+        // Invitation link (App\Controller\InvitationsController::accept()): choose the password
+        [
+            'role' => '*',
+            'plugin' => null,
+            'controller' => 'Invitations',
+            'action' => 'accept',
+            'bypassAuth' => true,
+        ],
         [
             'role' => '*',
             'plugin' => null,

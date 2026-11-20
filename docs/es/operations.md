@@ -65,6 +65,8 @@ Al crear un comando nuevo, añádelo a esta tabla. Si debe ejecutarse a diario, 
 | `bin/cake activity purge [--days N] [--dry-run]` | Purga manual de la actividad de las cuentas |
 | `bin/cake two_factor reset <usuario\|email>` | Quitar el 2FA de una cuenta (superadmin sin dispositivo) |
 | `bin/cake users add_superuser` | Crear un superadmin |
+| `bin/cake users password_email <usuario\|email>` | Enviar un enlace para restablecer la contraseña |
+| `bin/cake bake all <Modelo>` | CRUD con las plantillas del tema ([Arquitectura](architecture.md)) |
 | `bin/cake queue run` / `queue info [--format json]` / `queue job view <id>` / `queue worker` | Worker y estado de la cola |
 | `composer check` | Tests + CodeSniffer + PHPStan |
 

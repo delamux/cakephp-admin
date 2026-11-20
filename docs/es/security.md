@@ -12,8 +12,9 @@ Aplicado según [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/sec
 | HTTPS + HSTS | `HTTPS_ENFORCE=true` (imagen de producción): HTTP → HTTPS y `Strict-Transport-Security` de 1 año (`HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`) |
 | CSRF | Cookie `httponly`, `SameSite=Lax` y `secure` en HTTPS; `fetch`/htmx envían `X-CSRF-Token` desde `<meta name="csrf-token">` |
 | FormProtection | En todos los controladores: los formularios de `FormHelper` llevan un token de sus campos (solo se desbloquean los endpoints JSON de WebAuthn y las casillas de la matriz) |
-| Cookie «recordarme» | Cifrada con AES (`EncryptedCookieMiddleware`, `COOKIE_KEY` o derivada de la sal), `secure`, `SameSite=Lax` |
-| Sesión | En **PostgreSQL** (tabla `sessions`); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` en HTTPS, caducidad por inactividad (`SESSION_TIMEOUT`, 240 min). Sobrevive a los redeploys y la comparten todas las réplicas |
+| Cookie «recordarme» | Cifrada con AES (`EncryptedCookieMiddleware`, `COOKIE_KEY` o derivada de la sal), `secure`, `SameSite=Lax`. Su token incluye el hash de la contraseña y `users.session_key`: cambiar la contraseña o «Sign out of every other session» la invalida |
+| `?api_key=` | El autenticador Token de CakeDC (entrar con `users.api_token` en cualquier URL) está **desactivado** (`Auth.Authenticators.Token => false`): la app no tiene API |
+| Sesión | En **PostgreSQL** (tabla `sessions`); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` en HTTPS, caducidad por inactividad (`SESSION_TIMEOUT`, 240 min). Sobrevive a los redeploys y la comparten todas las réplicas Cada fila guarda su usuario, IP y navegador (`AppDatabaseSession`) para *Dónde tienes la sesión abierta* |
 | Límite de intentos por IP | En **PostgreSQL** (`auth_throttles`, IP con hash SHA-256, upsert atómico): 20 accesos / códigos 2FA / passkeys fallidos cada 15 min; registro, reset y reenvío 5 por hora → 429 + `Retry-After` (`Security.throttle`) |
 | Proxies de confianza | `TRUSTED_PROXIES`: IPs o **rangos CIDR** desde los que se aceptan `X-Forwarded-For` y `X-Forwarded-Proto` |
 | Cuentas | 2FA y passkeys, códigos de un solo uso, campos de 2FA no asignables, solo un superadmin gestiona superadmins, [actividad de la cuenta](account-activity.md), [histórico de permisos](permissions.md#histórico) |

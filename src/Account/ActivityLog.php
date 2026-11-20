@@ -33,6 +33,9 @@ class ActivityLog
     public const TWO_FACTOR_RESET = 'two_factor_reset';
     public const PHOTO_CHANGED = 'photo_changed';
     public const PHOTO_REMOVED = 'photo_removed';
+    public const INVITED = 'invited';
+    public const INVITATION_ACCEPTED = 'invitation_accepted';
+    public const SESSIONS_REVOKED = 'sessions_revoked';
 
     /**
      * Events that may mean someone else is trying to get in (highlighted in the UI).

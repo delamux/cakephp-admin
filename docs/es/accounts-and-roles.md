@@ -15,7 +15,7 @@ webauthn-lib 5) con sus pantallas sobrescritas en `templates/plugin/CakeDC/Users
 | Passkey | «Sign in with a passkey» en el login, sin contraseña ([2FA y passkeys](two-factor.md)) |
 | Enlace mágico | «Email me a sign-in link» (`OneTimeLogin`): enlace de un solo uso por email; también pide el 2FA |
 | Recuperar contraseña | «Forgot your password?»: enlace con token por email |
-| Perfil | `/profile`: datos, **foto**, cambiar contraseña, verificación en dos pasos y **actividad reciente** |
+| Perfil | `/profile`: datos, **foto**, cambiar contraseña, verificación en dos pasos, **dónde tienes la sesión abierta** y **actividad reciente** |
 | Cambiar contraseña | Pide la actual; queda en su [actividad](account-activity.md) |
 
 Todos los emails salen por la [cola](queue.md) y usan el [layout de la app](emails-and-pdf.md). Los formularios
@@ -32,6 +32,26 @@ Reglas (`App\Service\UserRoleManager`, con tests):
 - **Nadie cambia su propio rol** (siempre queda al menos un administrador: quien actúa) ni borra su propia cuenta.
 - La contraseña de otro solo la cambia un superadmin, y solo si `Users.Superuser.allowedToChangePasswords` está activo.
 - El rol `superadmin` se mantiene sincronizado con el flag `is_superuser` de CakeDC.
+
+## Invitaciones
+
+*Administration › Users › Invite user*: escribes el email, el rol y (opcional) el nombre. La cuenta se crea
+**inactiva** y la persona recibe un email (por la cola) con un enlace para elegir su contraseña; hasta entonces no
+puede entrar. El listado la muestra como **Invited**, con **Resend invitation** en el menú de la fila (enlace nuevo,
+el anterior deja de valer).
+
+- Solo los roles que quien invita puede asignar (un admin nunca invita a un superadmin).
+- El enlace es de un solo uso y caduca a los `App.invitations.expirationDays` (**7 días**, `config/users.php`).
+- La página de aceptar (`/invitations/accept/<token>`) es pública y tiene límite por IP; la contraseña, 8 caracteres mínimo.
+- La invitación (con **quién** invitó) y la aceptación quedan en la [actividad de la cuenta](account-activity.md).
+- Quién puede invitar es un permiso (`Invitations::add` / `resend`, admins por defecto) de la [matriz](permissions.md).
+
+## Dónde tienes la sesión abierta
+
+El perfil lista las **sesiones vivas** de la cuenta (navegador, IP, última actividad; la actual marcada como *This
+device*). El usuario puede cerrar una o **todas las demás**. Esto último invalida también las cookies «recordarme» de
+esos dispositivos, para que no vuelvan a entrar solos (`users.session_key`, parte del token de la cookie). Queda en la
+[actividad](account-activity.md).
 
 ## Roles
 
@@ -57,8 +77,8 @@ Un rol con usuarios asignados no se puede borrar. Lo que puede hacer cada rol se
 
 ```bash
 bin/cake users add_superuser -u admin -p 'Secreto1234!' -e admin@example.com
+bin/cake users password_email ana@example.com   # envía un enlace para restablecer la contraseña
 bin/cake seeds run DemoUsers          # 40 usuarios de demo (contraseña Demo1234!), solo para desarrollo
 ```
 
-> `bin/cake users password_email` de CakeDC **no envía** el email (no le pasa el tipo a `resetToken()`): para un reset
-> usa «Forgot your password?».
+`users password_email` está corregido en el fork de CakeDC (no enviaba el email).

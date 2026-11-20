@@ -74,11 +74,16 @@ return [
         'id' => $webauthnId ?: null,
         'checker' => OptionalWebauthn2faChecker::class,
     ],
+    // No API: CakeDC's Token authenticator (`?api_key=<users.api_token>` on every URL) is switched off
+    'Auth.Authenticators.Token' => false,
     // The emailed one-time sign-in link must also go through 2FA (CakeDC skips it by default)
     'Auth.Authenticators.OneTimeToken.skipTwoFactorVerify' => false,
     // "Remember me" cookie: only over HTTPS when the app runs on HTTPS, never sent cross-site
     'Auth.Authenticators.Cookie.cookie.secure' => str_starts_with($fullBaseUrl, 'https://'),
     'Auth.Authenticators.Cookie.cookie.samesite' => 'Lax',
+    // Token secret = password hash + users.session_key (App\Model\Entity\User::_getRememberSecret()):
+    // "Sign out of every other session" rotates the key, so other devices cannot sign back in
+    'Auth.Authenticators.Cookie.fields.password' => 'remember_secret',
     // Role whitelist (App\Service\UserRoleManager). `superadmin` is kept in sync with CakeDC's
     // `is_superuser` (App\Model\Table\UsersTable::beforeSave) and only superadmins grant it.
     'App.roles' => [
@@ -117,6 +122,10 @@ return [
     // `bin/cake activity purge` (daily cron, minimum 30). It holds IPs and browsers (personal data).
     'App.accountActivity' => [
         'retentionDays' => 180,
+    ],
+    // Invitations (App\UseCase\Users\InviteUser): days the emailed link stays valid
+    'App.invitations' => [
+        'expirationDays' => 7,
     ],
     // Not signed in → "Please sign in to continue."; signed in without permission → this flash
     // (the plugin default appends the raw URL in debug mode).
