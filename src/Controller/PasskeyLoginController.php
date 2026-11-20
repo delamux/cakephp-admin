@@ -92,8 +92,8 @@ class PasskeyLoginController extends AppController
         if (!$user->get('active')) {
             throw new PasskeyLoginException('Account ' . $user->get('id') . ' is not active.');
         }
-        $identifiers = (array)Configure::read('Auth.Authenticators.Form.identifier');
-        $lockout = $identifiers['Authentication.Password']['lockoutHandler'] ?? null;
+        // CakeDC/Users 17: a single identifier (`className` + options) per authenticator
+        $lockout = Configure::read('Auth.Authenticators.Form.identifier.lockoutHandler');
         if (!is_array($lockout)) {
             return;
         }
@@ -105,7 +105,7 @@ class PasskeyLoginController extends AppController
 
     /**
      * "Remember me": CakeDC's cookie authenticator only issues the cookie on its login URL, so a
-     * copy with this action as login URL (route array: CakeDC's CakeRouter checker) is used.
+     * copy with this action as login URL (route array: the default URL checker accepts it) is used.
      *
      * @param \Cake\Datasource\EntityInterface $user User.
      * @return void

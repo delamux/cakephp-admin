@@ -40,8 +40,8 @@ Docker for development, production and **Coolify**.
 | --- | --- | --- | --- |
 | Language | PHP | 8.5 | Project requirement |
 | Framework | CakePHP | 5.4 | Conventions, ORM, DI container, security middlewares |
-| Users | CakeDC/Users (fork `delamux/CakeDC-users`, branch `issue/4-webauthn-lib-5`) | 16.0.5 + webauthn-lib 5 | Login, sign-up, 2FA; the fork makes it compatible with webauthn-lib 5 / PHP 8.5 |
-| Authorization | CakeDC/Auth RBAC + custom database provider | 10.1 | Per-role rules editable in the UI |
+| Users | CakeDC/Users (fork `delamux/CakeDC-users`, branch `issue/4-webauthn-lib-5-cake17`) | 17.0.0 + webauthn-lib 5 | Login, sign-up, 2FA; the fork makes it compatible with webauthn-lib 5 / PHP 8.5 |
+| Authorization | CakeDC/Auth RBAC + custom database provider · cakephp/authentication | 13.0 · 4.2 | Per-role rules editable in the UI |
 | 2FA / passkeys | robthree/twofactorauth · web-auth/webauthn-lib · endroid/qr-code | 3 · 5.3 · 6.2 | TOTP, WebAuthn, server-side QR |
 | UI | [delamux/cakephp-basecoat-theme](https://github.com/delamux/cakephp-basecoat-theme) (Basecoat + Tailwind v4) | main | shadcn-style components, light/dark, no inline JS |
 | Interaction | htmx | 2.0.11 | Fragments without reloads, no build step or JS framework |

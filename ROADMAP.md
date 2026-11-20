@@ -301,7 +301,20 @@ Branch `feat/security-invitations-sessions-bake` (PR to `main`), with branches i
 - `bin/deploy` clears the table schema cache after migrating (with the code mounted in dev a stale cache ignored new
   columns when saving).
 - Composer points to the fork/theme branches until their PRs are merged; then back to `dev-issue/4-webauthn-lib-5`
-  and `dev-main`.
+  and `dev-main` (superseded by Phase 24: the fork branch is now `issue/4-webauthn-lib-5-cake17`).
+- Upstream: the two fork fixes were proposed to CakeDC/users (issues #1194, #1195; PRs #1196, #1197 against
+  `16.next-cake5`).
+
+### Phase 24 — CakeDC/Users 17 ✅ (2026-11-20)
+
+- Fork branch `issue/4-webauthn-lib-5-cake17` = upstream `17.next-cake5` + our commits (webauthn-lib 5, standard
+  base64 in WebAuthn, `password_email` fix, `false` disables an authenticator). Fork suite: 590 tests OK.
+- App: `cakedc/users` 17.0.0 (alias), `cakedc/auth` 13.0, `cakephp/authentication` 4.2. The app config overrides no
+  identifier, so `config/users.php` needs no changes (17 uses one identifier per authenticator with `className`;
+  `Authentication.CakeRouter` is gone and the default URL checker accepts route arrays).
+- `PasskeyLoginController` read the password lockout from the 16 identifier format: fixed with a regression test
+  (a locked account cannot sign in with a passkey).
+- Stacked on Phase 23 (`feat/security-invitations-sessions-bake`).
 
 ## Pending / next steps
 

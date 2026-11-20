@@ -41,8 +41,8 @@ estado de cada fase: [ROADMAP.md](ROADMAP.md) (en inglés).
 | --- | --- | --- | --- |
 | Lenguaje | PHP | 8.5 | Requisito del proyecto |
 | Framework | CakePHP | 5.4 | Convenciones, ORM, contenedor DI, middlewares de seguridad |
-| Usuarios | CakeDC/Users (fork `delamux/CakeDC-users`, rama `issue/4-webauthn-lib-5`) | 16.0.5 + webauthn-lib 5 | Login, registro, 2FA; el fork lo hace compatible con webauthn-lib 5 / PHP 8.5 |
-| Autorización | CakeDC/Auth RBAC + proveedor propio en BD | 10.1 | Reglas por rol editables en la UI |
+| Usuarios | CakeDC/Users (fork `delamux/CakeDC-users`, rama `issue/4-webauthn-lib-5-cake17`) | 17.0.0 + webauthn-lib 5 | Login, registro, 2FA; el fork lo hace compatible con webauthn-lib 5 / PHP 8.5 |
+| Autorización | CakeDC/Auth RBAC + proveedor propio en BD · cakephp/authentication | 13.0 · 4.2 | Reglas por rol editables en la UI |
 | 2FA / passkeys | robthree/twofactorauth · web-auth/webauthn-lib · endroid/qr-code | 3 · 5.3 · 6.2 | TOTP, WebAuthn, QR en servidor |
 | UI | [delamux/cakephp-basecoat-theme](https://github.com/delamux/cakephp-basecoat-theme) (Basecoat + Tailwind v4) | main | Componentes estilo shadcn, light/dark, sin JS en línea |
 | Interacción | htmx | 2.0.11 | Fragmentos sin recargar, sin build ni framework JS |
