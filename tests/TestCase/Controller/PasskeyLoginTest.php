@@ -7,6 +7,8 @@ use App\Account\ActivityLog;
 use App\Test\TestCase\PermissionsTestTrait;
 use App\Test\TestCase\UserFactoryTrait;
 use App\Test\TestCase\WebauthnTestTrait;
+use Cake\Core\Configure;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -131,6 +133,21 @@ class PasskeyLoginTest extends TestCase
         $inactive = $this->userWithPasskey(['active' => false]);
         $this->post('/passkey/login', $this->assertion($this->challenge(), (string)$inactive->id));
         $this->assertResponseCode(422, 'Inactive account');
+        $this->assertNull($this->sessionValue('Auth'));
+    }
+
+    public function testAccountsLockedByThePasswordLockoutAreRejected(): void
+    {
+        // CakeDC/Users 17 format: a single identifier (className + options), not a collection
+        Configure::write('Auth.Authenticators.Form.identifier', [
+            'className' => 'CakeDC/Users.PasswordLockout',
+            'lockoutHandler' => ['className' => 'CakeDC/Users.LockoutHandler'],
+        ]);
+        $locked = $this->userWithPasskey(['lockout_time' => DateTime::now()]);
+
+        $this->post('/passkey/login', $this->assertion($this->challenge(), (string)$locked->id));
+
+        $this->assertResponseCode(422);
         $this->assertNull($this->sessionValue('Auth'));
     }
 
