@@ -112,6 +112,10 @@ class Application extends BaseApplication
         // Its own admin pages are not routed (Bootstrap from a CDN, against the CSP): see QueueController.
         $this->addPlugin('Queue', ['routes' => false]);
 
+        // List search and filters (friendsofcake/search): baked lists use it through the theme
+        // (BasecoatTheme.Contains/Equals/DateRange filters, ListFilter, filter bar)
+        $this->addPlugin('Search');
+
         // By default, does not allow fallback classes.
         FactoryLocator::add(
             'Table',

@@ -57,6 +57,12 @@ docs/                   # this documentation
    styles (see [Security](security.md#csp-compatible-templates)). For a CRUD, **bake** generates them already with the
    theme (`Bake.theme` = `BasecoatTheme` in `config/app.php`): `bin/cake bake all Customers` writes table, entity,
    controller, the four screens (list, detail, form, delete in a dialog) and the tests; then adapt them.
+   The list comes with **search, filters and CSV export** ([friendsofcake/search](https://github.com/FriendsOfCake/search)):
+   the table gets filters guessed from the columns (text search, belongsTo and yes/no selects, a `created` date
+   range) that you edit like any search filter; the bar refreshes the results with htmx and keeps the filters in
+   the URL, and *Export CSV* downloads the filtered rows (secrets and hidden fields excluded). Details in the
+   theme README, "List search, filters and CSV export". Bake output is not lint-clean (unused imports, parameter
+   types): run `composer cs-fix` afterwards.
 6. **Permissions:** `bin/cake permissions sync` discovers the new actions; grant access per role in
    *Access control › Permissions* (or in `App.permissions.defaults` in `config/users.php` for new installations).
    If only the superadmin should touch it, add it to `PermissionsSynchronizer::SUPERADMIN_ONLY`.
