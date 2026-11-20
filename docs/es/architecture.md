@@ -57,6 +57,12 @@ docs/                   # esta documentación
    línea (ver [Seguridad](security.md#plantillas-compatibles-con-la-csp)). Para un CRUD, **bake** las genera ya con el
    tema (`Bake.theme` = `BasecoatTheme` en `config/app.php`): `bin/cake bake all Customers` escribe tabla, entidad,
    controlador, las cuatro pantallas (listado, ficha, formulario, borrado con diálogo) y los tests; luego se adaptan.
+   El listado trae **búsqueda, filtros y exportación a CSV** ([friendsofcake/search](https://github.com/FriendsOfCake/search)):
+   la tabla recibe filtros deducidos de las columnas (búsqueda de texto, desplegables de belongsTo y sí/no, rango de
+   fechas de `created`) que se editan como cualquier filtro de Search; la barra refresca los resultados con htmx y
+   deja los filtros en la URL, y *Export CSV* descarga las filas filtradas (sin secretos ni campos ocultos). Detalle
+   en el README del tema, "List search, filters and CSV export". Lo que genera bake no pasa el lint (imports sin
+   usar, tipos de parámetros): ejecuta `composer cs-fix` después.
 6. **Permisos:** `bin/cake permissions sync` descubre las acciones nuevas; dales acceso por rol en
    *Access control › Permissions* (o en `App.permissions.defaults` de `config/users.php` para instalaciones nuevas).
    Si solo debe tocarlo el superadmin, añádelo a `PermissionsSynchronizer::SUPERADMIN_ONLY`.

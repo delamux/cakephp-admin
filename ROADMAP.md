@@ -316,6 +316,20 @@ Branch `feat/security-invitations-sessions-bake` (PR to `main`), with branches i
   (a locked account cannot sign in with a passkey).
 - Stacked on Phase 23 (`feat/security-invitations-sessions-bake`).
 
+### Phase 25 — List search, filters and CSV export in bake ✅ (2026-11-20)
+
+- Approved package: `friendsofcake/search` ^7.9 (loaded in `config/plugins.php`). CakeDC/search-filter was
+  considered and rejected: Vue 3 runtime template compilation needs `unsafe-eval` (strict CSP), its own markup
+  instead of Basecoat, no CSV.
+- Everything reusable lives in the theme (`feat/list-filters`, TDD, 14 tests on in-memory SQLite):
+  filters `BasecoatTheme.Contains` (every word, case-insensitive on any database, literal `%`/`_`), `Equals`
+  (value must fit the column type: no SQL errors from edited URLs) and `DateRange` (both days included);
+  `ListFilter` (bar controls from the search manager, CSV streamed in chunks, list order, formula injection
+  guard); `list_filters` element (GET form, htmx refreshes `#list-results`, URL kept); bake listener + table,
+  controller and index templates. Secret columns and hidden fields are never listed nor exported.
+- QA in dev baking throwaway tables (uuid key, belongsTo, boolean, numeric, text, timestamps, a token column):
+  search/filters/invalid values/CSV/htmx partial via curl, screenshots desktop and empty state; artifacts removed.
+
 ## Pending / next steps
 
 - [x] **Generic basecoat theme improvements** (2026-11-18, approved). Clone in `../cakephp-basecoat-theme`,

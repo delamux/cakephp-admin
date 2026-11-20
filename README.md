@@ -29,8 +29,8 @@ Docker for development, production and **Coolify**.
 - **Security**: strict CSP with nonces, security headers, HTTPS + HSTS, CSRF and FormProtection, encrypted cookie,
   sessions and per-IP rate limiting in PostgreSQL, trusted proxies with CIDR ranges. → [Security](docs/en/security.md)
 - CSP-compatible **htmx** (lists, matrix, 2FA without reloads). → [htmx](docs/en/htmx.md)
-- **CRUD generator**: `bin/cake bake all <Model>` writes the screens with the theme components (list, detail,
-  form, delete in a dialog, CSP-safe). → [Architecture](docs/en/architecture.md)
+- **CRUD generator**: `bin/cake bake all <Model>` writes the screens with the theme components (list with
+  **search, filters and CSV export**, detail, form, delete in a dialog, CSP-safe). → [Architecture](docs/en/architecture.md)
 - **i18n** English and Spanish · **Quality**: TDD (≈260 tests), PHPStan level 8, CodeSniffer, `composer audit`, CI on
   GitHub Actions.
 
