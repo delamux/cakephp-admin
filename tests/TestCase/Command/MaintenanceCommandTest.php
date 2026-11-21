@@ -14,6 +14,8 @@ use Cake\TestSuite\TestCase;
  * `bin/cake maintenance`: the one daily cron. Applies every retention (account activity,
  * permissions history, finished queue jobs) and removes expired sessions and throttling
  * counters; recent data is kept.
+ *
+ * @link \App\Command\MaintenanceCommand
  */
 class MaintenanceCommandTest extends TestCase
 {

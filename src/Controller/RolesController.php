@@ -10,6 +10,8 @@ use Cake\Http\Response;
 /**
  * Roles CRUD (superadmin only). Thin controller: the lifecycle (cache, audit) is in
  * App\UseCase\Roles\ManageRoles and the rules in App\Model\Table\RolesTable.
+ *
+ * @property \App\Model\Table\RolesTable $Roles
  */
 class RolesController extends AppController
 {

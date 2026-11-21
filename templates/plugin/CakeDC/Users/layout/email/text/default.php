@@ -2,6 +2,6 @@
 /**
  * Reuse the app plain-text email layout for CakeDC/Users emails.
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  */
 include ROOT . DS . 'templates' . DS . 'layout' . DS . 'email' . DS . 'text' . DS . 'default.php';

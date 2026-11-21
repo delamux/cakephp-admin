@@ -7,6 +7,8 @@
  * @var list<\Queue\Model\Entity\QueuedJob> $failed
  * @var list<\Queue\Model\Entity\QueuedJob> $recent
  * @var list<\Queue\Model\Entity\QueueProcess> $workers
+ * @var mixed $hint
+ * @var mixed $label
  */
 $this->assign('title', (string)$this->get('title'));
 if ($counters['failed'] > 0) {

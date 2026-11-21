@@ -26,6 +26,22 @@ use CakeDC\Users\Webauthn\Base64Utility;
  *
  * CakeDC resolves its table by the alias `CakeDC/Users.Users` (its CRUD uses `fetchTable()`), so
  * the alias is pointed to this class with register().
+ *
+ * @property \Cake\ORM\Association\HasMany<\CakeDC\Users\Model\Table\SocialAccountsTable> $SocialAccounts
+ * @method \App\Model\Entity\User newEmptyEntity()
+ * @method \App\Model\Entity\User newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\User> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\User get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \App\Model\Entity\User findOrCreate(\Cake\ORM\Query\SelectQuery<\App\Model\Entity\User>|callable|array<string, mixed> $search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\User patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\User> patchEntities(iterable<\App\Model\Entity\User> $entities, array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\User|false save(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\User saveOrFail(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\User>|false saveMany(iterable<\App\Model\Entity\User> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\User> saveManyOrFail(iterable<\App\Model\Entity\User> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\User>|false deleteMany(iterable<\App\Model\Entity\User> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\User> deleteManyOrFail(iterable<\App\Model\Entity\User> $entities, array<string, mixed> $options = [])
+ * @mixin \Josegonzalez\Upload\Model\Behavior\UploadBehavior
  */
 class UsersTable extends BaseUsersTable
 {
@@ -62,7 +78,7 @@ class UsersTable extends BaseUsersTable
      * Deleting a user deletes all its files (`users/<id>/`).
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event.
-     * @param \Cake\Datasource\EntityInterface $entity User.
+     * @param \App\Model\Entity\User $entity User.
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
@@ -75,7 +91,7 @@ class UsersTable extends BaseUsersTable
      * Keeps the superadmin role and the superuser flag consistent.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event.
-     * @param \Cake\Datasource\EntityInterface $entity User.
+     * @param \App\Model\Entity\User $entity User.
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */

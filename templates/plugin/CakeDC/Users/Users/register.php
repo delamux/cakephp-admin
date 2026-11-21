@@ -3,7 +3,7 @@
  * Sign up (CakeDC/Users override).
  *
  * @var \App\View\AppView $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\Model\Entity\User $user
  */
 use Cake\Core\Configure;
 

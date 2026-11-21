@@ -7,6 +7,9 @@ use Cake\ORM\Table;
 
 /**
  * Audit log of roles/permissions changes (append-only).
+ *
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}, \Cake\ORM\Entity>
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class PermissionAuditsTable extends Table
 {

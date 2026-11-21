@@ -12,6 +12,8 @@ use Cake\Http\Response;
 /**
  * Permissions per role: discovered actions with a select (deny, allow, rule). Superadmin only.
  * Thin controller: the work is done by the use cases in App\UseCase\Permissions.
+ *
+ * @property \App\Model\Table\PermissionsTable $Permissions
  */
 class PermissionsController extends AppController
 {

@@ -9,6 +9,8 @@ use Cake\ORM\Table;
  * Per-IP throttling counters (`auth_throttles`). Written by App\Http\AuthThrottle with an atomic
  * SQL upsert; this class exists so the table can be used through the ORM (fixtures, inspection)
  * while fallback Table classes are disabled.
+ *
+ * @extends \Cake\ORM\Table<array{}, \Cake\ORM\Entity>
  */
 class AuthThrottlesTable extends Table
 {

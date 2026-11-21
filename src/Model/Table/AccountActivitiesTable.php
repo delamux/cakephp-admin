@@ -7,6 +7,9 @@ use Cake\ORM\Table;
 
 /**
  * Account activity log (append-only, written by App\Account\ActivityLog).
+ *
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}, \Cake\ORM\Entity>
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class AccountActivitiesTable extends Table
 {

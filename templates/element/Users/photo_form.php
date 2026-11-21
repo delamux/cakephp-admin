@@ -3,7 +3,7 @@
  * "Photo" card: upload a new one / remove it (App\Controller\UserPhotoController).
  *
  * @var \App\View\AppView $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\Model\Entity\User $user
  * @var bool $own Own profile (no id in the URLs)
  */
 $own ??= true;

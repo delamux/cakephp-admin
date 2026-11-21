@@ -3,7 +3,7 @@
  * Shared admin user form (add / edit) for the CakeDC/Users templates.
  *
  * @var \App\View\AppView $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\Model\Entity\User $user
  * @var string $title
  * @var bool $withPassword
  */

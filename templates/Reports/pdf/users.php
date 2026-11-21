@@ -2,8 +2,8 @@
 /**
  * Users report (PDF).
  *
- * @var \Cake\View\View $this
- * @var iterable<\CakeDC\Users\Model\Entity\User> $users
+ * @var \App\View\AppView $this
+ * @var array<\App\Model\Entity\User>|\Cake\Collection\CollectionInterface<int, \App\Model\Entity\User> $users
  * @var array<string, mixed> $summary
  * @var \Cake\I18n\DateTime $generatedAt
  */

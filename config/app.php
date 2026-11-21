@@ -582,4 +582,26 @@ return [
         'orientation' => 'portrait',
         'margin' => ['top' => 15, 'right' => 12, 'bottom' => 15, 'left' => 12],
     ],
+
+    /*
+     * IdeHelper (dev only, `composer annotate`): emit annotations that pass
+     * PHPStan level 8 (generics instead of bare `array` / intersection types).
+     */
+    'IdeHelper' => [
+        'arrayAsGenerics' => true,
+        'objectAsGenerics' => true,
+        // `Table&BelongsToMany` intersections are unresolvable for PHPStan on Cake 5.4.
+        'assocsAsGenerics' => true,
+        'genericsInParam' => 'detailed',
+        'typeMap' => [
+            'json' => 'array<string, mixed>',
+        ],
+        'tableBehaviors' => true,
+        'propertyTypeMap' => [
+            'actsAs' => 'array<string, mixed>',
+            'helpers' => 'array<int|string, string|array<string, mixed>>',
+            'components' => 'array<int|string, string|array<string, mixed>>',
+            'paginate' => 'array<string, mixed>',
+        ],
+    ],
 ];

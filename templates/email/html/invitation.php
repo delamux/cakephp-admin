@@ -2,7 +2,7 @@
 /**
  * Invitation (App\Mailer\UsersMailer::invitation()).
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var string $name
  * @var string $appName
  * @var array<string|int, mixed> $url

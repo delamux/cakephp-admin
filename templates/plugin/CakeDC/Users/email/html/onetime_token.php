@@ -4,8 +4,8 @@
  *
  * Note: the plugin token is a 32-char hex string (not a short typeable code), so only the link is offered.
  *
- * @var \Cake\View\View $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\User $user
  * @var array|string $loginLink
  * @var string $token
  */

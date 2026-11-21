@@ -9,6 +9,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * `bin/cake permissions purge`: retention of the permissions history.
+ *
+ * @link \App\Command\PermissionsPurgeCommand
  */
 class PermissionsPurgeCommandTest extends TestCase
 {

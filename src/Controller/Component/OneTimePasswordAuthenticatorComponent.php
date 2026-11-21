@@ -11,6 +11,8 @@ use CakeDC\Auth\Controller\Component\OneTimePasswordAuthenticatorComponent as Ba
  * CakeDC's TOTP component (login `/verify`) with replay protection: a code is accepted only once
  * (its 30 s window is claimed atomically, App\UseCase\TwoFactor\TwoFactorSettings::verifyLoginCode()).
  * Swapped in for CakeDC's by App\Controller\AppController::beforeFilter().
+ *
+ * @method \App\Controller\AppController getController()
  */
 class OneTimePasswordAuthenticatorComponent extends BaseComponent
 {
