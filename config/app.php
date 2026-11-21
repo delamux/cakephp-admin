@@ -501,8 +501,9 @@ return [
         'defaults' => 'database',
         // Also stores the user, IP and browser of each session ("Where you're signed in" in the profile)
         'handler' => ['engine' => \App\Http\Session\AppDatabaseSession::class],
-        // Idle minutes before the session expires (CakePHP renews the id on login)
-        'timeout' => (int)env('SESSION_TIMEOUT', 240),
+        // Idle minutes before the session expires (CakePHP renews the id on login). Maximum lifetime and
+        // password confirmation: `App.session` in config/users.php (App\Account\SessionGuard)
+        'timeout' => (int)env('SESSION_TIMEOUT', 60),
         'ini' => [
             'session.cookie_httponly' => true,
             'session.cookie_samesite' => 'Lax',

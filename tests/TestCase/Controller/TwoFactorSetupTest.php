@@ -37,7 +37,7 @@ class TwoFactorSetupTest extends TestCase
         $this->enableSecurityToken();
         $this->enableRetainFlashMessages();
         $this->user = $this->createUser(['username' => 'ana', 'email' => 'ana@example.test']);
-        $this->session(['Auth' => $this->user]);
+        $this->signIn($this->user);
     }
 
     /**
@@ -189,7 +189,7 @@ class TwoFactorSetupTest extends TestCase
     public function testProfileFormsCannotChangeTwoFactorFields(): void
     {
         $admin = $this->createUser(['role' => 'admin']);
-        $this->session(['Auth' => $admin]);
+        $this->signIn($admin);
         $this->enableSecurityToken();
 
         $this->post('/users/edit/' . $this->user->id, [

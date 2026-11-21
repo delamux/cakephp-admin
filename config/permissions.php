@@ -66,6 +66,13 @@ return [
             'controller' => 'AccountSessions',
             'action' => ['signOut', 'signOutOthers'],
         ],
+        // Password confirmation before sensitive actions ("sudo mode", App\Account\SessionGuard)
+        [
+            'role' => '*',
+            'plugin' => null,
+            'controller' => 'ConfirmPassword',
+            'action' => 'index',
+        ],
         [
             'role' => '*',
             'plugin' => null,

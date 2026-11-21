@@ -104,7 +104,7 @@ class SecurityTest extends TestCase
 
     public function testAppPagesHaveNoInlineEventHandlers(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
         $this->createUser(['username' => 'listed']);
 
         foreach (['/', '/users/index', '/roles', '/permissions', '/permissions/audit', '/profile'] as $url) {
@@ -143,7 +143,7 @@ class SecurityTest extends TestCase
     public function testAppFormsAreProtectedButJsonEndpointsAreNot(): void
     {
         $this->enableCsrfToken();
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
 
         $this->post('/roles/add', ['slug' => 'tampered', 'name' => 'Tampered']);
         $this->assertResponseCode(400, 'No FormProtection token');

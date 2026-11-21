@@ -10,13 +10,13 @@ webauthn-lib 5) con sus pantallas sobrescritas en `templates/plugin/CakeDC/Users
 
 | Función | Detalle |
 | --- | --- |
-| Registrarse | `/register`, con validación por email (`Users.Email.validate`); rol por defecto `user`. Se desactiva con `Users.Registration.active` |
+| Registrarse | `/register`, con validación por email (`Users.Email.validate`); rol por defecto `user`. Activado por defecto; se desactiva con `REGISTRATION_ENABLED=false` ([Seguridad](security.md#registro-público)) |
 | Iniciar sesión | Usuario **o** email + contraseña; «recordarme» con cookie cifrada; segundo paso si tiene 2FA |
 | Passkey | «Sign in with a passkey» en el login, sin contraseña ([2FA y passkeys](two-factor.md)) |
 | Enlace mágico | «Email me a sign-in link» (`OneTimeLogin`): enlace de un solo uso por email; también pide el 2FA |
 | Recuperar contraseña | «Forgot your password?»: enlace con token por email |
-| Perfil | `/profile`: datos, **foto**, cambiar contraseña, verificación en dos pasos, **dónde tienes la sesión abierta** y **actividad reciente** |
-| Cambiar contraseña | Pide la actual; queda en su [actividad](account-activity.md) |
+| Perfil | `/profile` (solo el propio: `/profile/<id>` de otra cuenta muestra el tuyo): datos, **foto**, cambiar contraseña, verificación en dos pasos, **dónde tienes la sesión abierta** y **actividad reciente** |
+| Cambiar contraseña | Pide la actual; cierra las demás sesiones de la cuenta ([Sesiones](security.md#sesiones)) y queda en su [actividad](account-activity.md) |
 
 Todos los emails salen por la [cola](queue.md) y usan el [layout de la app](emails-and-pdf.md). Los formularios
 públicos tienen [límite por IP](security.md).
@@ -32,6 +32,13 @@ Reglas (`App\Service\UserRoleManager`, con tests):
 - **Nadie cambia su propio rol** (siempre queda al menos un administrador: quien actúa) ni borra su propia cuenta.
 - La contraseña de otro solo la cambia un superadmin, y solo si `Users.Superuser.allowedToChangePasswords` está activo.
 - El rol `superadmin` se mantiene sincronizado con el flag `is_superuser` de CakeDC.
+- Estas protecciones (`AppController::beforeFilter`) valen para **toda acción sobre la cuenta de otro**: editar, borrar,
+  cambiar la contraseña y resetear su 2FA, digan lo que digan los permisos de la matriz.
+- Editar un usuario **nunca** cambia su contraseña aunque se fuerce el formulario (el CRUD descarta `password`); la
+  contraseña solo cambia en sus pantallas (cambiar contraseña, reset por email, aceptar invitación). Los tokens
+  (validación, reset, enlace de acceso, API) y las fechas de acceso no se aceptan de ningún formulario.
+- Alta, edición y borrado de usuarios piden [confirmar la contraseña](security.md#sesiones) si no se escribió en los
+  últimos minutos.
 
 ## Invitaciones
 

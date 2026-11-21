@@ -26,6 +26,19 @@ use Cake\Validation\Validation;
 class AppController extends Controller
 {
     /**
+     * CakeDC/Users actions on someone else's account checked by UserRoleManager::isProtected().
+     */
+    private const PROTECTED_ACCOUNT_ACTIONS = ['edit', 'delete', 'changePassword', 'resetOneTimePasswordAuthenticator'];
+
+    /**
+     * Fields the CakeDC/Users CRUD `edit` never takes from the request, even if a forged form passed
+     * FormProtection. The password has its own screens (change password, reset by email, invitation),
+     * which keep working: only `edit` is filtered. Tokens and login bookkeeping are not assignable at
+     * all (App\Model\Entity\User).
+     */
+    private const EDIT_PROTECTED_FIELDS = ['password', 'password_confirm', 'current_password'];
+
+    /**
      * @inheritDoc
      */
     public function initialize(): void
@@ -38,6 +51,30 @@ class AppController extends Controller
         $this->loadComponent('FormProtection');
         // htmx: partial rendering for htmx requests (App\Controller\Component\HtmxComponent)
         $this->loadComponent('Htmx');
+        // After FormProtection has validated the form (same event, registered later)
+        $this->getEventManager()->on('Controller.startup', fn() => $this->dropProtectedFields());
+    }
+
+    /**
+     * Drops EDIT_PROTECTED_FIELDS from the CakeDC/Users CRUD `edit` request.
+     *
+     * @return void
+     */
+    private function dropProtectedFields(): void
+    {
+        $params = (array)$this->request->getAttribute('params');
+        $data = $this->request->getParsedBody();
+        if (
+            ($params['plugin'] ?? null) !== 'CakeDC/Users'
+            || ($params['controller'] ?? null) !== 'Users'
+            || ($params['action'] ?? null) !== 'edit'
+            || !is_array($data)
+        ) {
+            return;
+        }
+        $this->setRequest($this->request->withParsedBody(
+            array_diff_key($data, array_flip(self::EDIT_PROTECTED_FIELDS)),
+        ));
     }
 
     /**
@@ -69,14 +106,15 @@ class AppController extends Controller
         // Fixed account protections of the CakeDC/Users CRUD, whatever the role permissions say
         // (App\Service\UserRoleManager::isProtected()): superadmin accounts only for superadmins,
         // admin accounts not for other admins; and nobody deletes their own account, superadmins
-        // included (they bypass the RBAC rules, so these cannot be rules).
+        // included (they bypass the RBAC rules, so these cannot be rules). Covers every action that
+        // changes someone else's account (`view` is read-only: the role permissions decide).
         $params = (array)$this->request->getAttribute('params');
         $action = $params['action'] ?? null;
         $id = (string)($params['pass'][0] ?? '');
         if (
             ($params['plugin'] ?? null) !== 'CakeDC/Users'
             || ($params['controller'] ?? null) !== 'Users'
-            || !in_array($action, ['edit', 'delete'], true)
+            || !in_array($action, self::PROTECTED_ACCOUNT_ACTIONS, true)
             || $id === ''
         ) {
             return;

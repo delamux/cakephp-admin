@@ -27,7 +27,7 @@ class AccessRulesTest extends TestCase
 
     private function loginAs(string $role, bool $superuser = false): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => $role, 'is_superuser' => $superuser])]);
+        $this->signIn($this->createUser(['role' => $role, 'is_superuser' => $superuser]));
     }
 
     public function testDashboardRequiresLogin(): void

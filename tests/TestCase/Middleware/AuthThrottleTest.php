@@ -24,7 +24,9 @@ class AuthThrottleTest extends TestCase
     use PermissionsTestTrait;
     use UserFactoryTrait;
 
-    protected array $fixtures = ['app.Users', 'app.Roles', 'app.Permissions', 'app.RolesPermissions', 'app.AuthThrottles'];
+    protected array $fixtures = [
+        'app.Users', 'app.Roles', 'app.Permissions', 'app.RolesPermissions', 'app.AuthThrottles', 'app.Sessions',
+    ];
 
     private const SECRET = 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP';
     private const IP = '203.0.113.7';
@@ -105,6 +107,34 @@ class AuthThrottleTest extends TestCase
         $this->assertResponseCode(429);
         $this->post('/login', ['username' => 'nobody', 'password' => 'wrong']);
         $this->assertNotSame(429, $this->_response->getStatusCode(), 'Separate bucket');
+    }
+
+    public function testEmailedSignInLinksHaveTheirOwnLimit(): void
+    {
+        $limit = (int)Configure::read('Security.throttle.accountActions');
+        for ($i = 0; $i < $limit; $i++) {
+            $this->post('/users/requestLoginLink', ['email' => 'victim@example.test']);
+            $this->assertNotSame(429, $this->_response->getStatusCode());
+        }
+
+        $this->post('/users/requestLoginLink', ['email' => 'victim@example.test']);
+        $this->assertResponseCode(429, 'No email flooding');
+    }
+
+    public function testFailedSecurityKeysAndPasswordConfirmationsCountAsFailedLogins(): void
+    {
+        $this->post('/webauthn-login/authenticate', ['id' => 'bogus']);
+        $this->assertSame(1, $this->failures(), 'Failed security key (2FA) = failed login');
+
+        $this->signIn($this->createUser());
+        $this->post('/confirm-password', ['password' => 'wrong']);
+        $this->assertSame(2, $this->failures(), 'Wrong confirmation password = failed login');
+
+        $this->session(['Auth' => null]);
+        $this->failLogins((int)Configure::read('Security.throttle.loginFailures'));
+        $this->signIn($this->createUser());
+        $this->post('/confirm-password', ['password' => 'Secret1234!']);
+        $this->assertResponseCode(429, 'Refused once the bucket is exhausted');
     }
 
     private function failures(): int

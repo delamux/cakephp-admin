@@ -10,13 +10,13 @@ webauthn-lib 5), with its screens overridden in `templates/plugin/CakeDC/Users/U
 
 | Feature | Details |
 | --- | --- |
-| Sign up | `/register`, with email verification (`Users.Email.validate`); default role `user`. Disabled with `Users.Registration.active` |
+| Sign up | `/register`, with email verification (`Users.Email.validate`); default role `user`. On by default; switch it off with `REGISTRATION_ENABLED=false` ([Security](security.md#public-sign-up)) |
 | Sign in | Username **or** email + password; "remember me" with an encrypted cookie; second step if 2FA is enabled |
 | Passkey | "Sign in with a passkey" on the login page, no password ([2FA and passkeys](two-factor.md)) |
 | Magic link | "Email me a sign-in link" (`OneTimeLogin`): single-use link by email; it also asks for 2FA |
 | Password recovery | "Forgot your password?": token link by email |
-| Profile | `/profile`: details, **photo**, change password, two-step verification, **where you are signed in** and **recent activity** |
-| Change password | Asks for the current one; recorded in their [activity](account-activity.md) |
+| Profile | `/profile` (your own only: another account's `/profile/<id>` shows yours): details, **photo**, change password, two-step verification, **where you are signed in** and **recent activity** |
+| Change password | Asks for the current one; signs out the other sessions of the account ([Sessions](security.md#sessions)) and is recorded in their [activity](account-activity.md) |
 
 Every email goes out through the [queue](queue.md) and uses the [app layout](emails-and-pdf.md). Public forms are
 [rate-limited per IP](security.md).
@@ -35,6 +35,13 @@ Rules (`App\Service\UserRoleManager`, with tests):
 - Another user's password can only be changed by a superadmin, and only if `Users.Superuser.allowedToChangePasswords`
   is enabled.
 - The `superadmin` role is kept in sync with CakeDC's `is_superuser` flag.
+- These protections (`AppController::beforeFilter`) hold for **every action on someone else's account**: edit,
+  delete, change password and reset their 2FA, whatever the permissions matrix says.
+- Editing a user **never** changes their password, even with a forged form (the CRUD drops `password`); the password
+  only changes on its own screens (change password, reset by email, accepting an invitation). Tokens (validation,
+  reset, sign-in link, API) and sign-in dates are not taken from any form.
+- Adding, editing and deleting users ask to [confirm the password](security.md#sessions) unless it was typed in the
+  last minutes.
 
 ## Invitations
 

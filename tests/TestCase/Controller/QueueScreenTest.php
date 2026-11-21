@@ -57,7 +57,7 @@ class QueueScreenTest extends TestCase
 
     private function asSuperadmin(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
     }
 
     public function testSuperadminSeesCountersFailedJobsAndWorkers(): void
@@ -120,7 +120,7 @@ class QueueScreenTest extends TestCase
 
     public function testOnlySuperadminsSeeTheQueue(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $this->get('/queue');
         $this->assertResponseNotContains('data-queue-count');
 

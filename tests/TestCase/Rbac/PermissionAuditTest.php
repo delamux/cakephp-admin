@@ -37,7 +37,7 @@ class PermissionAuditTest extends TestCase
         // Matrix checkboxes are plain inputs, unlocked in PermissionsController (FormProtection)
         $this->setUnlockedFields(['grants']);
         $this->super = $this->createUser(['username' => 'root', 'role' => 'superadmin', 'is_superuser' => true]);
-        $this->session(['Auth' => $this->super]);
+        $this->signIn($this->super);
     }
 
     /**
@@ -147,7 +147,7 @@ class PermissionAuditTest extends TestCase
         $this->assertResponseContains('root');
         $this->assertResponseContains('Reports::users');
 
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $this->get('/permissions/audit');
         $this->assertRedirect();
     }

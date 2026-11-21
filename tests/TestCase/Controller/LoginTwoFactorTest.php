@@ -128,7 +128,7 @@ class LoginTwoFactorTest extends TestCase
     public function testTheCodeUsedToEnableTotpCannotBeUsedToLogIn(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
         $this->post('/two-factor/start', ['method' => 'totp', 'current_password' => 'Secret1234!']);
         $secret = (string)$this->sessionValue('TwoFactorSetup.secret');
         $this->keepSession();

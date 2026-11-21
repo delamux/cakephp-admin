@@ -25,7 +25,7 @@ class HtmxTest extends TestCase
     {
         parent::setUp();
         $this->syncPermissions();
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
     }
 
     private function body(): string

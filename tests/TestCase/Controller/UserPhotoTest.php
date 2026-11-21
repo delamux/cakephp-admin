@@ -115,7 +115,7 @@ class UserPhotoTest extends TestCase
     public function testOwnPhotoIsStoredAsAPrivateSquareWebpNamedByConvention(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
 
         $this->post('/user-photo/update', ['photo' => $this->upload()]);
 
@@ -138,7 +138,7 @@ class UserPhotoTest extends TestCase
     public function testOnlyRealJpegPngOrWebpUpTo2MbAreAccepted(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
 
         $this->post('/user-photo/update', ['photo' => $this->fileUpload('<?php echo "hi";', 'shell.jpg', 'image/jpeg')]);
         $this->assertFlashMessage('The photo must be a JPEG, PNG or WebP image.');
@@ -158,7 +158,7 @@ class UserPhotoTest extends TestCase
     public function testReplacingDeletesThePreviousFileAndRemovingClearsIt(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
         $this->post('/user-photo/update', ['photo' => $this->upload()]);
         $first = $this->storedFile($user);
 
@@ -180,7 +180,7 @@ class UserPhotoTest extends TestCase
         $super = $this->createUser(['role' => 'superadmin', 'is_superuser' => true]);
         $admin = $this->createUser(['role' => 'admin']);
 
-        $this->session(['Auth' => $admin]);
+        $this->signIn($admin);
         $this->post('/user-photo/update/' . $target->id, ['photo' => $this->upload()]);
         $this->assertRedirectContains('/users/edit/' . $target->id);
         $this->assertNotNull($this->fresh($target)->get('photo'));
@@ -190,7 +190,7 @@ class UserPhotoTest extends TestCase
         $this->post('/user-photo/update/' . $super->id, ['photo' => $this->upload()]);
         $this->assertNull($this->fresh($super)->get('photo'), 'An admin never touches a superadmin');
 
-        $this->session(['Auth' => $this->createUser()]);
+        $this->signIn($this->createUser());
         $this->post('/user-photo/delete/' . $target->id);
         $this->assertNotNull($this->fresh($target)->get('photo'), 'A user only changes their own');
     }
@@ -198,7 +198,7 @@ class UserPhotoTest extends TestCase
     public function testPhotosAreServedOnlyToSignedInUsers(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
         $this->post('/user-photo/update', ['photo' => $this->upload()]);
 
         $this->get('/user-photo/show/' . $user->id);
@@ -210,7 +210,7 @@ class UserPhotoTest extends TestCase
         $this->get('/profile');
         $this->assertResponseContains('/user-photo/show/' . $user->id . '?v=');
 
-        $this->session(['Auth' => $this->createUser()]);
+        $this->signIn($this->createUser());
         $this->get('/user-photo/show/' . $this->createUser()->id);
         $this->assertResponseCode(404, 'No photo');
 
@@ -222,7 +222,7 @@ class UserPhotoTest extends TestCase
     public function testDeletingTheUserDeletesItsFiles(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
         $this->post('/user-photo/update', ['photo' => $this->upload()]);
         $file = $this->storedFile($user);
 

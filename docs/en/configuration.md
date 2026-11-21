@@ -24,7 +24,10 @@ image). In dev, `compose.yaml` already defines them.
 | `HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS` | `31536000`, `false` | HSTS |
 | `CSP_REPORT_ONLY` | `false` in production (`DEBUG` in dev) | Report-only CSP |
 | `TRUSTED_PROXIES` | empty (Coolify: private ranges) | Proxy IPs or CIDR ranges, comma-separated |
-| `SESSION_TIMEOUT` | `240` | Idle minutes |
+| `SESSION_TIMEOUT` | `60` | Idle minutes before the session ends |
+| `SESSION_MAX_LIFETIME` | `12` | Maximum hours of a session, however active (`0` = no limit) |
+| `SESSION_CONFIRM_MINUTES` | `15` | Minutes a password confirmation lasts before a sensitive action (`0` = never asked) |
+| `REGISTRATION_ENABLED` | `true` | Public sign-up (`/register`). `false`: invitations or the users CRUD only |
 | `TWO_FACTOR_ENABLED` | `true` | Global switch for 2FA and passkeys |
 | `DEBUG` | `false` | Never `true` in production |
 | `APP_DEFAULT_LOCALE`, `APP_DEFAULT_TIMEZONE` | `en_US`, `UTC` | Default language (the browser picks between `en_US` and `es_ES`) and time zone |
