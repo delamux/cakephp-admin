@@ -36,7 +36,7 @@ migrate (una vez por deploy: bin/deploy = migraciones + sync de permisos)
    - `EMAIL_FROM` (y opcionalmente `EMAIL_FROM_NAME`).
    - `SECURITY_SALT` y `COOKIE_KEY` los genera Coolify la primera vez (`SERVICE_HEX_64_*`) y los conserva:
      **no los cambies** (cerraría todas las sesiones e invalidaría las cookies «recordarme»).
-   - Opcionales: `TWO_FACTOR_ENABLED`, `SESSION_TIMEOUT`, `TRUSTED_PROXIES` (por defecto, los rangos privados de
+   - Opcionales: `TWO_FACTOR_ENABLED`, `SESSION_TIMEOUT`, `SESSION_MAX_LIFETIME`, `SESSION_CONFIRM_MINUTES`, `REGISTRATION_ENABLED`, `TRUSTED_PROXIES` (por defecto, los rangos privados de
      Docker: ver [Seguridad](security.md#proxies-de-confianza)).
 7. **Deploy.** `migrate` crea o actualiza el esquema y registra las acciones; después arrancan `app`, `worker` y `web`.
 8. **Primer superadmin** (solo la primera vez), desde *Terminal* del contenedor `app`:

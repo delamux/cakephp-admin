@@ -58,7 +58,7 @@ class TwoFactorResetTest extends TestCase
     public function testSuperadminResetsAUserAndTheUserIsEmailed(): void
     {
         $target = $this->withTwoFactor(['email' => 'target@example.test']);
-        $this->session(['Auth' => $this->superadmin()]);
+        $this->signIn($this->superadmin());
 
         $this->post('/two-factor/reset/' . $target->id);
 
@@ -71,7 +71,7 @@ class TwoFactorResetTest extends TestCase
     public function testAnotherSuperadminIsNeverReset(): void
     {
         $other = $this->withTwoFactor(['role' => 'superadmin', 'is_superuser' => true]);
-        $this->session(['Auth' => $this->superadmin()]);
+        $this->signIn($this->superadmin());
 
         $this->post('/two-factor/reset/' . $other->id);
 
@@ -82,11 +82,11 @@ class TwoFactorResetTest extends TestCase
     public function testOtherRolesCannotResetAndItIsPostOnly(): void
     {
         $target = $this->withTwoFactor();
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $this->post('/two-factor/reset/' . $target->id);
         $this->assertSame(['totp', 'webauthn'], $this->users()->twoFactorMethods((string)$target->id));
 
-        $this->session(['Auth' => $this->superadmin()]);
+        $this->signIn($this->superadmin());
         $this->get('/two-factor/reset/' . $target->id);
         $this->assertResponseCode(405);
     }
@@ -95,7 +95,7 @@ class TwoFactorResetTest extends TestCase
     {
         $target = $this->withTwoFactor();
         $other = $this->withTwoFactor(['role' => 'superadmin', 'is_superuser' => true]);
-        $this->session(['Auth' => $this->superadmin()]);
+        $this->signIn($this->superadmin());
 
         $this->get('/users/view/' . $target->id);
         $this->assertResponseOk();

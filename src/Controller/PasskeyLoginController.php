@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Account\ActivityLog;
+use App\Account\SessionGuard;
 use App\Model\Table\UsersTable;
 use App\Webauthn\PasskeyLoginAdapter;
 use App\Webauthn\PasskeyLoginException;
@@ -71,6 +72,8 @@ class PasskeyLoginController extends AppController
         }
 
         $this->Authentication->setIdentity($user);
+        // Interactive login: starts the session clock and counts as a password confirmation
+        SessionGuard::signedIn($this->request->getSession());
         $this->rememberMe($user);
         /** @var \App\Model\Table\UsersTable $users */
         $users = $this->fetchTable((string)Configure::read('Users.table', 'Users'));

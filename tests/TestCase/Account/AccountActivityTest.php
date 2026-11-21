@@ -116,7 +116,7 @@ class AccountActivityTest extends TestCase
     public function testLogoutIsRecorded(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
 
         $this->get('/logout');
 
@@ -154,7 +154,7 @@ class AccountActivityTest extends TestCase
     public function testPasswordChangesAreRecorded(): void
     {
         $user = $this->createUser();
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
 
         $this->post('/users/change-password', [
             'current_password' => 'Secret1234!',
@@ -226,18 +226,18 @@ class AccountActivityTest extends TestCase
         $request = new ServerRequest(['environment' => ['REMOTE_ADDR' => self::IP, 'HTTP_USER_AGENT' => self::UA]]);
         (new ActivityLog())->record((string)$user->id, ActivityLog::LOGIN_FAILED, $request);
 
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
         $this->get('/profile');
         $this->assertResponseOk();
         $this->assertResponseContains('Recent activity');
         $this->assertResponseContains('Failed sign-in');
         $this->assertResponseContains('Chrome on macOS');
 
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
         $this->get('/users/view/' . $user->id);
         $this->assertResponseContains('Failed sign-in');
 
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $this->get('/users/view/' . $user->id);
         $this->assertResponseOk();
         $this->assertResponseNotContains('Recent activity');

@@ -63,6 +63,8 @@ return function (RouteBuilder $routes): void {
         // Passwordless login with a passkey (App\Controller\PasskeyLoginController)
         $builder->connect('/passkey/options', ['controller' => 'PasskeyLogin', 'action' => 'options']);
         $builder->connect('/passkey/login', ['controller' => 'PasskeyLogin', 'action' => 'login']);
+        // Password confirmation before sensitive actions (App\Middleware\ConfirmPasswordMiddleware)
+        $builder->connect('/confirm-password', ['controller' => 'ConfirmPassword', 'action' => 'index']);
         // Role change from the users CRUD (POST only, enforced in the controller: a method-restricted
         // route would not be found by reverse routing without `_method`).
         $builder->connect(

@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Test\TestCase;
 
 use App\Model\Table\UsersTable;
+use Cake\Datasource\EntityInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 use CakeDC\Users\Model\Entity\User;
 
 /**
@@ -39,5 +41,20 @@ trait UserFactoryTrait
         $user->set('password', password_hash('Secret1234!', PASSWORD_DEFAULT), ['setter' => false]);
 
         return $table->saveOrFail($user, ['checkRules' => false]);
+    }
+
+    /**
+     * Signed-in session as right after a password login: the session clock starts now and the
+     * password counts as just confirmed (sensitive actions do not ask for it; App\Account\SessionGuard).
+     *
+     * @param \Cake\Datasource\EntityInterface|array<string, mixed> $user Identity.
+     * @param array<string, mixed> $extra More session data.
+     */
+    protected function signIn(EntityInterface|array $user, array $extra = []): void
+    {
+        $this->session(Hash::merge([
+            'Auth' => $user,
+            'App' => ['Session' => ['signedInAt' => time(), 'confirmedAt' => time()]],
+        ], $extra));
     }
 }

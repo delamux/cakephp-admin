@@ -34,7 +34,7 @@ class RoleManagementTest extends TestCase
 
     private function loginAs(User $user): void
     {
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
     }
 
     private function reload(User $user): User

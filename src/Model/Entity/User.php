@@ -6,10 +6,14 @@ namespace App\Model\Entity;
 use CakeDC\Users\Model\Entity\User as BaseUser;
 
 /**
- * CakeDC/Users user with the two-factor columns protected from mass assignment: CakeDC's entity
- * accepts every field but `id`, `is_superuser` and `role`, so a form could plant a TOTP secret or a
- * WebAuthn key in another account. 2FA is only written by App\Model\Table\UsersTable methods; the
- * photo only by App\UseCase\Users\ChangeUserPhoto.
+ * CakeDC/Users user with the sensitive columns protected from mass assignment: CakeDC's entity
+ * accepts every field but `id`, `is_superuser` and `role`, so a form (users CRUD, public sign-up) could
+ * plant a TOTP secret, a WebAuthn key, a reset/sign-in token or fake login bookkeeping. 2FA is only
+ * written by App\Model\Table\UsersTable methods; the photo only by App\UseCase\Users\ChangeUserPhoto;
+ * tokens and dates by CakeDC's behaviors (`set()`/`updateAll()`, not affected) and InviteUser.
+ *
+ * `password` stays assignable: sign-up, the users CRUD `add`, change password and reset password set it
+ * from their forms (and validate it). The CRUD `edit` drops it from the request (App\Controller\AppController).
  */
 class User extends BaseUser
 {
@@ -31,6 +35,16 @@ class User extends BaseUser
         'invited_at' => false,
         // Only App\UseCase\Account\ActiveSessions (rotated to sign the other devices out)
         'session_key' => false,
+        // Validation / reset / sign-in link tokens and login bookkeeping: CakeDC sets them itself
+        'token' => false,
+        'token_expires' => false,
+        'api_token' => false,
+        'activation_date' => false,
+        'login_token' => false,
+        'login_token_date' => false,
+        'token_send_requested' => false,
+        'last_login' => false,
+        'lockout_time' => false,
     ];
 
     /**

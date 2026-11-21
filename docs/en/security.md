@@ -12,14 +12,41 @@ Applied following [book.cakephp.org/5.x/security](https://book.cakephp.org/5.x/s
 | HTTPS + HSTS | `HTTPS_ENFORCE=true` (production image): HTTP → HTTPS and a 1-year `Strict-Transport-Security` (`HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`) |
 | CSRF | `httponly` cookie, `SameSite=Lax` and `secure` over HTTPS; `fetch`/htmx send `X-CSRF-Token` from `<meta name="csrf-token">` |
 | FormProtection | In every controller: `FormHelper` forms carry a token for their fields (only the WebAuthn JSON endpoints and the matrix checkboxes are unlocked) |
-| "Remember me" cookie | AES-encrypted (`EncryptedCookieMiddleware`, `COOKIE_KEY` or derived from the salt), `secure`, `SameSite=Lax`. Its token includes the password hash and `users.session_key`: changing the password or "Sign out of every other session" invalidates it |
+| "Remember me" cookie | AES-encrypted (`EncryptedCookieMiddleware`, `COOKIE_KEY` or derived from the salt), `secure`, `SameSite=Lax`. Its token includes the password hash and `users.session_key`: changing the password or "Sign out of every other session" invalidates it. Lasts 1 month |
 | `?api_key=` | CakeDC's Token authenticator (sign-in with `users.api_token` on any URL) is **disabled** (`Auth.Authenticators.Token => false`): the app has no API |
-| Session | Stored in **PostgreSQL** (`sessions` table); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` over HTTPS, idle timeout (`SESSION_TIMEOUT`, 240 min). Survives redeploys and is shared by every replica. Each row stores its user, IP and browser (`AppDatabaseSession`) for *Where you are signed in* |
-| Per-IP rate limiting | In **PostgreSQL** (`auth_throttles`, SHA-256-hashed IP, atomic upsert): 20 failed sign-ins / 2FA codes / passkeys every 15 min; sign-up, reset and resend 5 per hour → 429 + `Retry-After` (`Security.throttle`) |
+| Session | Stored in **PostgreSQL** (`sessions` table); `httponly`, `SameSite=Lax`, `use_strict_mode`, `secure` over HTTPS, idle timeout (`SESSION_TIMEOUT`, 60 min) and **maximum lifetime** (`SESSION_MAX_LIFETIME`, 12 h). Survives redeploys and is shared by every replica. Each row stores its user, IP and browser (`AppDatabaseSession`) for *Where you are signed in* |
+| Sign out everywhere | Changing or resetting the password signs out **every other session** of the account (and their "remember me" cookies); whoever changes it from their profile stays signed in. See [Sessions](#sessions) |
+| Password confirmation | Sensitive actions ask for the password again unless it was typed in the last 15 min (`SESSION_CONFIRM_MINUTES`). See [Sessions](#sessions) |
+| Per-IP rate limiting | In **PostgreSQL** (`auth_throttles`, SHA-256-hashed IP, atomic upsert): 20 failed sign-ins / 2FA codes / security keys / passkeys / password confirmations every 15 min; sign-up, reset, resend and emailed sign-in link 5 per hour → 429 + `Retry-After` (`Security.throttle`) |
 | Trusted proxies | `TRUSTED_PROXIES`: IPs or **CIDR ranges** from which `X-Forwarded-For` and `X-Forwarded-Proto` are accepted |
-| Accounts | 2FA and passkeys, single-use codes, 2FA fields not mass-assignable, only a superadmin manages superadmins, [account activity](account-activity.md), [permissions history](permissions.md#history) |
+| Accounts | 2FA and passkeys, single-use codes, 2FA fields, tokens and sign-in dates not mass-assignable from forms (the CRUD does not take the password when editing either), private profiles (`/profile/<id>` only shows your own), only a superadmin manages superadmins, [account activity](account-activity.md), [permissions history](permissions.md#history) |
 | Uploaded files | Private, outside `webroot`, served only with a session; validated by their content; images are re-encoded (no EXIF or hidden content); never the client's file name ([File uploads](uploads.md)) |
 | Personal data | Activity and histories have retention periods and are purged daily; the queue doesn't show job data; failure logs carry no data |
+
+## Sessions
+
+`App\Account\SessionGuard` (with tests), applied by `RefreshIdentityMiddleware` and `ConfirmPasswordMiddleware`;
+configured in `App.session` (`config/users.php`):
+
+- **Idle timeout** (`SESSION_TIMEOUT`, 60 min): the session expires without requests.
+- **Maximum lifetime** (`SESSION_MAX_LIFETIME`, 12 h): the session ends N hours after signing in however active it
+  is, and the "remember me" cookie is removed too. If the session expires earlier from inactivity, the "remember me"
+  cookie (1 month) opens a new one.
+- **Sign out everywhere**: every session remembers the account's `users.session_key` when it starts. Changing the
+  password from the profile, resetting it by email or "Sign out of every other session" rotate that key, so any other
+  session (a stolen one included) ends on its next request with *Your session has ended*.
+- **Password confirmation ("sudo mode")**: sensitive actions redirect to `/confirm-password` unless the password was
+  typed in the last `SESSION_CONFIRM_MINUTES` (15). Signing in with the password (and 2FA) or a passkey counts as a
+  confirmation; coming back through the "remember me" cookie or an emailed sign-in link does not. A GET comes back to
+  the same page; a POST back to the form it came from (submit it again). Failures count in the per-IP limit.
+  Defaults (`SessionGuard::CONFIRM_ACTIONS`, change them in `App.session.confirmActions`): permissions, roles, role
+  changes, invitations, resetting someone's 2FA, and adding, editing and deleting users. Superadmins are asked too.
+
+## Public sign-up
+
+`/register` is **on** by default (role `user`, with email verification). For an internal panel, switch it off with
+`REGISTRATION_ENABLED=false`: `/register` answers 404, the login page hides the *Sign up* link and accounts are only
+created by [invitation](accounts-and-roles.md#invitations) or from the users CRUD.
 
 ## Trusted proxies
 

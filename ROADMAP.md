@@ -330,6 +330,23 @@ Branch `feat/security-invitations-sessions-bake` (PR to `main`), with branches i
 - QA in dev baking throwaway tables (uuid key, belongsTo, boolean, numeric, text, timestamps, a token column):
   search/filters/invalid values/CSV/htmx partial via curl, screenshots desktop and empty state; artifacts removed.
 
+### Phase 26 — Session and account hardening ✅ (2026-11-21)
+
+From a security review of roles, permissions and sessions (`feat/security-hardening`, TDD on `App\Account\SessionGuard`):
+- A password change or reset signs out every other session of the account (`ActiveSessions::passwordChanged()`); the
+  session remembers `users.session_key` and ends when the account rotates it (`RefreshIdentityMiddleware`).
+- Maximum session lifetime (`SESSION_MAX_LIFETIME`, 12 h) and idle timeout lowered to 60 min (`SESSION_TIMEOUT`).
+- "Sudo mode": sensitive actions (`SessionGuard::CONFIRM_ACTIONS`: permissions, roles, role changes, invitations,
+  someone's 2FA reset, users add/edit/delete) ask for the password again after `SESSION_CONFIRM_MINUTES` (15);
+  `/confirm-password`, `ConfirmPasswordMiddleware` after authorization; password/passkey login counts as a
+  confirmation, remember-me and the emailed link do not.
+- Private profiles (`Users.Profile.viewOthers => false`).
+- Per-IP limit also on the emailed sign-in link, the security key 2FA step and password confirmations.
+- Fixed account protections also on `changePassword` and `resetOneTimePasswordAuthenticator` of someone else.
+- Tokens and sign-in bookkeeping not mass-assignable; the users CRUD `edit` drops `password` (change/reset/invitation
+  screens unaffected).
+- Public sign-up kept on, switchable with `REGISTRATION_ENABLED` (documented in Security).
+
 ## Pending / next steps
 
 - [x] **Generic basecoat theme improvements** (2026-11-18, approved). Clone in `../cakephp-basecoat-theme`,

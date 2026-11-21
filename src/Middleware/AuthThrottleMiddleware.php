@@ -16,20 +16,24 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Per-IP throttling of sign-in and account endpoints (POST only), 429 + Retry-After over the limit.
  * Runs after routing (needs the action) and before CSRF (to cut early).
  *
- * - `login`, `verify` (2FA code), passkey login: one shared bucket of failures. Password failures
- *   are counted by the CakeDC `afterLoginFailure` listener (Application::bootstrap()); a 2FA code is
- *   a failure if the second step did not pass; a passkey login if the response is not 200.
+ * - `login`, `verify` (2FA code), security key (2FA), passkey login, password confirmation: one shared
+ *   bucket of failures. Password failures are counted by the CakeDC `afterLoginFailure` listener
+ *   (Application::bootstrap()); a 2FA code is a failure if the second step did not pass; a security key
+ *   or passkey login if the response is not 200; a wrong confirmation password by
+ *   App\UseCase\Account\ConfirmPassword.
  * - Passkey options are refused when the bucket is exhausted but never counted: the login page
  *   requests them on every load (browser autofill).
- * - `register`, `requestResetPassword`, `resendTokenValidation`, accepting an invitation: every
- *   submission, own bucket.
+ * - `register`, `requestResetPassword`, `resendTokenValidation`, `requestLoginLink` (emailed sign-in
+ *   link), accepting an invitation: every submission, own bucket (no email flooding).
  *
  * The client IP is REMOTE_ADDR as seen by nginx; behind a load balancer configure trusted proxies.
  */
 class AuthThrottleMiddleware implements MiddlewareInterface
 {
-    private const LOGIN_ACTIONS = ['login', 'verify', 'passkeyLogin', 'passkeyOptions'];
-    private const ACCOUNT_ACTIONS = ['register', 'requestResetPassword', 'resendTokenValidation'];
+    private const LOGIN_ACTIONS = [
+        'login', 'verify', 'webauthn', 'passkeyLogin', 'passkeyOptions', 'confirmPassword',
+    ];
+    private const ACCOUNT_ACTIONS = ['register', 'requestResetPassword', 'resendTokenValidation', 'requestLoginLink'];
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request Request.
@@ -60,7 +64,7 @@ class AuthThrottleMiddleware implements MiddlewareInterface
         if ($action === 'verify' && !$request->getSession()->check(TwoFactorAuthenticator::USER_SESSION_KEY)) {
             AuthThrottle::recordLoginFailure($ip);
         }
-        if ($action === 'passkeyLogin' && $response->getStatusCode() !== 200) {
+        if (in_array($action, ['passkeyLogin', 'webauthn'], true) && $response->getStatusCode() !== 200) {
             AuthThrottle::recordLoginFailure($ip);
         }
 
@@ -80,6 +84,12 @@ class AuthThrottleMiddleware implements MiddlewareInterface
         if (empty($params['plugin']) && ($params['controller'] ?? null) === 'Invitations') {
             return ($params['action'] ?? null) === 'accept' ? 'acceptInvitation' : null;
         }
+        if (empty($params['plugin']) && ($params['controller'] ?? null) === 'WebauthnLogin') {
+            return ($params['action'] ?? null) === 'authenticate' ? 'webauthn' : null;
+        }
+        if (empty($params['plugin']) && ($params['controller'] ?? null) === 'ConfirmPassword') {
+            return 'confirmPassword';
+        }
         if (empty($params['plugin']) && ($params['controller'] ?? null) === 'PasskeyLogin') {
             return match ($params['action'] ?? null) {
                 'login' => 'passkeyLogin',
@@ -91,6 +101,9 @@ class AuthThrottleMiddleware implements MiddlewareInterface
             return null;
         }
         $action = (string)($params['action'] ?? '');
+        if ($action === 'webauthn2faAuthenticate') {
+            return 'webauthn';
+        }
 
         return in_array($action, ['login', 'verify', ...self::ACCOUNT_ACTIONS], true) ? $action : null;
     }

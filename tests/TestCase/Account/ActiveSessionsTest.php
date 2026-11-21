@@ -145,7 +145,7 @@ class ActiveSessionsTest extends TestCase
     {
         $user = $this->createUser();
         $this->addSession('laptop', (string)$user->id, time() + 3600);
-        $this->session(['Auth' => $user]);
+        $this->signIn($user);
 
         $this->get('/profile');
         $this->assertResponseContains('Where you are signed in');

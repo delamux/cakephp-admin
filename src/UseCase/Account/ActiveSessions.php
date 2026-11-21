@@ -17,7 +17,9 @@ use Cake\Utility\Security;
  *
  * Pages only see `key` (SHA-256 of the session id), never the id itself: it is the session cookie.
  * Signing out the other sessions also rotates `users.session_key`, part of the "remember me" cookie
- * token (App\Model\Entity\User::_getRememberSecret()), so those devices cannot sign back in alone.
+ * token (App\Model\Entity\User::_getRememberSecret()), so those devices cannot sign back in alone; a
+ * session that still holds the old key is ended on its next request (App\Account\SessionGuard). A
+ * password change or reset does the same (passwordChanged()).
  */
 class ActiveSessions
 {
@@ -97,12 +99,44 @@ class ActiveSessions
      */
     public function signOutOthers(string $userId, string $currentId): int
     {
-        $removed = $this->sessions->deleteAll(['user_id' => $userId, 'id !=' => $currentId]);
+        $removed = $this->revoke($userId, $currentId);
+        $this->activity->record($userId, ActivityLog::SESSIONS_REVOKED);
+
+        return $removed;
+    }
+
+    /**
+     * New password: whoever had the old one (or a stolen session) is signed out everywhere. A user
+     * changing their own password keeps the session of the request; a reset by email link or a
+     * password set by someone else signs out every session of the account.
+     *
+     * @param string $userId Account whose password changed.
+     * @param string|null $keepId Session id to keep (the user's own request), or null for none.
+     * @return int Sessions signed out.
+     */
+    public function passwordChanged(string $userId, ?string $keepId = null): int
+    {
+        return $this->revoke($userId, $keepId);
+    }
+
+    /**
+     * Deletes the sessions of the account (but `$keepId`) and rotates `users.session_key`.
+     *
+     * @param string $userId User.
+     * @param string|null $keepId Session id to keep.
+     * @return int Sessions deleted.
+     */
+    private function revoke(string $userId, ?string $keepId): int
+    {
+        $conditions = ['user_id' => $userId];
+        if ($keepId !== null && $keepId !== '') {
+            $conditions['id !='] = $keepId;
+        }
+        $removed = $this->sessions->deleteAll($conditions);
         $this->users->updateQuery()
             ->set(['session_key' => bin2hex(Security::randomBytes(32))])
             ->where(['id' => $userId])
             ->execute();
-        $this->activity->record($userId, ActivityLog::SESSIONS_REVOKED);
 
         return $removed;
     }

@@ -1722,3 +1722,15 @@ msgid "This link expires in {0} day and can be used only once."
 msgid_plural "This link expires in {0} days and can be used only once."
 msgstr[0] "Este enlace caduca en {0} día y solo se puede usar una vez."
 msgstr[1] "Este enlace caduca en {0} días y solo se puede usar una vez."
+
+msgid "Confirm your password to continue."
+msgstr "Confirma tu contraseña para continuar."
+
+msgid "Confirm your password"
+msgstr "Confirma tu contraseña"
+
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgid "You are about to change something sensitive. Type your password again to continue; you will not be asked again for a few minutes."
+msgstr "Vas a cambiar algo delicado. Escribe de nuevo tu contraseña para continuar; no te la volveremos a pedir en unos minutos."

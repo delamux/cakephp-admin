@@ -33,7 +33,7 @@ class RolesAndPermissionsTest extends TestCase
 
     private function loginAsSuperadmin(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'superadmin', 'is_superuser' => true])]);
+        $this->signIn($this->createUser(['role' => 'superadmin', 'is_superuser' => true]));
     }
 
     private function roleExists(string $slug): bool
@@ -43,7 +43,7 @@ class RolesAndPermissionsTest extends TestCase
 
     public function testAdminCannotOpenRolesOrPermissions(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
 
         $this->get('/roles');
         $this->assertRedirect();
@@ -122,7 +122,7 @@ class RolesAndPermissionsTest extends TestCase
         // RBAC reads the new grants and their rules
         $editor = $this->createUser(['role' => 'editor']);
         $target = $this->createUser(['role' => 'user']);
-        $this->session(['Auth' => $editor]);
+        $this->signIn($editor);
         $this->get('/users/view/' . $target->id);
         $this->assertResponseCode(302, 'view was removed from the editor');
         $this->get('/users/edit/' . $target->id);

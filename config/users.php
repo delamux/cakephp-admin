@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Account\SessionGuard;
 use App\Authentication\OptionalOneTimePasswordChecker;
 use App\Authentication\OptionalWebauthn2faChecker;
 use App\Loader\MiddlewareQueueLoader;
@@ -35,8 +36,10 @@ return [
             // Mailer with the app email layout + CSS inlining (Emogrifier)
             'mailerClass' => UsersMailer::class,
         ],
+        // Public sign-up (role `user`). Set to false to only create accounts by invitation or from the
+        // users CRUD: the /register route then answers 404 and the login page hides the link.
         'Registration' => [
-            'active' => true,
+            'active' => filter_var(env('REGISTRATION_ENABLED', 'true'), FILTER_VALIDATE_BOOLEAN),
             'reCaptcha' => false,
             'allowLoggedIn' => false,
             'defaultRole' => 'user',
@@ -47,6 +50,11 @@ return [
         ],
         'Social' => [
             'login' => false,
+        ],
+        // /profile/<id> shows only the signed-in user's own profile (CakeDC's default lets any signed-in
+        // user open anyone's profile, email included); staff see other accounts in the users CRUD.
+        'Profile' => [
+            'viewOthers' => false,
         ],
         'RememberMe' => [
             'active' => true,
@@ -117,6 +125,16 @@ return [
         ],
         // Actions whose first passed parameter is a user account (rule `owner`: the account is the user)
         'accountActions' => Owner::ACCOUNT_ACTIONS,
+    ],
+    // Session security (App\Account\SessionGuard), on top of the idle timeout (SESSION_TIMEOUT, config/app.php):
+    // - maxLifetime: seconds a signed-in session lives however active it is (SESSION_MAX_LIFETIME hours, 0 = off),
+    // - confirmWindow: seconds a password confirmation lasts before a sensitive action asks again
+    //   (SESSION_CONFIRM_MINUTES, 0 = never asked),
+    // - confirmActions: the sensitive actions (patterns on `Plugin.Prefix/Controller::action`, `!` excludes).
+    'App.session' => [
+        'maxLifetime' => (int)env('SESSION_MAX_LIFETIME', 12) * 3600,
+        'confirmWindow' => (int)env('SESSION_CONFIRM_MINUTES', 15) * 60,
+        'confirmActions' => SessionGuard::CONFIRM_ACTIONS,
     ],
     // Account activity log (App\Account\ActivityLog): kept for N days, then deleted by
     // `bin/cake activity purge` (daily cron, minimum 30). It holds IPs and browsers (personal data).

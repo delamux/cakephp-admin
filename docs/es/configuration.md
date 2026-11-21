@@ -24,7 +24,10 @@ En producción todo va por **variables de entorno** (`config/app_local.php` no e
 | `HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS` | `31536000`, `false` | HSTS |
 | `CSP_REPORT_ONLY` | `false` en producción (`DEBUG` en dev) | CSP solo informativa |
 | `TRUSTED_PROXIES` | vacío (Coolify: rangos privados) | IPs o rangos CIDR del proxy, separados por comas |
-| `SESSION_TIMEOUT` | `240` | Minutos de inactividad |
+| `SESSION_TIMEOUT` | `60` | Minutos de inactividad antes de cerrar la sesión |
+| `SESSION_MAX_LIFETIME` | `12` | Horas máximas de una sesión aunque haya actividad (`0` = sin límite) |
+| `SESSION_CONFIRM_MINUTES` | `15` | Minutos que dura la confirmación de contraseña antes de una acción sensible (`0` = no se pide nunca) |
+| `REGISTRATION_ENABLED` | `true` | Registro público (`/register`). `false`: solo invitaciones o alta desde el CRUD |
 | `TWO_FACTOR_ENABLED` | `true` | Interruptor general del 2FA y las passkeys |
 | `DEBUG` | `false` | Nunca `true` en producción |
 | `APP_DEFAULT_LOCALE`, `APP_DEFAULT_TIMEZONE` | `en_US`, `UTC` | Idioma por defecto (el navegador elige entre `en_US` y `es_ES`) y zona horaria |

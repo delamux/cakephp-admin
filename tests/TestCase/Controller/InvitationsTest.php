@@ -44,14 +44,14 @@ class InvitationsTest extends TestCase
 
     private function inviteAsAdmin(string $email = 'new@example.test', string $role = 'editor'): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $this->post('/invitations/add', ['email' => $email, 'role' => $role, 'first_name' => 'Nuria']);
     }
 
     public function testAnAdminInvitesSomeoneWhoGetsAnEmailWithTheLink(): void
     {
         $admin = $this->createUser(['role' => 'admin']);
-        $this->session(['Auth' => $admin]);
+        $this->signIn($admin);
 
         $this->post('/invitations/add', ['email' => 'new@example.test', 'role' => 'editor', 'first_name' => 'Nuria']);
 
@@ -89,7 +89,7 @@ class InvitationsTest extends TestCase
 
     public function testUsersWithoutPermissionCannotInvite(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'editor'])]);
+        $this->signIn($this->createUser(['role' => 'editor']));
 
         $this->post('/invitations/add', ['email' => 'new@example.test', 'role' => 'user']);
 
@@ -167,7 +167,7 @@ class InvitationsTest extends TestCase
 
     public function testOnlyPendingInvitationsCanBeResent(): void
     {
-        $this->session(['Auth' => $this->createUser(['role' => 'admin'])]);
+        $this->signIn($this->createUser(['role' => 'admin']));
         $member = $this->createUser();
 
         $this->post('/invitations/resend/' . $member->id);
