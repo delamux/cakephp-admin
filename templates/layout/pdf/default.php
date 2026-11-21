@@ -2,7 +2,7 @@
 /**
  * PDF layout (Dompdf: CSS 2.1, no flexbox/grid → tables for layout).
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  */
 use Cake\Core\Configure;
 

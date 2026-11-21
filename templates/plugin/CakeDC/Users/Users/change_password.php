@@ -4,7 +4,7 @@
  * and from the reset-password link (auth layout).
  *
  * @var \App\View\AppView $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\Model\Entity\User $user
  * @var bool $validatePassword
  */
 use Cake\Core\Configure;

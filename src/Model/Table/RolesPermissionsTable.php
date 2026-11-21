@@ -7,6 +7,10 @@ use Cake\ORM\Table;
 
 /**
  * Allow-list role ↔ permission.
+ *
+ * @extends \Cake\ORM\Table<array{}, \Cake\ORM\Entity>
+ * @property \Cake\ORM\Association\BelongsTo<\App\Model\Table\RolesTable> $Roles
+ * @property \Cake\ORM\Association\BelongsTo<\App\Model\Table\PermissionsTable> $Permissions
  */
 class RolesPermissionsTable extends Table
 {

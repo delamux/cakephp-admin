@@ -21,6 +21,17 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Role newEntity(array<string, mixed> $data, array<string, mixed> $options = [])
  * @method \App\Model\Entity\Role patchEntity(\Cake\Datasource\EntityInterface $entity, array<string, mixed> $data, array<string, mixed> $options = [])
  * @method \Cake\ORM\Query\SelectQuery<\App\Model\Entity\Role> findBySlug(string $slug)
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}, \App\Model\Entity\Role>
+ * @property \Cake\ORM\Association\BelongsToMany<\App\Model\Table\PermissionsTable> $Permissions
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Role>|false saveMany(iterable<\App\Model\Entity\Role> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Role> saveManyOrFail(iterable<\App\Model\Entity\Role> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Role>|false deleteMany(iterable<\App\Model\Entity\Role> $entities, array<string, mixed> $options = [])
+ * @method \Cake\Datasource\ResultSetInterface<int, \App\Model\Entity\Role> deleteManyOrFail(iterable<\App\Model\Entity\Role> $entities, array<string, mixed> $options = [])
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @method array<\App\Model\Entity\Role> newEntities(array<array<string, mixed>> $data, array<string, mixed> $options = [])
+ * @method \App\Model\Entity\Role get(mixed $primaryKey, array<string, mixed>|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \App\Model\Entity\Role findOrCreate(\Cake\ORM\Query\SelectQuery<\App\Model\Entity\Role>|callable|array<string, mixed> $search, ?callable $callback = null, array<string, mixed> $options = [])
+ * @method array<\App\Model\Entity\Role> patchEntities(iterable<\App\Model\Entity\Role> $entities, array<array<string, mixed>> $data, array<string, mixed> $options = [])
  */
 class RolesTable extends Table
 {
@@ -96,7 +107,7 @@ class RolesTable extends Table
      * New roles are never protected (only the migration creates the protected superadmin).
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event.
-     * @param \Cake\Datasource\EntityInterface $entity Role.
+     * @param \App\Model\Entity\Role $entity Role.
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity): void

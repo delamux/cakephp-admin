@@ -9,6 +9,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * `bin/cake permissions sync`: real discovery + configured defaults.
+ *
+ * @link \App\Command\PermissionsSyncCommand
  */
 class PermissionsSyncCommandTest extends TestCase
 {

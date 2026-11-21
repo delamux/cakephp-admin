@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var string $name
  * @var string $event enabled | disabled | reset
  * @var string|null $method totp | webauthn

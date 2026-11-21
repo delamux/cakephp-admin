@@ -3,7 +3,7 @@
  * Role badge: label from the role whitelist (App.roles), emphasis by access level.
  *
  * @var \App\View\AppView $this
- * @var \CakeDC\Users\Model\Entity\User $user
+ * @var \App\Model\Entity\User $user
  */
 use App\Service\UserRoleManager;
 

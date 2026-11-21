@@ -11,6 +11,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * `bin/cake two_factor reset <username|email>`: the way out for a superadmin who lost their device.
+ *
+ * @link \App\Command\TwoFactorResetCommand
  */
 class TwoFactorResetCommandTest extends TestCase
 {

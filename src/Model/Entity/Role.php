@@ -13,6 +13,9 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property bool $protected
  * @property array<\App\Model\Entity\Permission> $permissions
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
+ * @property \Cake\ORM\Entity $_joinData
  */
 class Role extends Entity
 {

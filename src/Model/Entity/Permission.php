@@ -16,6 +16,9 @@ use Cake\ORM\Entity;
  * @property string $action
  * @property bool $orphan The action no longer exists in the code
  * @property array<\App\Model\Entity\Role> $roles
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
+ * @property \Cake\ORM\Entity $_joinData
  */
 class Permission extends Entity
 {

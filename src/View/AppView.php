@@ -9,6 +9,34 @@ use Cake\View\View;
 
 /**
  * Application View: all Basecoat component helpers (Form included) + CakeDC/Users helpers.
+ *
+ * @property \BasecoatTheme\View\Helper\AccordionHelper $Accordion
+ * @property \BasecoatTheme\View\Helper\AlertHelper $Alert
+ * @property \BasecoatTheme\View\Helper\AvatarHelper $Avatar
+ * @property \BasecoatTheme\View\Helper\BadgeHelper $Badge
+ * @property \BasecoatTheme\View\Helper\BreadcrumbHelper $Breadcrumb
+ * @property \BasecoatTheme\View\Helper\ButtonHelper $Button
+ * @property \BasecoatTheme\View\Helper\ButtonGroupHelper $ButtonGroup
+ * @property \BasecoatTheme\View\Helper\CardHelper $Card
+ * @property \BasecoatTheme\View\Helper\ChartHelper $Chart
+ * @property \BasecoatTheme\View\Helper\DialogHelper $Dialog
+ * @property \BasecoatTheme\View\Helper\DropdownMenuHelper $DropdownMenu
+ * @property \BasecoatTheme\View\Helper\EmptyStateHelper $EmptyState
+ * @property \BasecoatTheme\View\Helper\FormHelper $Form
+ * @property \BasecoatTheme\View\Helper\IconHelper $Icon
+ * @property \BasecoatTheme\View\Helper\KbdHelper $Kbd
+ * @property \BasecoatTheme\View\Helper\PaginationHelper $Pagination
+ * @property \BasecoatTheme\View\Helper\ProgressHelper $Progress
+ * @property \BasecoatTheme\View\Helper\SidebarHelper $Sidebar
+ * @property \BasecoatTheme\View\Helper\SkeletonHelper $Skeleton
+ * @property \BasecoatTheme\View\Helper\TableHelper $Table
+ * @property \BasecoatTheme\View\Helper\TabsHelper $Tabs
+ * @property \BasecoatTheme\View\Helper\ThemeHelper $Theme
+ * @property \BasecoatTheme\View\Helper\ToastHelper $Toast
+ * @property \BasecoatTheme\View\Helper\TooltipHelper $Tooltip
+ * @property \CakeDC\Users\View\Helper\UserHelper $User
+ * @property \CakeDC\Users\View\Helper\AuthLinkHelper $AuthLink
+ * @property \App\View\Helper\UserPhotoHelper $UserPhoto
  */
 class AppView extends View
 {

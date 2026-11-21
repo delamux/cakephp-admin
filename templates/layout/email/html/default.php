@@ -9,7 +9,7 @@
  *
  * Blocks: `title`, `preheader` (inbox preview text), `content`.
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  */
 use Cake\Core\Configure;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var string $activationUrl
  * @var string|null $first_name
  * @var string|null $username

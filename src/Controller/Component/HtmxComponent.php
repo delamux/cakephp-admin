@@ -15,6 +15,8 @@ use Cake\Routing\Router;
  *   navigation (`HX-Boosted`) keeps the full page, unless it swaps an element (`HX-Target`).
  * - `Vary: HX-Request` so caches never mix full pages and fragments.
  * - Helpers for response headers: trigger(), redirect(), refresh().
+ *
+ * @method \App\Controller\AppController getController()
  */
 class HtmxComponent extends Component
 {

@@ -2,7 +2,7 @@
 /**
  * "Bulletproof" email button: table cell background (Outlook) + padded link (everyone else).
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var string $text
  * @var string $url Absolute URL.
  */

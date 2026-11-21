@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var \CakeDC\Users\Model\Entity\User $user
  * @var \Cake\Datasource\EntityInterface $socialAccount
  * @var array $activationUrl

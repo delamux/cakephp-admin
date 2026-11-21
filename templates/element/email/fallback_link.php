@@ -2,7 +2,7 @@
 /**
  * Raw link for clients that block buttons.
  *
- * @var \Cake\View\View $this
+ * @var \App\View\AppView $this
  * @var string $url Absolute URL.
  */
 ?>

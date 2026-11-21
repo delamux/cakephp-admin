@@ -3,7 +3,7 @@
  * Roles list (superadmin only).
  *
  * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\Role> $roles
+ * @var array<\App\Model\Entity\Role>|\Cake\Collection\CollectionInterface<int, \App\Model\Entity\Role> $roles
  * @var array<string, int> $counts Users per role slug
  */
 $this->assign('title', (string)$this->get('title'));
